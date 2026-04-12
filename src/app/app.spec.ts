@@ -1,23 +1,32 @@
-import { TestBed } from '@angular/core/testing';
+import { ApplicationRef } from '@angular/core';
+import { bootstrapApplication } from '@angular/platform-browser';
+
+import { appConfig } from './app.config';
 import { App } from './app';
 
 describe('App', () => {
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      imports: [App],
-    }).compileComponents();
+  let appRef: ApplicationRef | undefined;
+
+  beforeEach(() => {
+    document.body.innerHTML = '<app-root></app-root>';
   });
 
-  it('should create the app', () => {
-    const fixture = TestBed.createComponent(App);
-    const app = fixture.componentInstance;
-    expect(app).toBeTruthy();
+  afterEach(() => {
+    appRef?.destroy();
+    appRef = undefined;
+    document.body.innerHTML = '';
   });
 
-  it('should render title', async () => {
-    const fixture = TestBed.createComponent(App);
-    await fixture.whenStable();
-    const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('h1')?.textContent).toContain('Hello, nutrition-ui');
+  it('should bootstrap the app', async () => {
+    appRef = await bootstrapApplication(App, appConfig);
+
+    expect(appRef.components[0]?.instance).toBeInstanceOf(App);
+  });
+
+  it('should show toolbar title', async () => {
+    appRef = await bootstrapApplication(App, appConfig);
+    await appRef.whenStable();
+
+    expect(document.querySelector('mat-toolbar')?.textContent).toContain('Nutrition');
   });
 });

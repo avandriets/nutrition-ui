@@ -1,0 +1,107 @@
+// Flex layout and sizing. gap utilities live in spacing.scss (gap-*).
+
+.flex {
+  display: flex;
+}
+
+.inline-flex {
+  display: inline-flex;
+}
+
+.flex-row {
+  flex-direction: row;
+}
+
+.flex-col {
+  flex-direction: column;
+}
+
+.flex-wrap {
+  flex-wrap: wrap;
+}
+
+.items-start {
+  align-items: flex-start;
+}
+
+.items-center {
+  align-items: center;
+}
+
+.items-end {
+  align-items: flex-end;
+}
+
+.items-stretch {
+  align-items: stretch;
+}
+
+.justify-start {
+  justify-content: flex-start;
+}
+
+.justify-center {
+  justify-content: center;
+}
+
+.justify-end {
+  justify-content: flex-end;
+}
+
+.justify-between {
+  justify-content: space-between;
+}
+
+.flex-1 {
+  flex: 1 1 0%;
+  min-width: 0;
+}
+
+.flex-auto {
+  flex: 1 1 auto;
+}
+
+.flex-none {
+  flex: none;
+}
+
+.shrink-0 {
+  flex-shrink: 0;
+}
+
+// Sizes and constraints
+.w-full {
+  width: 100%;
+}
+
+.h-full {
+  height: 100%;
+}
+
+.min-h-0 {
+  min-height: 0;
+}
+
+.min-h-screen {
+  min-height: 100vh;
+}
+
+.max-w-full {
+  max-width: 100%;
+}
+
+.max-w-sm {
+  max-width: 40rem;
+}
+
+.max-w-md {
+  max-width: 48rem;
+}
+
+.max-w-lg {
+  max-width: var(--content-max-width);
+}
+
+.max-w-xl {
+  max-width: 75rem;
+}

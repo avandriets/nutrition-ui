@@ -1,0 +1,17 @@
+@use './styles/spacing';
+@use './styles/typography';
+@use './styles/layout';
+
+@import '@angular/material/prebuilt-themes/azure-blue.css';
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: Roboto, 'Helvetica Neue', sans-serif;
+  background: var(--mat-sys-background);
+  color: var(--mat-sys-on-background);
+}

@@ -1,0 +1,7 @@
+.app-shell {
+  height: 100vh;
+}
+
+mat-nav-list a.active {
+  background: color-mix(in srgb, var(--mat-sys-on-surface) 8%, transparent);
+}
