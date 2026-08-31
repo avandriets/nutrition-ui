@@ -1,0 +1,54 @@
+:host {
+  display: block;
+  min-width: min(520px, 86vw);
+}
+.dialog-heading {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 24px 24px 4px;
+}
+.dialog-heading h2 {
+  margin: 0;
+  padding: 0;
+  color: #1d2a23;
+  font-size: 21px;
+}
+.dialog-heading p {
+  margin: 4px 0 0;
+  color: #829088;
+  font-size: 12px;
+}
+.dialog-icon {
+  display: grid;
+  place-items: center;
+  width: 45px;
+  height: 45px;
+  flex: none;
+  border-radius: 14px;
+  background: #fff1e4;
+  color: #d17d35;
+}
+mat-dialog-content {
+  padding-top: 20px !important;
+}
+form {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px 12px;
+}
+.full {
+  grid-column: 1/-1;
+}
+.primary {
+  background: #31875d !important;
+  color: white !important;
+}
+@media (max-width: 540px) {
+  form {
+    grid-template-columns: 1fr;
+  }
+  .full {
+    grid-column: auto;
+  }
+}

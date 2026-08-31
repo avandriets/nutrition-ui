@@ -1,0 +1,100 @@
+:host {
+  display: block;
+  min-width: min(680px, calc(100vw - 32px));
+}
+
+.dialog-header {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  padding: 24px 24px 4px;
+}
+
+.dialog-icon {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  flex: none;
+  border-radius: 15px;
+  color: #3979a8;
+  background: #eaf4fb;
+}
+
+.dialog-header span {
+  color: #438763;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 1.1px;
+}
+
+h2 {
+  margin: 3px 0 0;
+  padding: 0 !important;
+  color: #243129;
+}
+
+mat-dialog-content {
+  padding-top: 18px !important;
+}
+
+form,
+.date-field {
+  width: 100%;
+}
+
+.measurement-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 2px 14px;
+}
+
+mat-icon[matPrefix] {
+  margin-right: 8px;
+  color: #6f7f76;
+}
+
+[matSuffix] {
+  margin-left: 8px;
+  color: #849089;
+  font-size: 11px;
+}
+
+.form-hint {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin: 0 3px;
+  color: #748078;
+  font-size: 11px;
+}
+
+.form-hint.error {
+  color: #b44f43;
+}
+
+.form-hint mat-icon {
+  width: 17px;
+  height: 17px;
+  font-size: 17px;
+}
+
+mat-dialog-actions {
+  padding: 12px 24px 20px;
+}
+
+.save-button {
+  min-width: 145px;
+  background: #31875d !important;
+  color: white !important;
+}
+
+@media (max-width: 620px) {
+  :host {
+    min-width: 0;
+  }
+
+  .measurement-grid {
+    grid-template-columns: 1fr;
+  }
+}

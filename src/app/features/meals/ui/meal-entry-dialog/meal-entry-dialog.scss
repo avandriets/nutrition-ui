@@ -1,0 +1,158 @@
+:host {
+  display: block;
+  width: 100%;
+}
+.dialog-heading {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 24px 24px 4px;
+}
+.dialog-heading h2 {
+  margin: 0;
+  padding: 0;
+  color: #1d2a23;
+  font-size: 21px;
+}
+.dialog-heading p {
+  margin: 4px 0 0;
+  color: #829088;
+  font-size: 12px;
+}
+.dialog-icon {
+  display: grid;
+  place-items: center;
+  width: 45px;
+  height: 45px;
+  flex: none;
+  border-radius: 14px;
+  background: #e9f6ee;
+  color: #37865e;
+}
+mat-dialog-content {
+  padding-top: 20px !important;
+}
+form {
+  display: flex;
+  flex-direction: column;
+}
+.product-field {
+  width: 100%;
+  margin-bottom: 8px;
+}
+.product-field mat-icon {
+  margin-right: 7px;
+  color: #718078;
+}
+.product-option {
+  display: grid;
+  gap: 2px;
+  padding: 5px 0;
+  line-height: 1.2;
+}
+.product-option strong {
+  color: #2c3931;
+  font-size: 13px;
+}
+.product-option small {
+  color: #87938c;
+  font-size: 10px;
+}
+.portions-heading {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 16px;
+  margin: 4px 0 10px;
+}
+.portions-heading div {
+  display: grid;
+  gap: 3px;
+}
+.portions-heading strong {
+  color: #27352d;
+  font-size: 13px;
+}
+.portions-heading span {
+  color: #8a958f;
+  font-size: 10px;
+}
+.portions-heading > span {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.7px;
+  text-transform: uppercase;
+}
+.portion-list {
+  overflow: hidden;
+  border: 1px solid #e3e9e5;
+  border-radius: 14px;
+}
+.portion-row {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  min-height: 70px;
+  padding: 9px 12px;
+  border-bottom: 1px solid #e9eeeb;
+}
+.portion-row:last-child {
+  border-bottom: 0;
+}
+.member {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+}
+.member-avatar {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  background: #f0ebff;
+  color: #6b56ae;
+}
+.member-avatar mat-icon {
+  width: 18px;
+  height: 18px;
+  font-size: 18px;
+}
+.member strong {
+  color: #334139;
+  font-size: 13px;
+}
+.portion-row mat-form-field {
+  width: 150px;
+}
+.hint {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: #a0653e;
+  font-size: 12px;
+}
+.hint mat-icon {
+  font-size: 18px;
+}
+.primary {
+  background: #31875d !important;
+  color: white !important;
+}
+@media (max-width: 540px) {
+  .dialog-heading {
+    align-items: flex-start;
+    padding: 20px 18px 4px;
+  }
+  .dialog-icon {
+    width: 40px;
+    height: 40px;
+  }
+  .portion-row {
+    gap: 10px;
+  }
+  .portion-row mat-form-field {
+    width: 125px;
+  }
+}

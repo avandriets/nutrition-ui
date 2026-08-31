@@ -1,0 +1,406 @@
+<section class="page">
+  <header class="page-header">
+    <div>
+      <span class="eyebrow">СЕМЕЙНЫЙ АККАУНТ</span>
+      <h1>{{ store.account()?.name || 'Наша семья' }}</h1>
+      <p>Общие приёмы пищи, персональные дневники и цели.</p>
+    </div>
+    <button mat-flat-button class="add-button" (click)="addMember()">
+      <mat-icon>person_add</mat-icon> Добавить человека
+    </button>
+  </header>
+
+  @if (store.error(); as error) {
+    <div class="error-banner">
+      <mat-icon>error_outline</mat-icon><span>{{ error }}</span
+      ><button mat-icon-button aria-label="Закрыть" (click)="store.dismissError()">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+  }
+
+  @if (store.loading()) {
+    <div class="loading-state">
+      <mat-spinner diameter="42"></mat-spinner>
+      <p>Загружаем семейный аккаунт…</p>
+    </div>
+  } @else {
+    <div class="family-layout">
+      <aside>
+        <div class="aside-heading">
+          <div>
+            <h2>Члены семьи</h2>
+            <p>{{ store.users().length }} профиля</p>
+          </div>
+          <span class="account-badge"><mat-icon>home</mat-icon>Общий аккаунт</span>
+        </div>
+        <mat-card class="members-card">
+          @for (user of store.users(); track user.id) {
+            <button
+              class="member-row"
+              [class.active]="store.selectedUserId() === user.id"
+              (click)="store.selectUser(user.id)"
+            >
+              <span class="member-avatar">{{ initials(user.name) }}</span
+              ><span class="member-copy"
+                ><strong>{{ user.name }}</strong
+                ><small
+                  >{{
+                    user.birth_date
+                      ? (user.birth_date | date: 'd MMMM y' : '' : 'ru')
+                      : 'Дата рождения не указана'
+                  }}
+                  @if (user.height_cm != null) {
+                    · {{ user.height_cm | number: '1.0-1' }} см
+                  }
+                </small></span
+              ><mat-icon>chevron_right</mat-icon>
+            </button>
+          } @empty {
+            <div class="empty-members">
+              <mat-icon>group_add</mat-icon>
+              <h3>Добавьте семью</h3>
+              <p>Создайте первый профиль, чтобы настроить цели и вести дневник.</p>
+              <button mat-stroked-button (click)="addMember()">Добавить человека</button>
+            </div>
+          }
+        </mat-card>
+        <div class="family-note">
+          <mat-icon>restaurant</mat-icon>
+          <p>
+            <strong>Едите вместе?</strong><br />Один общий приём пищи можно будет распределить между
+            членами семьи, сохранив персональный дневник каждого.
+          </p>
+        </div>
+      </aside>
+
+      <main class="member-details">
+        @if (store.selectedUser(); as user) {
+          <mat-card class="profile-card">
+            <div class="profile-avatar">{{ initials(user.name) }}</div>
+            <div class="profile-copy">
+              <span>АКТИВНЫЙ ПРОФИЛЬ</span>
+              <h2>{{ user.name }}</h2>
+              <div class="profile-meta">
+                <span
+                  ><mat-icon>cake</mat-icon
+                  >{{
+                    user.birth_date
+                      ? (user.birth_date | date: 'd MMMM y' : '' : 'ru')
+                      : 'Дата рождения не указана'
+                  }}</span
+                >
+                <span
+                  ><mat-icon>height</mat-icon>
+                  @if (user.height_cm != null) {
+                    {{ user.height_cm | number: '1.0-1' }} см
+                  } @else {
+                    Рост не указан
+                  }
+                </span>
+              </div>
+            </div>
+            <div class="profile-actions">
+              <button mat-icon-button aria-label="Редактировать" (click)="editMember(user)">
+                <mat-icon>edit</mat-icon></button
+              ><button
+                mat-icon-button
+                class="delete"
+                aria-label="Удалить"
+                (click)="deleteMember(user)"
+              >
+                <mat-icon>delete_outline</mat-icon>
+              </button>
+            </div>
+          </mat-card>
+
+          <section class="measurement-section">
+            <div class="section-heading">
+              <div>
+                <h2>Вес и замеры</h2>
+                <p>История параметров тела пользователя</p>
+              </div>
+              <button mat-button [disabled]="store.saving()" (click)="addMeasurement()">
+                <mat-icon>add</mat-icon>Добавить замер
+              </button>
+            </div>
+
+            @if (store.loadingMeasurements()) {
+              <mat-card class="measurement-loading">
+                <mat-spinner diameter="25"></mat-spinner>
+                <span>Загружаем историю замеров…</span>
+              </mat-card>
+            } @else if (store.latestMeasurement(); as latest) {
+              <div class="latest-heading">
+                <span>Последний замер</span>
+                <strong>{{ latest.measured_on | date: 'd MMMM y' : '' : 'ru' }}</strong>
+              </div>
+              <div class="measurement-summary-grid">
+                <mat-card class="measurement-summary weight">
+                  <div class="measurement-icon"><mat-icon>monitor_weight</mat-icon></div>
+                  <span>ВЕС</span>
+                  <strong>
+                    @if (latest.weight_kg != null) {
+                      {{ latest.weight_kg | number: '1.0-1' }} <small>кг</small>
+                    } @else {
+                      —
+                    }
+                  </strong>
+                </mat-card>
+                <mat-card class="measurement-summary neck">
+                  <div class="measurement-icon"><mat-icon>straighten</mat-icon></div>
+                  <span>ШЕЯ</span>
+                  <strong>
+                    @if (latest.neck_cm != null) {
+                      {{ latest.neck_cm | number: '1.0-1' }} <small>см</small>
+                    } @else {
+                      —
+                    }
+                  </strong>
+                </mat-card>
+                <mat-card class="measurement-summary waist">
+                  <div class="measurement-icon"><mat-icon>straighten</mat-icon></div>
+                  <span>ТАЛИЯ</span>
+                  <strong>
+                    @if (latest.waist_cm != null) {
+                      {{ latest.waist_cm | number: '1.0-1' }} <small>см</small>
+                    } @else {
+                      —
+                    }
+                  </strong>
+                </mat-card>
+                <mat-card class="measurement-summary hips">
+                  <div class="measurement-icon"><mat-icon>straighten</mat-icon></div>
+                  <span>БЁДРА</span>
+                  <strong>
+                    @if (latest.hips_cm != null) {
+                      {{ latest.hips_cm | number: '1.0-1' }} <small>см</small>
+                    } @else {
+                      —
+                    }
+                  </strong>
+                </mat-card>
+              </div>
+
+              <mat-card class="measurement-history-card">
+                <div class="history-heading">
+                  <h3>История измерений</h3>
+                  <span>{{ recordsCountLabel(store.measurements().length) }}</span>
+                </div>
+                <div class="measurement-table-scroll">
+                  <table class="measurement-table">
+                    <thead>
+                      <tr>
+                        <th scope="col">Дата</th>
+                        <th scope="col">Вес</th>
+                        <th scope="col">Шея</th>
+                        <th scope="col">Талия</th>
+                        <th scope="col">Бёдра</th>
+                        <th scope="col"><span class="visually-hidden">Действия</span></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      @for (measurement of store.measurements(); track measurement.id) {
+                        <tr>
+                          <th scope="row">
+                            {{ measurement.measured_on | date: 'd MMM y' : '' : 'ru' }}
+                          </th>
+                          <td>
+                            @if (measurement.weight_kg != null) {
+                              <strong>{{ measurement.weight_kg | number: '1.0-1' }}</strong> кг
+                            } @else {
+                              —
+                            }
+                          </td>
+                          <td>
+                            @if (measurement.neck_cm != null) {
+                              <strong>{{ measurement.neck_cm | number: '1.0-1' }}</strong> см
+                            } @else {
+                              —
+                            }
+                          </td>
+                          <td>
+                            @if (measurement.waist_cm != null) {
+                              <strong>{{ measurement.waist_cm | number: '1.0-1' }}</strong> см
+                            } @else {
+                              —
+                            }
+                          </td>
+                          <td>
+                            @if (measurement.hips_cm != null) {
+                              <strong>{{ measurement.hips_cm | number: '1.0-1' }}</strong> см
+                            } @else {
+                              —
+                            }
+                          </td>
+                          <td class="measurement-actions">
+                            <button
+                              mat-icon-button
+                              [disabled]="store.saving()"
+                              aria-label="Редактировать замер"
+                              (click)="editMeasurement(measurement)"
+                            >
+                              <mat-icon>edit</mat-icon>
+                            </button>
+                            <button
+                              mat-icon-button
+                              class="delete-measurement"
+                              [disabled]="store.saving()"
+                              aria-label="Удалить замер"
+                              (click)="confirmDeleteMeasurement(measurement)"
+                            >
+                              <mat-icon>delete_outline</mat-icon>
+                            </button>
+                          </td>
+                        </tr>
+                      }
+                    </tbody>
+                  </table>
+                </div>
+              </mat-card>
+            } @else {
+              <mat-card class="empty-measurements">
+                <div class="empty-measurement-icon"><mat-icon>monitor_weight</mat-icon></div>
+                <div>
+                  <h3>Замеров пока нет</h3>
+                  <p>Добавьте вес или окружности тела, чтобы отслеживать изменения.</p>
+                </div>
+                <button mat-stroked-button (click)="addMeasurement()">Добавить первый замер</button>
+              </mat-card>
+            }
+          </section>
+
+          <section class="goal-section">
+            <div class="section-heading">
+              <div>
+                <h2>Дневная цель</h2>
+                <p>Нормы меняются по датам, предыдущие значения сохраняются</p>
+              </div>
+              <button mat-button [disabled]="store.saving()" (click)="addGoal()">
+                <mat-icon>add</mat-icon>{{ store.goals().length ? 'Новая цель' : 'Настроить' }}
+              </button>
+            </div>
+            @if (store.loadingGoals()) {
+              <mat-card class="goal-loading">
+                <mat-spinner diameter="25"></mat-spinner>
+                <span>Загружаем историю целей…</span>
+              </mat-card>
+            } @else if (store.currentGoal(); as goal) {
+              <div class="goal-grid">
+                <mat-card class="goal-card calories"
+                  ><div class="goal-icon"><mat-icon>local_fire_department</mat-icon></div>
+                  <span>КАЛОРИИ</span
+                  ><strong>{{ goal.daily_calories_kcal | number: '1.0-0' }}</strong
+                  ><small>ккал в день</small></mat-card
+                >
+                <mat-card class="goal-card protein"
+                  ><div class="goal-icon"><mat-icon>fitness_center</mat-icon></div>
+                  <span>БЕЛОК</span><strong>{{ goal.daily_protein_g | number: '1.0-1' }}</strong
+                  ><small>грамм в день</small></mat-card
+                >
+                <mat-card class="goal-card fiber"
+                  ><div class="goal-icon"><mat-icon>eco</mat-icon></div>
+                  <span>КЛЕТЧАТКА</span><strong>{{ goal.daily_fiber_g | number: '1.0-1' }}</strong
+                  ><small>грамм в день</small></mat-card
+                >
+              </div>
+              <p class="effective-date">
+                <mat-icon>event</mat-icon>Цель действует с
+                {{ goal.effective_from | date: 'd MMMM y' : '' : 'ru' }}
+              </p>
+            } @else {
+              <mat-card class="empty-goal"
+                ><div class="empty-goal-icon"><mat-icon>flag</mat-icon></div>
+                <div>
+                  <h3>Цель пока не настроена</h3>
+                  <p>Укажите норму калорий, белка и клетчатки для персонального дневника.</p>
+                </div>
+                <button mat-stroked-button (click)="addGoal()">Настроить</button></mat-card
+              >
+            }
+
+            @if (!store.loadingGoals() && store.goals().length) {
+              <mat-card class="goal-history-card">
+                <div class="history-heading">
+                  <div>
+                    <h3>История целей</h3>
+                    <p>Для дневника используется цель, действовавшая в выбранную дату</p>
+                  </div>
+                  <span>{{ recordsCountLabel(store.goals().length) }}</span>
+                </div>
+                <div class="goal-history-scroll">
+                  <table class="goal-history-table">
+                    <thead>
+                      <tr>
+                        <th scope="col">Действует с</th>
+                        <th scope="col">Калории</th>
+                        <th scope="col">Белок</th>
+                        <th scope="col">Клетчатка</th>
+                        <th scope="col">Статус</th>
+                        <th scope="col"><span class="visually-hidden">Действия</span></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      @for (historyGoal of store.goals(); track historyGoal.id) {
+                        <tr>
+                          <th scope="row">
+                            {{ historyGoal.effective_from | date: 'd MMM y' : '' : 'ru' }}
+                          </th>
+                          <td>
+                            <strong>{{ historyGoal.daily_calories_kcal | number: '1.0-0' }}</strong>
+                            ккал
+                          </td>
+                          <td>
+                            <strong>{{ historyGoal.daily_protein_g | number: '1.0-1' }}</strong> г
+                          </td>
+                          <td>
+                            <strong>{{ historyGoal.daily_fiber_g | number: '1.0-1' }}</strong> г
+                          </td>
+                          <td>
+                            <span class="goal-status" [class]="goalStatusClass(historyGoal)">
+                              {{ goalStatusLabel(historyGoal) }}
+                            </span>
+                          </td>
+                          <td class="goal-history-actions">
+                            <button
+                              mat-icon-button
+                              [disabled]="store.saving()"
+                              aria-label="Редактировать цель"
+                              (click)="editGoal(historyGoal)"
+                            >
+                              <mat-icon>edit</mat-icon>
+                            </button>
+                          </td>
+                        </tr>
+                      }
+                    </tbody>
+                  </table>
+                </div>
+              </mat-card>
+            }
+          </section>
+
+          <a class="diary-link" [routerLink]="['/family/users', user.id, 'diary']">
+            <mat-card class="diary-preview"
+              ><div class="diary-icon"><mat-icon>menu_book</mat-icon></div>
+              <div>
+                <span>ПЕРСОНАЛЬНЫЙ ДНЕВНИК</span>
+                <h3>Дневник питания пользователя {{ user.name }}</h3>
+                <p>Индивидуальные порции, дневные итоги и прогресс к цели за выбранный день.</p>
+              </div>
+              <span class="soon">Открыть <mat-icon>arrow_forward</mat-icon></span></mat-card
+            >
+          </a>
+        } @else {
+          <mat-card class="select-state"
+            ><mat-icon>family_restroom</mat-icon>
+            <h2>Выберите или добавьте профиль</h2>
+            <p>
+              Для каждого члена семьи будут храниться собственные цели и дневник питания.
+            </p></mat-card
+          >
+        }
+      </main>
+    </div>
+  }
+</section>

@@ -1,0 +1,66 @@
+<div class="dialog-header">
+  <div class="dialog-icon"><mat-icon>straighten</mat-icon></div>
+  <div>
+    <span>ПАРАМЕТРЫ ТЕЛА</span>
+    <h2 mat-dialog-title>{{ editing ? 'Редактировать замер' : 'Новый замер' }}</h2>
+  </div>
+</div>
+
+<mat-dialog-content>
+  <form id="measurement-form" [formGroup]="form" (ngSubmit)="save()">
+    <mat-form-field appearance="outline" class="date-field">
+      <mat-label>Дата измерения</mat-label>
+      <input matInput type="date" formControlName="measured_on" />
+      <mat-icon matPrefix>event</mat-icon>
+      @if (form.controls.measured_on.hasError('required')) {
+        <mat-error>Укажите дату</mat-error>
+      }
+    </mat-form-field>
+
+    <div class="measurement-grid">
+      <mat-form-field appearance="outline">
+        <mat-label>Вес</mat-label>
+        <input matInput type="number" min="0.1" step="0.1" formControlName="weight_kg" />
+        <mat-icon matPrefix>monitor_weight</mat-icon>
+        <span matSuffix>кг</span>
+        <mat-error>Введите значение больше нуля</mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Окружность шеи</mat-label>
+        <input matInput type="number" min="0.1" step="0.1" formControlName="neck_cm" />
+        <mat-icon matPrefix>straighten</mat-icon>
+        <span matSuffix>см</span>
+        <mat-error>Введите значение больше нуля</mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Окружность талии</mat-label>
+        <input matInput type="number" min="0.1" step="0.1" formControlName="waist_cm" />
+        <mat-icon matPrefix>straighten</mat-icon>
+        <span matSuffix>см</span>
+        <mat-error>Введите значение больше нуля</mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Окружность бёдер</mat-label>
+        <input matInput type="number" min="0.1" step="0.1" formControlName="hips_cm" />
+        <mat-icon matPrefix>straighten</mat-icon>
+        <span matSuffix>см</span>
+        <mat-error>Введите значение больше нуля</mat-error>
+      </mat-form-field>
+    </div>
+
+    <div class="form-hint" [class.error]="form.hasError('measurementRequired') && form.touched">
+      <mat-icon>info</mat-icon>
+      <span>Заполните хотя бы один параметр: вес или окружность тела.</span>
+    </div>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button [mat-dialog-close]="null">Отмена</button>
+  <button mat-flat-button class="save-button" type="submit" form="measurement-form">
+    {{ editing ? 'Сохранить' : 'Добавить замер' }}
+  </button>
+</mat-dialog-actions>

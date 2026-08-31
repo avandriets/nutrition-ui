@@ -1,0 +1,107 @@
+<section class="page">
+  <header class="page-header">
+    <div>
+      <span class="eyebrow">СЕМЕЙНЫЙ ДНЕВНИК</span>
+      <h1>Приёмы пищи</h1>
+      <p>Общая еда с персональными порциями для каждого члена семьи.</p>
+    </div>
+    <div class="header-actions">
+      <button mat-stroked-button class="copy-button" [disabled]="saving()" (click)="copyMealDay()">
+        <mat-icon>content_copy</mat-icon>Копировать рацион
+      </button>
+      <button mat-flat-button class="add-button" [disabled]="saving()" (click)="createMeal()">
+        <mat-icon>add</mat-icon>Новый приём пищи
+      </button>
+    </div>
+  </header>
+
+  <mat-card class="filter-card"
+    ><div class="filter-copy">
+      <mat-icon>calendar_month</mat-icon>
+      <div>
+        <strong>{{ dateFilter() ? 'Приёмы пищи за день' : 'Все приёмы пищи' }}</strong
+        ><span>{{
+          dateFilter()
+            ? dateFilter() === todayDate
+              ? 'Сегодня'
+              : 'Фильтр по выбранной дате'
+            : 'Без ограничения по дате'
+        }}</span>
+      </div>
+    </div>
+    <label
+      ><span class="filter-label">Дата</span
+      ><input
+        #dateInput
+        type="date"
+        aria-label="Дата приёмов пищи"
+        [value]="dateFilter()"
+        (change)="setDateFilter(dateInput.value)"
+    /></label>
+    @if (dateFilter()) {
+      <button
+        mat-button
+        aria-label="Сбросить фильтр даты"
+        title="Сбросить фильтр даты"
+        (click)="dateInput.value = ''; setDateFilter('')"
+      >
+        <mat-icon>close</mat-icon><span class="reset-label">Сбросить</span>
+      </button>
+    }
+  </mat-card>
+
+  @if (error(); as message) {
+    <div class="error-banner">
+      <mat-icon>error_outline</mat-icon><span>{{ message }}</span
+      ><button mat-button (click)="loadMeals()">Повторить</button>
+    </div>
+  }
+
+  @if (loading()) {
+    <div class="state">
+      <mat-spinner diameter="42"></mat-spinner>
+      <p>Загружаем приёмы пищи…</p>
+    </div>
+  } @else if (meals().length) {
+    <div class="list-heading">
+      <span>Найдено: {{ meals().length }}</span
+      ><span>Калории по членам семьи</span>
+    </div>
+    <div class="meal-grid">
+      @for (meal of meals(); track meal.id) {
+        <a class="meal-link" [routerLink]="['/meals', meal.id]">
+          <mat-card class="meal-card"
+            ><div class="meal-icon" [class]="meal.meal_type">
+              <mat-icon>{{ typeIcon(meal.meal_type) }}</mat-icon>
+            </div>
+            <div class="meal-copy">
+              <span>{{ meal.meal_date | date: 'd MMMM y' }}</span>
+              <h2>{{ meal.name || typeLabel(meal.meal_type) }}</h2>
+              <p>{{ typeLabel(meal.meal_type) }} · {{ meal.rows.length }} продуктов</p>
+            </div>
+            <div class="meal-calories">
+              @for (user of users(); track user.id) {
+                <div class="user-calories">
+                  <span class="member-name">{{ user.name }}</span>
+                  <span class="member-value"
+                    ><strong>{{ userCalories(meal, user.id) | number: '1.0-0' }}</strong> ккал</span
+                  >
+                </div>
+              }
+            </div>
+            <mat-icon class="arrow">arrow_forward</mat-icon></mat-card
+          >
+        </a>
+      }
+    </div>
+  } @else {
+    <mat-card class="state empty"
+      ><div class="empty-icon"><mat-icon>restaurant_menu</mat-icon></div>
+      <h2>{{ dateFilter() ? 'На эту дату приёмов пищи нет' : 'Дневник пока пуст' }}</h2>
+      <p>Создайте общий приём пищи и добавьте порции членов семьи.</p>
+      <button mat-stroked-button (click)="createMeal()">
+        <mat-icon>add</mat-icon>Создать приём пищи
+      </button></mat-card
+    >
+  }
+</section>

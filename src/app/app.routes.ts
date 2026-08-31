@@ -1,23 +1,33 @@
 import { Routes } from '@angular/router';
 
 export const routes: Routes = [
-  { path: '', pathMatch: 'full', redirectTo: 'dashboard' },
   {
-    path: 'dashboard',
+    path: 'overview',
     loadChildren: () =>
-      import('./features/dashboard/dashboard.module').then((m) => m.DashboardModule),
+      import('./features/overview/overview.routes').then((feature) => feature.OVERVIEW_ROUTES),
+  },
+  {
+    path: 'products',
+    loadChildren: () =>
+      import('./features/products/products.routes').then((feature) => feature.PRODUCTS_ROUTES),
   },
   {
     path: 'meals',
-    loadChildren: () => import('./features/meals/meals.module').then((m) => m.MealsModule),
+    loadChildren: () =>
+      import('./features/meals/meals.routes').then((feature) => feature.MEALS_ROUTES),
   },
   {
-    path: 'profile',
-    loadChildren: () => import('./features/profile/profile.module').then((m) => m.ProfileModule),
+    path: 'statistics',
+    loadChildren: () =>
+      import('./features/statistics/statistics.routes').then(
+        (feature) => feature.STATISTICS_ROUTES,
+      ),
   },
   {
-    path: 'auth',
-    loadChildren: () => import('./features/auth/auth.module').then((m) => m.AuthModule),
+    path: 'family',
+    loadChildren: () =>
+      import('./features/family/family.routes').then((feature) => feature.FAMILY_ROUTES),
   },
-  { path: '**', redirectTo: 'dashboard' },
+  { path: '', pathMatch: 'full', redirectTo: 'overview' },
+  { path: '**', redirectTo: 'overview' },
 ];

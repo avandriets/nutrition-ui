@@ -1,0 +1,224 @@
+<section class="page">
+  <header class="page-header">
+    <div>
+      <span class="eyebrow">КАТАЛОГ</span>
+      <h1>Продукты</h1>
+      <p>Пищевая ценность продуктов на 100 г</p>
+    </div>
+    <button mat-flat-button class="add-button" [disabled]="saving()" (click)="addProduct()">
+      <mat-icon>add</mat-icon> Добавить продукт
+    </button>
+  </header>
+
+  @if (actionError(); as message) {
+    <div class="action-error">
+      <mat-icon>error_outline</mat-icon><span>{{ message }}</span
+      ><button mat-icon-button aria-label="Закрыть" (click)="dismissActionError()">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+  }
+
+  <mat-card class="filters">
+    <label class="search-field">
+      <mat-icon>search</mat-icon>
+      <input
+        #searchInput
+        type="search"
+        placeholder="Название, бренд или категория"
+        [value]="search()"
+        (input)="setSearch(searchInput.value)"
+      />
+      @if (search()) {
+        <button
+          mat-icon-button
+          aria-label="Очистить поиск"
+          (click)="setSearch(''); searchInput.value = ''"
+        >
+          <mat-icon>close</mat-icon>
+        </button>
+      }
+    </label>
+    <mat-select
+      class="category-select"
+      aria-label="Категория"
+      [value]="category()"
+      (selectionChange)="setCategory($event.value)"
+    >
+      <mat-option value="all">Все категории</mat-option>
+      @for (item of categories(); track item) {
+        <mat-option [value]="item">{{ item }}</mat-option>
+      }
+    </mat-select>
+    <mat-button-toggle-group
+      class="view-toggle"
+      aria-label="Вид каталога"
+      hideSingleSelectionIndicator
+      [value]="viewMode()"
+      (change)="setViewMode($event.value)"
+    >
+      <mat-button-toggle value="cards" matTooltip="Карточки"
+        ><mat-icon>grid_view</mat-icon></mat-button-toggle
+      >
+      <mat-button-toggle value="table" matTooltip="Таблица"
+        ><mat-icon>table_rows</mat-icon></mat-button-toggle
+      >
+    </mat-button-toggle-group>
+    <button
+      mat-icon-button
+      matTooltip="Обновить данные"
+      aria-label="Обновить данные"
+      (click)="loadProducts()"
+    >
+      <mat-icon>refresh</mat-icon>
+    </button>
+  </mat-card>
+
+  @if (loading()) {
+    <div class="state">
+      <mat-spinner diameter="42"></mat-spinner>
+      <p>Загружаем продукты…</p>
+    </div>
+  } @else if (error()) {
+    <mat-card class="state error-state"
+      ><div class="state-icon"><mat-icon>cloud_off</mat-icon></div>
+      <h2>Не удалось загрузить продукты</h2>
+      <p>Проверьте, что API запущен на 127.0.0.1:8000, и попробуйте снова.</p>
+      <button mat-stroked-button (click)="loadProducts()">
+        <mat-icon>refresh</mat-icon> Повторить
+      </button></mat-card
+    >
+  } @else {
+    <div class="catalog-heading">
+      <p>
+        Найдено продуктов: <strong>{{ filteredProducts().length }}</strong>
+      </p>
+      <span>Б · Ж · У на 100 г</span>
+    </div>
+    @if (filteredProducts().length) {
+      @if (viewMode() === 'cards') {
+        <div class="product-grid">
+          @for (product of filteredProducts(); track product.id) {
+            <mat-card class="product-card">
+              <div class="card-top">
+                <div class="food-icon"><mat-icon>nutrition</mat-icon></div>
+                <span class="category">{{ product.category || 'Без категории' }}</span
+                ><button
+                  mat-icon-button
+                  aria-label="Меню продукта"
+                  [matMenuTriggerFor]="productMenu"
+                >
+                  <mat-icon>more_horiz</mat-icon>
+                </button>
+                <mat-menu #productMenu="matMenu">
+                  <button mat-menu-item (click)="editProduct(product)">
+                    <mat-icon>edit</mat-icon>Редактировать
+                  </button>
+                  <button mat-menu-item class="delete-menu-item" (click)="confirmDelete(product)">
+                    <mat-icon>delete_outline</mat-icon>Удалить
+                  </button>
+                </mat-menu>
+              </div>
+              <div class="product-copy">
+                <h2>{{ product.name }}</h2>
+                <p>{{ product.brand || product.description || 'Описание не указано' }}</p>
+              </div>
+              <div class="calories">
+                <strong>{{ product.calories_kcal | number: '1.0-1' }}</strong
+                ><span>ккал</span>
+              </div>
+              <div class="macros">
+                <div>
+                  <i class="protein"></i><span>Белки</span
+                  ><strong>{{ product.protein_g | number: '1.0-1' }} г</strong>
+                </div>
+                <div>
+                  <i class="fat"></i><span>Жиры</span
+                  ><strong>{{ product.fat_g | number: '1.0-1' }} г</strong>
+                </div>
+                <div>
+                  <i class="carbs"></i><span>Углеводы</span
+                  ><strong>{{ product.carbohydrates_g | number: '1.0-1' }} г</strong>
+                </div>
+              </div>
+            </mat-card>
+          }
+        </div>
+      } @else {
+        <mat-card class="table-shell">
+          <table class="product-table">
+            <thead>
+              <tr>
+                <th>Продукт</th>
+                <th>Категория</th>
+                <th class="number">Ккал</th>
+                <th class="number">Белки</th>
+                <th class="number">Жиры</th>
+                <th class="number">Углеводы</th>
+                <th class="number">Клетчатка</th>
+                <th aria-label="Действия"></th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (product of filteredProducts(); track product.id) {
+                <tr>
+                  <td>
+                    <div class="table-product">
+                      <span class="table-icon"><mat-icon>nutrition</mat-icon></span>
+                      <div>
+                        <strong>{{ product.name }}</strong
+                        ><small>{{ product.brand || 'Без бренда' }}</small>
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <span class="table-category">{{ product.category || 'Без категории' }}</span>
+                  </td>
+                  <td class="number calories-cell">
+                    {{ product.calories_kcal | number: '1.0-1' }}
+                  </td>
+                  <td class="number">{{ product.protein_g | number: '1.0-1' }} г</td>
+                  <td class="number">{{ product.fat_g | number: '1.0-1' }} г</td>
+                  <td class="number">{{ product.carbohydrates_g | number: '1.0-1' }} г</td>
+                  <td class="number">{{ product.fiber_g | number: '1.0-1' }} г</td>
+                  <td class="actions">
+                    <button
+                      mat-icon-button
+                      aria-label="Меню продукта"
+                      [matMenuTriggerFor]="tableMenu"
+                    >
+                      <mat-icon>more_horiz</mat-icon></button
+                    ><mat-menu #tableMenu="matMenu"
+                      ><button mat-menu-item (click)="editProduct(product)">
+                        <mat-icon>edit</mat-icon>Редактировать</button
+                      ><button mat-menu-item (click)="confirmDelete(product)">
+                        <mat-icon>delete_outline</mat-icon>Удалить
+                      </button></mat-menu
+                    >
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </mat-card>
+      }
+    } @else {
+      <mat-card class="state empty-state"
+        ><div class="state-icon"><mat-icon>search_off</mat-icon></div>
+        <h2>{{ products().length ? 'Ничего не найдено' : 'Каталог пока пуст' }}</h2>
+        <p>
+          {{
+            products().length
+              ? 'Попробуйте изменить поисковый запрос или категорию.'
+              : 'Добавьте первый продукт в общий семейный каталог.'
+          }}
+        </p>
+        @if (!products().length) {
+          <button mat-stroked-button (click)="addProduct()">
+            <mat-icon>add</mat-icon>Добавить продукт
+          </button>
+        }
+      </mat-card>
+    }
+  }
+</section>

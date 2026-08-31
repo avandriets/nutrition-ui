@@ -1,0 +1,17 @@
+.git
+.github
+.angular
+.idea
+.vscode
+coverage
+dist
+node_modules
+out-tsc
+tmp
+*.log
+.DS_Store
+.env
+.env.*
+openapi.json
+README.md
+compose.yaml

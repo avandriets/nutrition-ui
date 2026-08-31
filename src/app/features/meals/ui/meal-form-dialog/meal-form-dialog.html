@@ -1,0 +1,34 @@
+<div class="dialog-heading">
+  <div class="dialog-icon"><mat-icon>restaurant</mat-icon></div>
+  <div>
+    <h2 mat-dialog-title>Новый приём пищи</h2>
+    <p>Создайте общий семейный приём пищи.</p>
+  </div>
+</div>
+<mat-dialog-content
+  ><form id="meal-form" [formGroup]="form" (ngSubmit)="submit()">
+    <mat-form-field appearance="outline"
+      ><mat-label>Дата</mat-label
+      ><input matInput type="date" formControlName="meal_date" /></mat-form-field
+    ><mat-form-field appearance="outline"
+      ><mat-label>Тип</mat-label
+      ><mat-select formControlName="meal_type">
+        @for (type of mealTypes; track type.value) {
+          <mat-option [value]="type.value">{{ type.label }}</mat-option>
+        }
+      </mat-select></mat-form-field
+    ><mat-form-field appearance="outline" class="full"
+      ><mat-label>Название</mat-label
+      ><input matInput formControlName="name" placeholder="Например, семейный ужин" />
+      @if (form.hasError('otherMealName')) {
+        <mat-error>Для типа «Другое» укажите название</mat-error>
+      }
+    </mat-form-field>
+  </form></mat-dialog-content
+>
+<mat-dialog-actions align="end"
+  ><button mat-button mat-dialog-close>Отмена</button
+  ><button mat-flat-button class="primary" form="meal-form" type="submit" [disabled]="form.invalid">
+    Создать
+  </button></mat-dialog-actions
+>

@@ -1,0 +1,851 @@
+.page {
+  max-width: 1180px;
+  margin: auto;
+  padding: 52px 28px 80px;
+}
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 24px;
+  margin-bottom: 28px;
+}
+.eyebrow {
+  color: #3d9165;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 1.4px;
+}
+h1 {
+  margin: 6px 0;
+  color: #17241d;
+  font-size: clamp(30px, 3vw, 38px);
+  letter-spacing: -1.1px;
+}
+.page-header p,
+.section-heading p {
+  margin: 0;
+  color: #7b8781;
+}
+.add-button {
+  height: 48px;
+  padding: 0 22px;
+  border-radius: 14px;
+  background: #31875d !important;
+  color: white !important;
+  box-shadow: 0 9px 22px #31875d35;
+}
+mat-card {
+  border: 1px solid #e5ebe7;
+  box-shadow: 0 7px 24px rgba(29, 59, 43, 0.045);
+}
+.error-banner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 18px;
+  padding: 10px 12px 10px 16px;
+  border-radius: 13px;
+  background: #fff0ed;
+  color: #9c4439;
+}
+.error-banner span {
+  flex: 1;
+}
+.loading-state {
+  min-height: 400px;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  color: #78847e;
+}
+.loading-state mat-spinner {
+  --mat-progress-spinner-active-indicator-color: #388960;
+}
+.family-layout {
+  display: grid;
+  grid-template-columns: 345px minmax(0, 1fr);
+  gap: 22px;
+}
+.aside-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+  margin-bottom: 13px;
+}
+.aside-heading h2,
+.section-heading h2 {
+  margin: 0 0 4px;
+  color: #243129;
+  font-size: 18px;
+}
+.aside-heading p {
+  margin: 0;
+  color: #8a958f;
+  font-size: 11px;
+}
+.account-badge {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: #4a8766;
+  font-size: 9px;
+  font-weight: 700;
+}
+.account-badge mat-icon {
+  width: 15px;
+  height: 15px;
+  font-size: 15px;
+}
+.members-card {
+  overflow: hidden;
+  border-radius: 18px;
+}
+.member-row {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 13px 14px;
+  border: 0;
+  border-bottom: 1px solid #edf0ee;
+  background: white;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.18s;
+}
+.member-row:last-child {
+  border-bottom: 0;
+}
+.member-row:hover {
+  background: #f7faf8;
+}
+.member-row.active {
+  background: #eaf7ef;
+}
+.member-avatar,
+.profile-avatar {
+  display: grid;
+  place-items: center;
+  flex: none;
+  border-radius: 14px;
+  background: linear-gradient(145deg, #f5d7a8, #efc482);
+  color: #76542d;
+  font-weight: 800;
+}
+.member-avatar {
+  width: 43px;
+  height: 43px;
+  font-size: 12px;
+}
+.member-copy {
+  display: grid;
+  gap: 4px;
+  flex: 1;
+  min-width: 0;
+}
+.member-copy strong {
+  overflow: hidden;
+  font-size: 13px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.member-copy small {
+  color: #909a94;
+  font-size: 10px;
+}
+.member-row > mat-icon {
+  color: #97a19b;
+}
+.member-row.active > mat-icon {
+  color: #39865e;
+}
+.empty-members {
+  padding: 35px 22px;
+  text-align: center;
+}
+.empty-members > mat-icon {
+  width: 34px;
+  height: 34px;
+  color: #4a916b;
+  font-size: 34px;
+}
+.empty-members h3 {
+  margin: 12px 0 5px;
+}
+.empty-members p {
+  margin: 0 0 16px;
+  color: #849089;
+  font-size: 12px;
+  line-height: 1.5;
+}
+.family-note {
+  display: flex;
+  gap: 10px;
+  margin-top: 14px;
+  padding: 14px;
+  border-radius: 15px;
+  background: #fff8eb;
+  color: #7c6948;
+}
+.family-note mat-icon {
+  color: #d19443;
+}
+.family-note p {
+  margin: 0;
+  font-size: 11px;
+  line-height: 1.5;
+}
+.member-details {
+  min-height: auto;
+}
+.profile-card {
+  display: flex;
+  align-items: center;
+  padding: 22px;
+  border-radius: 19px;
+}
+.profile-avatar {
+  width: 64px;
+  height: 64px;
+  margin-right: 17px;
+  font-size: 18px;
+}
+.profile-copy {
+  min-width: 0;
+}
+.profile-copy > span,
+.goal-card > span,
+.diary-preview span:first-child {
+  color: #8e9892;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 1.1px;
+}
+.profile-copy h2 {
+  margin: 5px 0 4px;
+  color: #1d2a23;
+  font-size: 22px;
+}
+.profile-copy p,
+.profile-meta {
+  margin: 0;
+  color: #849089;
+  font-size: 12px;
+}
+
+.profile-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 14px;
+}
+
+.profile-meta span {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.profile-meta mat-icon {
+  width: 15px;
+  height: 15px;
+  color: #6c8175;
+  font-size: 15px;
+}
+.profile-actions {
+  display: flex;
+  margin-left: auto;
+}
+.profile-actions button {
+  color: #748078;
+}
+.profile-actions .delete {
+  color: #b96355;
+}
+.goal-section,
+.measurement-section {
+  margin-top: 28px;
+}
+
+.latest-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 0 3px 10px;
+  color: #7e8a83;
+  font-size: 10px;
+}
+
+.latest-heading strong {
+  color: #4a5950;
+  font-size: 11px;
+}
+
+.measurement-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.measurement-summary {
+  min-width: 0;
+  padding: 15px;
+  border-radius: 16px;
+}
+
+.measurement-summary > span {
+  display: block;
+  color: #8e9892;
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: 0.9px;
+}
+
+.measurement-summary > strong {
+  display: block;
+  margin-top: 6px;
+  color: #25322b;
+  font-size: 21px;
+}
+
+.measurement-summary > strong small {
+  color: #89948e;
+  font-size: 9px;
+  font-weight: 600;
+}
+
+.measurement-icon {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  margin-bottom: 12px;
+  border-radius: 11px;
+}
+
+.measurement-summary.weight .measurement-icon {
+  color: #3979a8;
+  background: #eaf4fb;
+}
+
+.measurement-summary.neck .measurement-icon {
+  color: #7258c2;
+  background: #f0ebff;
+}
+
+.measurement-summary.waist .measurement-icon {
+  color: #398a60;
+  background: #eaf7ef;
+}
+
+.measurement-summary.hips .measurement-icon {
+  color: #c27832;
+  background: #fff1e4;
+}
+
+.measurement-icon mat-icon {
+  width: 19px;
+  height: 19px;
+  font-size: 19px;
+}
+
+.measurement-history-card {
+  overflow: hidden;
+  margin-top: 12px;
+  border-radius: 17px;
+}
+
+.history-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 17px;
+  border-bottom: 1px solid #e8eeea;
+  background: #fafcfb;
+}
+
+.history-heading h3 {
+  margin: 0;
+  color: #35433b;
+  font-size: 13px;
+}
+
+.history-heading span {
+  color: #89948e;
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.measurement-table-scroll {
+  overflow-x: auto;
+}
+
+.measurement-table {
+  width: 100%;
+  min-width: 680px;
+  border-spacing: 0;
+  border-collapse: collapse;
+}
+
+.measurement-table th,
+.measurement-table td {
+  padding: 11px 13px;
+  border-bottom: 1px solid #edf1ee;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.measurement-table thead th {
+  color: #849089;
+  background: #f7faf8;
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+}
+
+.measurement-table tbody tr:last-child th,
+.measurement-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.measurement-table tbody th {
+  color: #4c5a52;
+  font-size: 11px;
+}
+
+.measurement-table tbody td {
+  color: #87928c;
+  font-size: 10px;
+}
+
+.measurement-table tbody td strong {
+  color: #2e3c34;
+  font-size: 12px;
+}
+
+.measurement-actions {
+  width: 84px;
+  padding-top: 4px !important;
+  padding-bottom: 4px !important;
+  text-align: right !important;
+}
+
+.measurement-actions button {
+  width: 34px;
+  height: 34px;
+  color: #6f7d75;
+}
+
+.measurement-actions .delete-measurement {
+  color: #ae6257;
+}
+
+.measurement-loading,
+.empty-measurements {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 14px;
+  min-height: 86px;
+  padding: 18px;
+  border-radius: 17px;
+}
+
+.measurement-loading {
+  justify-content: center;
+  color: #7e8a83;
+  font-size: 11px;
+}
+
+.measurement-loading mat-spinner {
+  --mat-progress-spinner-active-indicator-color: #388960;
+}
+
+.empty-measurement-icon {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  flex: none;
+  border-radius: 15px;
+  color: #3979a8;
+  background: #eaf4fb;
+}
+
+.empty-measurements h3 {
+  margin: 0 0 5px;
+  font-size: 14px;
+}
+
+.empty-measurements p {
+  margin: 0;
+  color: #87918c;
+  font-size: 11px;
+}
+
+.empty-measurements button {
+  margin-left: auto;
+  color: #37865e;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.section-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+  margin-bottom: 14px;
+}
+.section-heading button {
+  color: #35825b;
+}
+.goal-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 13px;
+}
+.goal-card {
+  padding: 18px;
+  border-radius: 17px;
+}
+.goal-icon {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  margin-bottom: 16px;
+  border-radius: 12px;
+}
+.goal-card strong,
+.goal-card small {
+  display: block;
+}
+.goal-card strong {
+  margin-top: 7px;
+  color: #25322b;
+  font-size: 25px;
+}
+.goal-card small {
+  margin-top: 2px;
+  color: #929b96;
+  font-size: 10px;
+}
+.calories .goal-icon {
+  color: #d27e37;
+  background: #fff1e4;
+}
+.protein .goal-icon {
+  color: #7258c2;
+  background: #f0ebff;
+}
+.fiber .goal-icon {
+  color: #398a60;
+  background: #eaf7ef;
+}
+.effective-date {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 11px 4px 0;
+  color: #919b95;
+  font-size: 10px;
+}
+.effective-date mat-icon {
+  width: 15px;
+  height: 15px;
+  font-size: 15px;
+}
+
+.goal-loading {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  min-height: 88px;
+  padding: 18px;
+  border-radius: 17px;
+  color: #7e8a83;
+  font-size: 11px;
+}
+
+.goal-loading mat-spinner {
+  --mat-progress-spinner-active-indicator-color: #388960;
+}
+
+.goal-history-card {
+  overflow: hidden;
+  margin-top: 14px;
+  border-radius: 17px;
+}
+
+.goal-history-card .history-heading p {
+  margin: 3px 0 0;
+  color: #89948e;
+  font-size: 10px;
+}
+
+.goal-history-scroll {
+  overflow-x: auto;
+}
+
+.goal-history-table {
+  width: 100%;
+  min-width: 640px;
+  border-spacing: 0;
+  border-collapse: collapse;
+}
+
+.goal-history-table th,
+.goal-history-table td {
+  padding: 11px 13px;
+  border-bottom: 1px solid #edf1ee;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.goal-history-table thead th {
+  color: #849089;
+  background: #f7faf8;
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+}
+
+.goal-history-table tbody tr:last-child th,
+.goal-history-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.goal-history-table tbody th {
+  color: #4c5a52;
+  font-size: 11px;
+}
+
+.goal-history-table tbody td {
+  color: #87928c;
+  font-size: 10px;
+}
+
+.goal-history-table tbody td strong {
+  color: #2e3c34;
+  font-size: 12px;
+}
+
+.goal-status {
+  display: inline-flex;
+  padding: 4px 8px;
+  border-radius: 999px;
+  font-size: 9px;
+  font-weight: 700;
+}
+
+.goal-status.current {
+  color: #28744e;
+  background: #e6f6ec;
+}
+
+.goal-status.scheduled {
+  color: #7458b4;
+  background: #f0ebff;
+}
+
+.goal-status.past {
+  color: #77827c;
+  background: #eef2ef;
+}
+
+.goal-history-actions {
+  width: 46px;
+  padding-top: 4px !important;
+  padding-bottom: 4px !important;
+  text-align: right !important;
+}
+
+.goal-history-actions button {
+  width: 34px;
+  height: 34px;
+  color: #6f7d75;
+}
+.empty-goal {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 20px;
+  border-radius: 17px;
+}
+.empty-goal-icon {
+  display: grid;
+  place-items: center;
+  width: 49px;
+  height: 49px;
+  flex: none;
+  border-radius: 15px;
+  color: #d17d35;
+  background: #fff1e4;
+}
+.empty-goal h3 {
+  margin: 0 0 5px;
+  font-size: 14px;
+}
+.empty-goal p {
+  margin: 0;
+  color: #87918c;
+  font-size: 11px;
+}
+.empty-goal button {
+  margin-left: auto;
+  color: #37865e;
+}
+.diary-preview {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-top: 28px;
+  padding: 20px;
+  border-radius: 18px;
+  background: linear-gradient(135deg, #f1f8f4, #f8fbf9);
+  transition:
+    transform 160ms ease,
+    box-shadow 160ms ease;
+}
+
+.diary-link {
+  color: inherit;
+  text-decoration: none;
+}
+
+.diary-link:hover .diary-preview {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 30px rgba(34, 87, 58, 0.1);
+}
+.diary-icon {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  flex: none;
+  border-radius: 15px;
+  background: white;
+  color: #3f8a64;
+}
+.diary-preview h3 {
+  margin: 5px 0;
+  font-size: 14px;
+}
+.diary-preview p {
+  margin: 0;
+  color: #7f8b84;
+  font-size: 11px;
+  line-height: 1.45;
+}
+.soon {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: auto;
+  padding: 6px 9px;
+  border-radius: 9px;
+  background: white;
+  color: #6f7e76;
+  font-size: 9px;
+  white-space: nowrap;
+}
+
+.soon mat-icon {
+  width: 15px;
+  height: 15px;
+  font-size: 15px;
+}
+.select-state {
+  min-height: 390px;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  padding: 40px;
+  border-radius: 20px;
+  text-align: center;
+}
+.select-state > mat-icon {
+  width: 44px;
+  height: 44px;
+  color: #4a916b;
+  font-size: 44px;
+}
+.select-state h2 {
+  margin: 16px 0 6px;
+}
+.select-state p {
+  margin: 0;
+  color: #829088;
+}
+@media (max-width: 850px) {
+  .family-layout {
+    grid-template-columns: 1fr;
+  }
+  .goal-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .measurement-summary-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 620px) {
+  .page {
+    padding: 34px 16px 60px;
+  }
+  .page-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+  .add-button {
+    width: 100%;
+  }
+  .goal-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .measurement-summary-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .profile-card {
+    align-items: flex-start;
+  }
+  .profile-avatar {
+    width: 52px;
+    height: 52px;
+  }
+  .empty-goal,
+  .empty-measurements,
+  .diary-preview {
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+  .empty-goal button,
+  .empty-measurements button,
+  .soon {
+    margin-left: 0;
+  }
+  .profile-copy p,
+  .profile-meta {
+    max-width: 170px;
+  }
+  .section-heading p {
+    display: none;
+  }
+}

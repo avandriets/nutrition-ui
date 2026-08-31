@@ -1,0 +1,250 @@
+<section class="page">
+  <a class="back-link" routerLink="/family"><mat-icon>arrow_back</mat-icon>Управление семьёй</a>
+
+  @if (loading() && !user()) {
+    <div class="state">
+      <mat-spinner diameter="42"></mat-spinner>
+      <p>Загружаем персональный дневник…</p>
+    </div>
+  } @else if (error() && !user()) {
+    <mat-card class="state error-state">
+      <mat-icon>error_outline</mat-icon>
+      <h2>{{ error() }}</h2>
+      <a mat-stroked-button routerLink="/family">Вернуться к семье</a>
+    </mat-card>
+  } @else if (user(); as currentUser) {
+    <header class="diary-header">
+      <div class="user-heading">
+        <div class="avatar">{{ initials(currentUser.name) }}</div>
+        <div>
+          <span class="eyebrow">ПЕРСОНАЛЬНЫЙ ДНЕВНИК</span>
+          <h1>{{ currentUser.name }}</h1>
+          <p>Индивидуальные порции и дневной баланс питания.</p>
+        </div>
+      </div>
+      <label class="date-filter">
+        <span>Дата дневника</span>
+        <input
+          #dateInput
+          type="date"
+          aria-label="Дата персонального дневника"
+          [value]="dateFilter()"
+          (change)="setDate(dateInput.value)"
+        />
+      </label>
+    </header>
+
+    @if (error(); as message) {
+      <div class="error-banner">
+        <mat-icon>error_outline</mat-icon><span>{{ message }}</span>
+        <button mat-button (click)="loadDiary()">Повторить</button>
+      </div>
+    }
+
+    @if (loading()) {
+      <div class="refreshing"><mat-spinner diameter="18"></mat-spinner>Обновляем дневник…</div>
+    }
+
+    <section class="daily-section">
+      <div class="section-heading">
+        <div>
+          <h2>Итоги за день</h2>
+          <p>{{ dateFilter() | date: 'd MMMM y' : '' : 'ru' }}</p>
+        </div>
+        <span>{{ mealsCountLabel(mealViews().length) }}</span>
+      </div>
+
+      <div class="nutrient-grid">
+        <mat-card class="nutrient-card calories">
+          <mat-icon>local_fire_department</mat-icon><span>КАЛОРИИ</span>
+          <strong>{{ dayTotals().calories_kcal | number: '1.0-0' }}</strong
+          ><small>ккал</small>
+        </mat-card>
+        <mat-card class="nutrient-card protein">
+          <mat-icon>fitness_center</mat-icon><span>БЕЛКИ</span>
+          <strong>{{ dayTotals().protein_g | number: '1.0-1' }}</strong
+          ><small>г</small>
+        </mat-card>
+        <mat-card class="nutrient-card fat">
+          <mat-icon>water_drop</mat-icon><span>ЖИРЫ</span>
+          <strong>{{ dayTotals().fat_g | number: '1.0-1' }}</strong
+          ><small>г</small>
+        </mat-card>
+        <mat-card class="nutrient-card carbs">
+          <mat-icon>grain</mat-icon><span>УГЛЕВОДЫ</span>
+          <strong>{{ dayTotals().carbohydrates_g | number: '1.0-1' }}</strong
+          ><small>г</small>
+        </mat-card>
+        <mat-card class="nutrient-card fiber">
+          <mat-icon>eco</mat-icon><span>КЛЕТЧАТКА</span>
+          <strong>{{ dayTotals().fiber_g | number: '1.0-1' }}</strong
+          ><small>г</small>
+        </mat-card>
+      </div>
+
+      @if (goal(); as dailyGoal) {
+        <mat-card class="goal-progress-card">
+          <div class="goal-title">
+            <div>
+              <mat-icon>flag</mat-icon>
+              <span
+                ><strong>Прогресс к цели на выбранную дату</strong
+                ><small
+                  >Действует с {{ dailyGoal.effective_from | date: 'd MMM y' : '' : 'ru' }}</small
+                ></span
+              >
+            </div>
+            <a mat-button [routerLink]="['/family']" [queryParams]="{ editGoal: true }"
+              >Новая цель</a
+            >
+          </div>
+          <div class="goal-progress-grid">
+            <div
+              class="goal-progress"
+              [class]="goalState(dayTotals().calories_kcal, dailyGoal.daily_calories_kcal)"
+            >
+              <div class="goal-label">
+                <span>Калории</span
+                ><strong
+                  >{{ dayTotals().calories_kcal | number: '1.0-0' }} /
+                  {{ dailyGoal.daily_calories_kcal | number: '1.0-0' }} ккал</strong
+                >
+              </div>
+              <div class="progress-track">
+                <span
+                  [style.width.%]="
+                    goalPercent(dayTotals().calories_kcal, dailyGoal.daily_calories_kcal)
+                  "
+                ></span>
+              </div>
+              <small>{{
+                goalCaption(dayTotals().calories_kcal, dailyGoal.daily_calories_kcal, 'ккал')
+              }}</small>
+            </div>
+            <div
+              class="goal-progress"
+              [class]="goalState(dayTotals().protein_g, dailyGoal.daily_protein_g)"
+            >
+              <div class="goal-label">
+                <span>Белок</span
+                ><strong
+                  >{{ dayTotals().protein_g | number: '1.0-1' }} /
+                  {{ dailyGoal.daily_protein_g | number: '1.0-1' }} г</strong
+                >
+              </div>
+              <div class="progress-track">
+                <span
+                  [style.width.%]="goalPercent(dayTotals().protein_g, dailyGoal.daily_protein_g)"
+                ></span>
+              </div>
+              <small>{{
+                goalCaption(dayTotals().protein_g, dailyGoal.daily_protein_g, 'г')
+              }}</small>
+            </div>
+            <div
+              class="goal-progress"
+              [class]="goalState(dayTotals().fiber_g, dailyGoal.daily_fiber_g)"
+            >
+              <div class="goal-label">
+                <span>Клетчатка</span
+                ><strong
+                  >{{ dayTotals().fiber_g | number: '1.0-1' }} /
+                  {{ dailyGoal.daily_fiber_g | number: '1.0-1' }} г</strong
+                >
+              </div>
+              <div class="progress-track">
+                <span
+                  [style.width.%]="goalPercent(dayTotals().fiber_g, dailyGoal.daily_fiber_g)"
+                ></span>
+              </div>
+              <small>{{ goalCaption(dayTotals().fiber_g, dailyGoal.daily_fiber_g, 'г') }}</small>
+            </div>
+          </div>
+        </mat-card>
+      } @else {
+        <mat-card class="goal-empty">
+          <mat-icon>flag</mat-icon>
+          <div>
+            <strong>Дневная цель не настроена</strong><span>Добавьте нормы для сравнения.</span>
+          </div>
+          <a mat-stroked-button routerLink="/family" [queryParams]="{ editGoal: true }"
+            >Настроить</a
+          >
+        </mat-card>
+      }
+    </section>
+
+    <section class="meals-section">
+      <div class="section-heading">
+        <div>
+          <h2>Приёмы пищи</h2>
+          <p>Только индивидуальные порции {{ currentUser.name }}</p>
+        </div>
+      </div>
+
+      @for (view of mealViews(); track view.meal.id) {
+        <mat-card class="personal-meal-card">
+          <div class="meal-card-header">
+            <div class="meal-title">
+              <div class="meal-icon" [class]="view.meal.meal_type">
+                <mat-icon>{{ typeIcon(view.meal.meal_type) }}</mat-icon>
+              </div>
+              <div>
+                <span>{{ typeLabel(view.meal.meal_type) }}</span>
+                <h3>{{ view.meal.name || typeLabel(view.meal.meal_type) }}</h3>
+                <small>{{ view.rows.length }} продуктов</small>
+              </div>
+            </div>
+            <div class="meal-total">
+              <strong>{{ view.totals.calories_kcal | number: '1.0-0' }}</strong
+              ><span>ккал</span>
+            </div>
+            <a mat-stroked-button [routerLink]="['/meals', view.meal.id]">
+              Открыть <mat-icon>arrow_forward</mat-icon>
+            </a>
+          </div>
+          <div class="meal-table-scroll">
+            <table class="meal-table">
+              <thead>
+                <tr>
+                  <th scope="col">Продукт</th>
+                  <th scope="col">Порция</th>
+                  <th scope="col">Ккал</th>
+                  <th scope="col">Белки</th>
+                  <th scope="col">Жиры</th>
+                  <th scope="col">Углеводы</th>
+                  <th scope="col">Клетчатка</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (row of view.rows; track row.id) {
+                  <tr>
+                    <th scope="row">
+                      <strong>{{ row.product_name }}</strong
+                      ><small>{{ row.product_brand || 'Без бренда' }}</small>
+                    </th>
+                    <td>
+                      <strong>{{ portionFor(row) | number: '1.0-1' }}</strong> г
+                    </td>
+                    <td>{{ nutrientFor(row, 'calories_kcal') | number: '1.0-0' }}</td>
+                    <td>{{ nutrientFor(row, 'protein_g') | number: '1.0-1' }} г</td>
+                    <td>{{ nutrientFor(row, 'fat_g') | number: '1.0-1' }} г</td>
+                    <td>{{ nutrientFor(row, 'carbohydrates_g') | number: '1.0-1' }} г</td>
+                    <td>{{ nutrientFor(row, 'fiber_g') | number: '1.0-1' }} г</td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </mat-card>
+      } @empty {
+        <mat-card class="empty-meals">
+          <div class="empty-icon"><mat-icon>restaurant_menu</mat-icon></div>
+          <h3>На эту дату порций нет</h3>
+          <p>Добавьте порцию пользователя в общий семейный приём пищи.</p>
+          <a mat-stroked-button routerLink="/meals">Перейти к приёмам пищи</a>
+        </mat-card>
+      }
+    </section>
+  }
+</section>

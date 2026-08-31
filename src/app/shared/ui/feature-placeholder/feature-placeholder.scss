@@ -1,0 +1,44 @@
+.section-page {
+  max-width: 1120px;
+  margin: auto;
+  padding: 64px 24px;
+}
+mat-card {
+  min-height: 390px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  text-align: center;
+  border: 1px solid #e5ebe7;
+  border-radius: 24px;
+  box-shadow: 0 10px 30px #233b2e0d;
+}
+.icon {
+  display: grid;
+  place-items: center;
+  width: 72px;
+  height: 72px;
+  border-radius: 22px;
+  color: #37865e;
+  background: #e9f6ee;
+}
+.icon mat-icon {
+  width: 34px;
+  height: 34px;
+  font-size: 34px;
+}
+h1 {
+  margin: 22px 0 8px;
+  color: #18251e;
+  font-size: 32px;
+}
+p {
+  margin: 0 0 25px;
+  color: #77837d;
+}
+button {
+  background: #31875d !important;
+  color: white !important;
+  border-radius: 12px;
+}

@@ -1,41 +1,47 @@
-<mat-sidenav-container class="app-shell">
-  <mat-sidenav #drawer mode="over" position="start">
-    <div class="px-4 pt-4 pb-2 text-sm font-medium text-muted tracking-wide">Sections</div>
-    <mat-nav-list>
-      <a
-        mat-list-item
-        routerLink="/dashboard"
-        routerLinkActive="active"
-        [routerLinkActiveOptions]="{ exact: true }"
-        (click)="closeDrawer()"
+<mat-toolbar class="topbar">
+  <a class="brand" routerLink="/overview" aria-label="NutriFlow — на главную">
+    <span class="brand-mark"><mat-icon>eco</mat-icon></span
+    ><span>Nutri<span>Flow</span></span>
+  </a>
+  <nav class="desktop-nav" aria-label="Основная навигация">
+    @for (item of navigation; track item.path) {
+      <a mat-button [routerLink]="item.path" routerLinkActive="active"
+        ><mat-icon>{{ item.icon }}</mat-icon
+        >{{ item.label }}</a
       >
-        <mat-icon matListItemIcon>dashboard</mat-icon>
-        <span matListItemTitle>Dashboard</span>
-      </a>
-      <a mat-list-item routerLink="/meals" routerLinkActive="active" (click)="closeDrawer()">
-        <mat-icon matListItemIcon>restaurant</mat-icon>
-        <span matListItemTitle>Meals</span>
-      </a>
-      <a mat-list-item routerLink="/profile" routerLinkActive="active" (click)="closeDrawer()">
-        <mat-icon matListItemIcon>person</mat-icon>
-        <span matListItemTitle>Profile</span>
-      </a>
-    </mat-nav-list>
-  </mat-sidenav>
-
-  <mat-sidenav-content>
-    <mat-toolbar color="primary">
-      <button mat-icon-button type="button" aria-label="Open menu" (click)="toggleDrawer()">
-        <mat-icon>menu</mat-icon>
-      </button>
-      <span class="ml-2 font-medium">Nutrition</span>
-      <span class="flex-auto"></span>
-      <a mat-button routerLink="/auth/login">Log In</a>
-      <a mat-flat-button color="accent" routerLink="/auth/signup">Sign Up</a>
-    </mat-toolbar>
-
-    <main class="p-6 max-w-content mx-auto">
-      <router-outlet />
-    </main>
-  </mat-sidenav-content>
-</mat-sidenav-container>
+    }
+  </nav>
+  <span class="spacer"></span>
+  <button mat-icon-button aria-label="Уведомления" class="notification">
+    <mat-icon>notifications_none</mat-icon><span class="notification-dot"></span>
+  </button>
+  <a mat-button class="family-action" routerLink="/family" routerLinkActive="active">
+    <mat-icon>family_restroom</mat-icon><span>Управление семьёй</span>
+  </a>
+  @if (session.authenticated()) {
+    <button mat-stroked-button class="auth-action" (click)="session.logout()">
+      <mat-icon>logout</mat-icon><span>Выйти</span>
+    </button>
+  } @else {
+    <button mat-flat-button class="auth-action login" (click)="session.login()">
+      <mat-icon>login</mat-icon><span>Войти</span>
+    </button>
+  }
+  <button
+    mat-icon-button
+    class="mobile-menu"
+    [matMenuTriggerFor]="navMenu"
+    aria-label="Открыть меню"
+  >
+    <mat-icon>menu</mat-icon>
+  </button>
+</mat-toolbar>
+<mat-menu #navMenu="matMenu">
+  @for (item of navigation; track item.path) {
+    <a mat-menu-item [routerLink]="item.path"
+      ><mat-icon>{{ item.icon }}</mat-icon
+      >{{ item.label }}</a
+    >
+  }
+</mat-menu>
+<main><router-outlet /></main>

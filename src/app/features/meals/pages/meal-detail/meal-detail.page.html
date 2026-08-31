@@ -1,0 +1,358 @@
+<section class="page">
+  <a class="back-link" routerLink="/meals"><mat-icon>arrow_back</mat-icon>Все приёмы пищи</a>
+
+  @if (loading()) {
+    <div class="state">
+      <mat-spinner diameter="42"></mat-spinner>
+      <p>Загружаем приём пищи…</p>
+    </div>
+  } @else if (error() && !meal()) {
+    <mat-card class="state error-state">
+      <mat-icon>error_outline</mat-icon>
+      <h2>{{ error() }}</h2>
+      <a mat-stroked-button routerLink="/meals">Вернуться к списку</a>
+    </mat-card>
+  } @else if (meal(); as currentMeal) {
+    <header class="meal-header">
+      <div>
+        <span class="eyebrow">
+          {{ typeLabel(currentMeal.meal_type) }} · {{ currentMeal.meal_date | date: 'd MMMM y' }}
+        </span>
+        <h1>{{ currentMeal.name || typeLabel(currentMeal.meal_type) }}</h1>
+        <p>Общий приём пищи с индивидуальными порциями для каждого члена семьи.</p>
+      </div>
+      <div class="meal-actions">
+        <a
+          mat-stroked-button
+          class="copy-button"
+          routerLink="/meals"
+          [queryParams]="{ copy: currentMeal.meal_date }"
+        >
+          <mat-icon>content_copy</mat-icon>Повторить рацион
+        </a>
+        <button mat-flat-button class="add-button" [disabled]="saving()" (click)="addEntry()">
+          @if (saving()) {
+            <mat-spinner diameter="18"></mat-spinner>
+          } @else {
+            <mat-icon>add</mat-icon>
+          }
+          Добавить продукт
+        </button>
+      </div>
+    </header>
+
+    @if (error(); as message) {
+      <div class="error-banner"><mat-icon>error_outline</mat-icon>{{ message }}</div>
+    }
+
+    <section class="matrix-section">
+      <div class="section-heading">
+        <div>
+          <h2>Порции семьи</h2>
+          <p>Строки — продукты, столбцы — члены семьи. Вводите вес порции в граммах.</p>
+        </div>
+        <span>{{ currentMeal.rows.length }} продуктов · {{ users().length }} членов семьи</span>
+      </div>
+
+      @if (!users().length) {
+        <mat-card class="empty-state">
+          <div class="empty-icon"><mat-icon>group_add</mat-icon></div>
+          <div>
+            <h3>В семье пока нет участников</h3>
+            <p>Добавьте членов семьи, чтобы указывать их порции.</p>
+          </div>
+          <a mat-stroked-button routerLink="/family">Управление семьёй</a>
+        </mat-card>
+      } @else if (currentMeal.rows.length) {
+        <mat-card class="table-card matrix-card">
+          <div class="table-scroll">
+            <table class="meal-matrix">
+              <thead>
+                <tr>
+                  <th class="product-column" scope="col">Продукт</th>
+                  @for (user of users(); track user.id) {
+                    <th class="member-column" scope="col">
+                      <div class="member-heading">
+                        <span class="member-avatar"><mat-icon>person</mat-icon></span>
+                        <span>{{ user.name }}</span>
+                      </div>
+                    </th>
+                  }
+                </tr>
+              </thead>
+              <tbody>
+                @for (row of currentMeal.rows; track row.id) {
+                  <tr [class.deleting]="isRowDeleting(row.id)">
+                    <th class="product-cell" scope="row">
+                      <span class="product-copy">
+                        <strong>{{ row.product_name }}</strong>
+                        <small>{{ row.product_brand || 'Без бренда' }}</small>
+                        <small class="per-hundred">
+                          100 г: {{ row.calories_kcal | number: '1.0-0' }} ккал · Б
+                          {{ row.protein_g | number: '1.0-1' }} · Ж
+                          {{ row.fat_g | number: '1.0-1' }} · У
+                          {{ row.carbohydrates_g | number: '1.0-1' }} · Кл
+                          {{ row.fiber_g | number: '1.0-1' }}
+                        </small>
+                      </span>
+                      <button
+                        mat-icon-button
+                        class="delete-row-button"
+                        type="button"
+                        [disabled]="isRowDeleting(row.id) || saving()"
+                        [attr.aria-label]="'Удалить ' + row.product_name + ' из приёма пищи'"
+                        [attr.title]="'Удалить ' + row.product_name"
+                        (click)="confirmDeleteRow(row)"
+                      >
+                        @if (isRowDeleting(row.id)) {
+                          <mat-spinner diameter="18"></mat-spinner>
+                        } @else {
+                          <mat-icon>delete_outline</mat-icon>
+                        }
+                      </button>
+                    </th>
+                    @for (user of users(); track user.id) {
+                      <td class="member-cell">
+                        <div class="portion-editor">
+                          <label
+                            class="portion-input"
+                            [class.saving]="isCellSaving(row.id, user.id)"
+                          >
+                            <input
+                              matInput
+                              type="number"
+                              min="0"
+                              step="1"
+                              inputmode="decimal"
+                              [value]="portionFor(row, user.id) || ''"
+                              [disabled]="isCellSaving(row.id, user.id) || isRowDeleting(row.id)"
+                              [attr.aria-label]="
+                                row.product_name + ', порция ' + user.name + ' в граммах'
+                              "
+                              (keydown.enter)="$any($event.target).blur()"
+                              (blur)="savePortion(row, user.id, $any($event.target).value)"
+                            />
+                            <span>г</span>
+                            @if (isCellSaving(row.id, user.id)) {
+                              <mat-spinner diameter="16"></mat-spinner>
+                            }
+                          </label>
+                          <div class="metric-line" aria-label="Пищевая ценность порции">
+                            <span class="metric calories">
+                              Кк-{{ nutrientFor(row, user.id, 'calories_kcal') | number: '1.0-0' }}
+                            </span>
+                            <span class="metric protein">
+                              Б-{{ nutrientFor(row, user.id, 'protein_g') | number: '1.0-1' }}г
+                            </span>
+                            <span class="metric fat">
+                              Ж-{{ nutrientFor(row, user.id, 'fat_g') | number: '1.0-1' }}г
+                            </span>
+                            <span class="metric carbs">
+                              У-{{
+                                nutrientFor(row, user.id, 'carbohydrates_g') | number: '1.0-1'
+                              }}г
+                            </span>
+                            <span class="metric fiber">
+                              F-{{ nutrientFor(row, user.id, 'fiber_g') | number: '1.0-1' }}г
+                            </span>
+                          </div>
+                        </div>
+                      </td>
+                    }
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+          <div class="table-hint">
+            <mat-icon>info</mat-icon>
+            <span
+              >Изменения сохраняются по Enter или при переходе в другую ячейку. Пустое поле или 0
+              удаляет порцию одного члена семьи; кнопка корзины удаляет всю строку.</span
+            >
+          </div>
+        </mat-card>
+      } @else {
+        <mat-card class="empty-state">
+          <div class="empty-icon"><mat-icon>playlist_add</mat-icon></div>
+          <div>
+            <h3>Добавьте первый продукт</h3>
+            <p>После добавления вы сможете заполнить порции всех членов семьи.</p>
+          </div>
+          <button mat-stroked-button (click)="addEntry()">Добавить продукт</button>
+        </mat-card>
+      }
+    </section>
+
+    @if (users().length) {
+      <section class="summary-section">
+        <div class="section-heading">
+          <div>
+            <h2>Итоги этого приёма пищи</h2>
+            <p>Суммарные БЖУ, калории и клетчатка за этот приём пищи.</p>
+          </div>
+          <span>На весь приём</span>
+        </div>
+
+        <mat-card class="table-card summary-card">
+          <div class="table-scroll">
+            <table class="member-summary">
+              <thead>
+                <tr>
+                  <th scope="col">Член семьи</th>
+                  <th scope="col">Калории</th>
+                  <th scope="col">Белки</th>
+                  <th scope="col">Жиры</th>
+                  <th scope="col">Углеводы</th>
+                  <th scope="col">Клетчатка</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (summary of familyMealTotals(); track summary.user.id) {
+                  <tr>
+                    <th scope="row">
+                      <span class="summary-avatar"><mat-icon>person</mat-icon></span>
+                      <strong>{{ summary.user.name }}</strong>
+                    </th>
+                    <td class="calories">
+                      <strong>{{ summary.totals.calories_kcal | number: '1.0-0' }}</strong>
+                      <span>ккал</span>
+                    </td>
+                    <td>
+                      <strong>{{ summary.totals.protein_g | number: '1.0-1' }}</strong>
+                      <span>г</span>
+                    </td>
+                    <td>
+                      <strong>{{ summary.totals.fat_g | number: '1.0-1' }}</strong>
+                      <span>г</span>
+                    </td>
+                    <td>
+                      <strong>{{ summary.totals.carbohydrates_g | number: '1.0-1' }}</strong>
+                      <span>г</span>
+                    </td>
+                    <td>
+                      <strong>{{ summary.totals.fiber_g | number: '1.0-1' }}</strong>
+                      <span>г</span>
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </mat-card>
+      </section>
+
+      <section class="summary-section daily-summary-section">
+        <div class="section-heading">
+          <div>
+            <h2>Итоги за весь день</h2>
+            <p>Все приёмы пищи за этот день. Данные обновляются после изменения любой порции.</p>
+          </div>
+          <span class="daily-heading-status">
+            @if (loadingDayTotals()) {
+              <mat-spinner diameter="14"></mat-spinner>
+              Пересчитываем
+            } @else {
+              {{ currentMeal.meal_date | date: 'd MMMM' }}
+            }
+          </span>
+        </div>
+
+        @if (dayTotals()) {
+          <mat-card class="table-card summary-card daily-summary-card">
+            <div class="table-scroll">
+              <table class="member-summary day-summary">
+                <thead>
+                  <tr>
+                    <th scope="col">Член семьи</th>
+                    <th scope="col">Калории</th>
+                    <th scope="col">Белки</th>
+                    <th scope="col">Жиры</th>
+                    <th scope="col">Углеводы</th>
+                    <th scope="col">Клетчатка</th>
+                    <th scope="col">Прогресс к дневным целям</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (summary of familyDayTotals(); track summary.user.id) {
+                    <tr>
+                      <th scope="row">
+                        <span class="summary-avatar daily"><mat-icon>person</mat-icon></span>
+                        <strong>{{ summary.user.name }}</strong>
+                      </th>
+                      <td class="calories">
+                        <strong>{{ summary.totals.calories_kcal | number: '1.0-0' }}</strong>
+                        <span>ккал</span>
+                      </td>
+                      <td>
+                        <strong>{{ summary.totals.protein_g | number: '1.0-1' }}</strong>
+                        <span>г</span>
+                      </td>
+                      <td>
+                        <strong>{{ summary.totals.fat_g | number: '1.0-1' }}</strong>
+                        <span>г</span>
+                      </td>
+                      <td>
+                        <strong>{{ summary.totals.carbohydrates_g | number: '1.0-1' }}</strong>
+                        <span>г</span>
+                      </td>
+                      <td>
+                        <strong>{{ summary.totals.fiber_g | number: '1.0-1' }}</strong>
+                        <span>г</span>
+                      </td>
+                      <td class="goal-cell">
+                        @if (goalFor(summary.user.id); as goal) {
+                          <span
+                            class="goal-badge"
+                            [class]="
+                              goalStatusClass(
+                                summary.totals.calories_kcal,
+                                goal.daily_calories_kcal
+                              )
+                            "
+                          >
+                            Ккал:
+                            <strong>{{ summary.totals.calories_kcal | number: '1.0-0' }}</strong> /
+                            {{ goal.daily_calories_kcal | number: '1.0-0' }} ·
+                            {{ goalStatus(summary.totals.calories_kcal, goal.daily_calories_kcal) }}
+                          </span>
+                          <span
+                            class="goal-badge"
+                            [class]="
+                              goalStatusClass(summary.totals.protein_g, goal.daily_protein_g)
+                            "
+                          >
+                            Белок:
+                            <strong>{{ summary.totals.protein_g | number: '1.0-1' }}</strong> /
+                            {{ goal.daily_protein_g | number: '1.0-1' }} г ·
+                            {{ goalStatus(summary.totals.protein_g, goal.daily_protein_g) }}
+                          </span>
+                          <span
+                            class="goal-badge"
+                            [class]="goalStatusClass(summary.totals.fiber_g, goal.daily_fiber_g)"
+                          >
+                            Клетчатка:
+                            <strong>{{ summary.totals.fiber_g | number: '1.0-1' }}</strong> /
+                            {{ goal.daily_fiber_g | number: '1.0-1' }} г ·
+                            {{ goalStatus(summary.totals.fiber_g, goal.daily_fiber_g) }}
+                          </span>
+                        } @else {
+                          <a class="goal-link" routerLink="/family">Настроить цель</a>
+                        }
+                      </td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          </mat-card>
+        } @else {
+          <mat-card class="daily-loading">
+            <mat-spinner diameter="22"></mat-spinner>
+            <span>Загружаем итоги за день…</span>
+          </mat-card>
+        }
+      </section>
+    }
+  }
+</section>

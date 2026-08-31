@@ -1,0 +1,61 @@
+<div class="dialog-heading">
+  <div class="dialog-icon">
+    <mat-icon>flag</mat-icon>
+  </div>
+  <div>
+    <h2 mat-dialog-title>{{ goal ? 'Редактировать цель' : 'Новая цель' }}</h2>
+    <p>
+      {{
+        goal
+          ? 'Измените значения выбранного периода.'
+          : 'Новая запись сохранит предыдущие нормы в истории.'
+      }}
+    </p>
+  </div>
+</div>
+<mat-dialog-content>
+  <form id="goal-form" [formGroup]="form" (ngSubmit)="submit()">
+    <div class="form-grid">
+      <mat-form-field appearance="outline"
+      >
+        <mat-label>Калории
+        </mat-label
+        >
+        <input matInput type="number" formControlName="daily_calories_kcal"/><span matTextSuffix
+      >ккал</span
+      ></mat-form-field
+      >
+      <mat-form-field appearance="outline"
+      >
+        <mat-label>Белок
+        </mat-label
+        >
+        <input matInput type="number" formControlName="daily_protein_g"/><span matTextSuffix
+      >г</span
+      ></mat-form-field
+      >
+      <mat-form-field appearance="outline"
+      >
+        <mat-label>Клетчатка
+        </mat-label
+        >
+        <input matInput type="number" formControlName="daily_fiber_g"/><span matTextSuffix
+      >г</span
+      ></mat-form-field
+      >
+      <mat-form-field appearance="outline"
+      >
+        <mat-label>Действует с
+        </mat-label>
+        <input matInput type="date" formControlName="effective_from"
+        /></mat-form-field>
+    </div>
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close>Отмена
+  </button>
+  <button mat-flat-button class="primary" form="goal-form" type="submit" [disabled]="form.invalid">
+    {{ goal ? 'Сохранить изменения' : 'Добавить цель' }}
+  </button>
+</mat-dialog-actions>

@@ -1,10 +1,10 @@
-import { Component, viewChild } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { MatListModule } from '@angular/material/list';
-import { MatSidenav, MatSidenavModule } from '@angular/material/sidenav';
+import { MatMenuModule } from '@angular/material/menu';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { SessionService } from './core/auth/session.service';
 
 @Component({
   selector: 'app-root',
@@ -15,20 +15,17 @@ import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
     MatToolbarModule,
     MatButtonModule,
     MatIconModule,
-    MatSidenavModule,
-    MatListModule,
+    MatMenuModule,
   ],
   templateUrl: './app.html',
   styleUrl: './app.scss',
 })
 export class App {
-  readonly drawer = viewChild.required<MatSidenav>('drawer');
-
-  toggleDrawer(): void {
-    void this.drawer().toggle();
-  }
-
-  closeDrawer(): void {
-    void this.drawer().close();
-  }
+  protected readonly session = inject(SessionService);
+  protected readonly navigation = [
+    { label: 'Обзор', icon: 'dashboard', path: '/overview' },
+    { label: 'Продукты', icon: 'grocery', path: '/products' },
+    { label: 'Приёмы пищи', icon: 'restaurant', path: '/meals' },
+    { label: 'Статистика', icon: 'monitoring', path: '/statistics' },
+  ];
 }

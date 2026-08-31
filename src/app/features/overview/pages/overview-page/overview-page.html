@@ -1,0 +1,218 @@
+<section class="page">
+  @if (loading()) {
+    <div class="state">
+      <mat-spinner diameter="42"></mat-spinner>
+      <p>Загружаем семейную сводку…</p>
+    </div>
+  } @else if (error()) {
+    <mat-card class="state error-state">
+      <mat-icon>error_outline</mat-icon>
+      <h2>{{ error() }}</h2>
+      <button mat-stroked-button (click)="ngOnInit()">Повторить</button>
+    </mat-card>
+  } @else {
+    <header class="welcome">
+      <div>
+        <span class="eyebrow">{{ today | date: 'EEEE, d MMMM' }}</span>
+        <h1>Добрый день, {{ selectedUser()?.name || 'семья' }} 👋</h1>
+        <p>Сводка по рациону и дневным целям на сегодня.</p>
+      </div>
+      <div class="header-actions">
+        <div class="user-filter">
+          <mat-icon>person</mat-icon>
+          <div>
+            <span>ЧЛЕН СЕМЬИ</span>
+            <mat-select
+              aria-label="Фильтр по члену семьи"
+              [value]="selectedUserId()"
+              [disabled]="!users().length"
+              (selectionChange)="selectUser($event.value)"
+            >
+              @for (user of users(); track user.id) {
+                <mat-option [value]="user.id">{{ user.name }}</mat-option>
+              }
+            </mat-select>
+          </div>
+        </div>
+        <a mat-flat-button class="add-button" routerLink="/meals" [queryParams]="{ create: true }">
+          <mat-icon>add</mat-icon>Добавить приём пищи
+        </a>
+      </div>
+    </header>
+
+    @if (!users().length) {
+      <mat-card class="empty-family">
+        <mat-icon>group_add</mat-icon>
+        <div>
+          <h2>Добавьте членов семьи</h2>
+          <p>После этого здесь появится персональная сводка по питанию.</p>
+        </div>
+        <a mat-stroked-button routerLink="/family">Управление семьёй</a>
+      </mat-card>
+    } @else {
+      <mat-card class="calories-card">
+        <div class="card-heading">
+          <div>
+            <span>КАЛОРИИ СЕГОДНЯ</span>
+            <h2>
+              {{ dayTotals().calories_kcal | number: '1.0-0' }}
+              @if (calorieTarget(); as target) {
+                <small>из {{ target | number: '1.0-0' }} ккал</small>
+              } @else {
+                <small>ккал</small>
+              }
+            </h2>
+          </div>
+          @if (caloriePercent() !== null) {
+            <div class="trend" [class.exceeded]="(caloriePercent() ?? 0) > 105">
+              <mat-icon>{{ (caloriePercent() ?? 0) > 100 ? 'trending_up' : 'target' }}</mat-icon>
+              {{ caloriePercent() }}%
+            </div>
+          } @else {
+            <a class="goal-link" routerLink="/family" [queryParams]="{ editGoal: true }"
+              ><mat-icon>flag</mat-icon>Настроить цель</a
+            >
+          }
+        </div>
+        <mat-progress-bar mode="determinate" [value]="caloriePercent() ?? 0"></mat-progress-bar>
+        <div class="calorie-legend">
+          <span
+            ><i class="consumed"></i>Съедено
+            <b>{{ dayTotals().calories_kcal | number: '1.0-0' }}</b></span
+          >
+          @if (calorieRemaining() !== null) {
+            <span
+              ><i class="remaining"></i>Осталось
+              <b>{{ calorieRemaining() | number: '1.0-0' }}</b></span
+            >
+          }
+        </div>
+      </mat-card>
+
+      <section class="content-section">
+        <div class="section-title">
+          <div>
+            <h2>Баланс нутриентов</h2>
+            <p>Данные за сегодня · {{ selectedUser()?.name }}</p>
+          </div>
+        </div>
+        <div class="nutrients-grid">
+          @for (item of nutrients(); track item.name) {
+            <mat-card class="nutrient-card" [style.--accent]="item.color">
+              <div class="ring" [style.--progress]="item.percent ?? 0">
+                <div>
+                  @if (item.percent !== null) {
+                    <b>{{ item.percent }}%</b><small>нормы</small>
+                  } @else {
+                    <b>—</b><small>без нормы</small>
+                  }
+                </div>
+              </div>
+              <div class="nutrient-info">
+                <span>{{ item.name }}</span>
+                <h3>
+                  {{ item.value | number: '1.0-1' }}
+                  @if (item.target !== null) {
+                    <small>/ {{ item.target | number: '1.0-1' }} г</small>
+                  } @else {
+                    <small>г</small>
+                  }
+                </h3>
+                <div class="mini-track">
+                  <i [style.width.%]="item.percent ?? 0"></i>
+                </div>
+              </div>
+            </mat-card>
+          }
+        </div>
+      </section>
+
+      <section class="content-section">
+        <div class="section-title">
+          <div>
+            <h2>Сегодняшние приёмы пищи</h2>
+            <p>{{ selectedUser()?.name }} · добавлено: {{ mealSummaries().length }}</p>
+          </div>
+          <a mat-button routerLink="/meals">Все приёмы <mat-icon>arrow_forward</mat-icon></a>
+        </div>
+
+        @if (mealSummaries().length) {
+          <mat-card class="meals-card">
+            <div class="table-scroll">
+              <table class="meals-table">
+                <thead>
+                  <tr>
+                    <th scope="col">Приём пищи</th>
+                    <th scope="col">Калории</th>
+                    <th scope="col">Белки</th>
+                    <th scope="col">Жиры</th>
+                    <th scope="col">Углеводы</th>
+                    <th scope="col">Клетчатка</th>
+                    <th scope="col"><span class="visually-hidden">Открыть</span></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (summary of mealSummaries(); track summary.meal.id) {
+                    <tr>
+                      <th scope="row">
+                        <span class="meal-icon" [class]="typeTone(summary.meal)">
+                          <mat-icon>{{ typeIcon(summary.meal) }}</mat-icon>
+                        </span>
+                        <span class="meal-main">
+                          <strong>{{ summary.meal.name || typeLabel(summary.meal) }}</strong>
+                          <small
+                            >{{ typeLabel(summary.meal) }} ·
+                            {{ summary.products || 'Нет продуктов' }}</small
+                          >
+                        </span>
+                      </th>
+                      <td class="calories">
+                        <strong>{{ summary.totals.calories_kcal | number: '1.0-0' }}</strong
+                        ><span>ккал</span>
+                      </td>
+                      <td>
+                        <strong>{{ summary.totals.protein_g | number: '1.0-1' }}</strong
+                        ><span>г</span>
+                      </td>
+                      <td>
+                        <strong>{{ summary.totals.fat_g | number: '1.0-1' }}</strong
+                        ><span>г</span>
+                      </td>
+                      <td>
+                        <strong>{{ summary.totals.carbohydrates_g | number: '1.0-1' }}</strong
+                        ><span>г</span>
+                      </td>
+                      <td>
+                        <strong>{{ summary.totals.fiber_g | number: '1.0-1' }}</strong
+                        ><span>г</span>
+                      </td>
+                      <td>
+                        <a
+                          mat-icon-button
+                          [routerLink]="['/meals', summary.meal.id]"
+                          [attr.aria-label]="
+                            'Открыть ' + (summary.meal.name || typeLabel(summary.meal))
+                          "
+                          ><mat-icon>arrow_forward</mat-icon></a
+                        >
+                      </td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          </mat-card>
+        } @else {
+          <mat-card class="empty-meals">
+            <mat-icon>restaurant</mat-icon>
+            <div>
+              <h3>На сегодня нет приёмов пищи</h3>
+              <p>Создайте первый приём и укажите порцию.</p>
+            </div>
+            <a mat-stroked-button routerLink="/meals" [queryParams]="{ create: true }">Добавить</a>
+          </mat-card>
+        }
+      </section>
+    }
+  }
+</section>

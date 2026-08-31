@@ -1,7 +1,147 @@
-.app-shell {
-  height: 100vh;
+:host {
+  display: block;
+  min-height: 100%;
 }
-
-mat-nav-list a.active {
-  background: color-mix(in srgb, var(--mat-sys-on-surface) 8%, transparent);
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  height: 76px;
+  padding: 0 clamp(20px, 5vw, 76px);
+  background: rgba(255, 255, 255, 0.92);
+  border-bottom: 1px solid #e6ebe8;
+  backdrop-filter: blur(18px);
+  color: #18231e;
+}
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-right: 42px;
+  color: #15221b;
+  text-decoration: none;
+  font-size: 21px;
+  font-weight: 800;
+  letter-spacing: -0.7px;
+}
+.brand > span:last-child span {
+  color: #3d9b6b;
+}
+.brand-mark {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  color: white;
+  background: linear-gradient(145deg, #65bf86, #31865d);
+  box-shadow: 0 7px 18px #4a9d6c35;
+}
+.brand-mark mat-icon {
+  font-size: 22px;
+  width: 22px;
+  height: 22px;
+}
+.desktop-nav {
+  display: flex;
+  align-self: stretch;
+  align-items: center;
+  gap: 4px;
+}
+.desktop-nav a {
+  height: 42px;
+  border-radius: 11px;
+  color: #65716b;
+  font-weight: 600;
+}
+.desktop-nav a mat-icon {
+  margin-right: 7px;
+  font-size: 20px;
+}
+.desktop-nav a.active {
+  color: #287b53;
+  background: #eaf7ef;
+}
+.spacer {
+  flex: 1;
+}
+.notification {
+  position: relative;
+  margin-right: 8px;
+  color: #536059;
+}
+.notification-dot {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #ee795f;
+  border: 2px solid white;
+}
+.family-action,
+.auth-action {
+  height: 42px;
+  border-radius: 12px;
+  font-weight: 600;
+}
+.family-action {
+  margin-right: 8px;
+  color: #526159;
+}
+.family-action mat-icon,
+.auth-action mat-icon {
+  margin-right: 7px;
+}
+.family-action.active {
+  color: #287b53;
+  background: #eaf7ef;
+}
+.auth-action {
+  border-color: #dce4df;
+  color: #4d5a52;
+}
+.auth-action.login {
+  background: #31875d;
+  color: white;
+}
+.mobile-menu {
+  display: none;
+}
+main {
+  min-height: calc(100vh - 76px);
+}
+@media (max-width: 1050px) {
+  .desktop-nav {
+    display: none;
+  }
+  .mobile-menu {
+    display: inline-flex;
+  }
+}
+@media (max-width: 560px) {
+  .topbar {
+    height: 66px;
+    padding: 0 16px;
+  }
+  .brand {
+    margin-right: 0;
+  }
+  .family-action,
+  .auth-action {
+    min-width: 42px;
+    padding: 0 9px;
+  }
+  .family-action span,
+  .auth-action span {
+    display: none;
+  }
+  .family-action mat-icon,
+  .auth-action mat-icon {
+    margin: 0;
+  }
+  main {
+    min-height: calc(100vh - 66px);
+  }
 }

@@ -1,0 +1,13 @@
+services:
+  frontend:
+    build:
+      context: .
+      target: runtime
+    image: nutriflow-frontend:local
+    environment:
+      API_UPSTREAM: ${API_UPSTREAM:-http://host.docker.internal:8000}
+    ports:
+      - '${FRONTEND_PORT:-4200}:8080'
+    extra_hosts:
+      - 'host.docker.internal:host-gateway'
+    restart: unless-stopped

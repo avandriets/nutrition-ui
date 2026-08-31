@@ -1,0 +1,422 @@
+<section class="page">
+  <header class="page-header">
+    <div>
+      <span class="eyebrow">АНАЛИТИКА ПИТАНИЯ</span>
+      <h1>Статистика</h1>
+      <p>Достижение целей за день, средние значения и динамика рациона.</p>
+    </div>
+    @if (!loadingInitial() && users().length) {
+      <label class="user-filter">
+        <mat-icon>group</mat-icon>
+        <span>
+          <small>ПОКАЗАТЬ</small>
+          <mat-select
+            aria-label="Фильтр статистики по члену семьи"
+            [value]="selectedUserId()"
+            (selectionChange)="selectUser($event.value)"
+          >
+            <mat-option [value]="null">Вся семья</mat-option>
+            @for (user of users(); track user.id) {
+              <mat-option [value]="user.id">{{ user.name }}</mat-option>
+            }
+          </mat-select>
+        </span>
+      </label>
+    }
+  </header>
+
+  @if (loadingInitial()) {
+    <div class="page-state">
+      <mat-spinner diameter="42"></mat-spinner>
+      <p>Загружаем статистику…</p>
+    </div>
+  } @else if (initialError(); as error) {
+    <mat-card class="page-state error-state">
+      <mat-icon>error_outline</mat-icon>
+      <h2>{{ error }}</h2>
+      <button mat-stroked-button (click)="ngOnInit()">Повторить</button>
+    </mat-card>
+  } @else if (!users().length) {
+    <mat-card class="empty-family">
+      <div class="empty-icon"><mat-icon>group_add</mat-icon></div>
+      <div>
+        <h2>Сначала добавьте членов семьи</h2>
+        <p>После этого здесь появятся персональные отчёты.</p>
+      </div>
+      <a mat-stroked-button routerLink="/family">Управление семьёй</a>
+    </mat-card>
+  } @else {
+    <section class="report-section daily-section">
+      <div class="section-heading">
+        <div>
+          <span class="section-icon green"><mat-icon>flag</mat-icon></span>
+          <div>
+            <h2>Достижение целей за день</h2>
+            <p>{{ selectedUserId() === null ? 'Вся семья' : selectedUserName() }}</p>
+          </div>
+        </div>
+        <div class="day-picker">
+          <button mat-icon-button aria-label="Предыдущий день" (click)="shiftDay(-1)">
+            <mat-icon>chevron_left</mat-icon>
+          </button>
+          <label>
+            <span>Дата отчёта</span>
+            <input
+              #dayInput
+              type="date"
+              aria-label="Дата отчёта по достижению целей"
+              [max]="today"
+              [value]="selectedDay()"
+              (change)="setDay(dayInput.value)"
+            />
+          </label>
+          <button
+            mat-icon-button
+            aria-label="Следующий день"
+            [disabled]="selectedDay() >= today"
+            (click)="shiftDay(1)"
+          >
+            <mat-icon>chevron_right</mat-icon>
+          </button>
+        </div>
+      </div>
+
+      @if (dailyError(); as error) {
+        <div class="inline-error">
+          <mat-icon>error_outline</mat-icon><span>{{ error }}</span>
+          <button mat-button (click)="setDay(selectedDay())">Повторить</button>
+        </div>
+      }
+
+      @if (loadingDaily()) {
+        <mat-card class="section-loading">
+          <mat-spinner diameter="27"></mat-spinner><span>Считаем достижения…</span>
+        </mat-card>
+      } @else {
+        <div class="daily-grid" [class.single]="dailyReports().length === 1">
+          @for (report of dailyReports(); track report.user.id) {
+            <mat-card class="daily-card" [class]="reportState(report)">
+              <div class="daily-card-header">
+                <div class="user-heading">
+                  <span class="avatar">{{ initials(report.user.name) }}</span>
+                  <div>
+                    <h3>{{ report.user.name }}</h3>
+                    <small>{{ selectedDay() | date: 'd MMMM y' : '' : 'ru' }}</small>
+                  </div>
+                </div>
+                @if (report.goal) {
+                  <span class="completion-badge">
+                    {{ completedGoals(report) }} из {{ activeGoals(report) }} выполнено
+                  </span>
+                } @else {
+                  <a class="no-goal" routerLink="/family" [queryParams]="{ editGoal: true }">
+                    <mat-icon>flag</mat-icon>Нет цели
+                  </a>
+                }
+              </div>
+
+              <div class="calorie-summary">
+                <span>КАЛОРИИ</span>
+                <strong>{{ report.totals.calories_kcal | number: '1.0-0' }}</strong>
+                @if (report.goal; as goal) {
+                  <small>из {{ goal.daily_calories_kcal | number: '1.0-0' }} ккал</small>
+                  <mat-progress-bar
+                    mode="determinate"
+                    [value]="percent(report.totals.calories_kcal, goal.daily_calories_kcal)"
+                  ></mat-progress-bar>
+                } @else {
+                  <small>ккал за день</small>
+                }
+              </div>
+
+              <div class="macro-strip">
+                <span class="protein"
+                  ><b>Б {{ report.totals.protein_g | number: '1.0-1' }}</b> г</span
+                >
+                <span class="fat"
+                  ><b>Ж {{ report.totals.fat_g | number: '1.0-1' }}</b> г</span
+                >
+                <span class="carbs"
+                  ><b>У {{ report.totals.carbohydrates_g | number: '1.0-1' }}</b> г</span
+                >
+                <span class="fiber"
+                  ><b>F {{ report.totals.fiber_g | number: '1.0-1' }}</b> г</span
+                >
+              </div>
+
+              @if (report.goalIsFallback) {
+                @if (report.goal; as fallbackGoal) {
+                  <div class="fallback-note">
+                    <mat-icon>history</mat-icon>
+                    <span
+                      >На эту дату цели ещё не было. Использована ближайшая цель с
+                      <strong>{{
+                        fallbackGoal.effective_from | date: 'd MMMM y' : '' : 'ru'
+                      }}</strong
+                      >.</span
+                    >
+                  </div>
+                }
+              }
+
+              @if (report.goal; as goal) {
+                <div class="goal-list">
+                  <div
+                    class="goal-row"
+                    [class]="goalState(report.totals.calories_kcal, goal.daily_calories_kcal)"
+                  >
+                    <div class="goal-copy">
+                      <span>Калории</span>
+                      <strong>{{
+                        goalStatus(report.totals.calories_kcal, goal.daily_calories_kcal)
+                      }}</strong>
+                    </div>
+                    <div class="goal-track">
+                      <i
+                        [style.width.%]="
+                          percent(report.totals.calories_kcal, goal.daily_calories_kcal)
+                        "
+                      ></i>
+                    </div>
+                  </div>
+                  <div
+                    class="goal-row"
+                    [class]="goalState(report.totals.protein_g, goal.daily_protein_g)"
+                  >
+                    <div class="goal-copy">
+                      <span>Белок</span>
+                      <strong>{{
+                        goalStatus(report.totals.protein_g, goal.daily_protein_g)
+                      }}</strong>
+                    </div>
+                    <div class="goal-track">
+                      <i
+                        [style.width.%]="percent(report.totals.protein_g, goal.daily_protein_g)"
+                      ></i>
+                    </div>
+                  </div>
+                  <div
+                    class="goal-row"
+                    [class]="goalState(report.totals.fiber_g, goal.daily_fiber_g)"
+                  >
+                    <div class="goal-copy">
+                      <span>Клетчатка</span>
+                      <strong>{{ goalStatus(report.totals.fiber_g, goal.daily_fiber_g) }}</strong>
+                    </div>
+                    <div class="goal-track">
+                      <i [style.width.%]="percent(report.totals.fiber_g, goal.daily_fiber_g)"></i>
+                    </div>
+                  </div>
+                </div>
+              }
+            </mat-card>
+          }
+        </div>
+      }
+    </section>
+
+    <section class="report-section period-section">
+      <div class="section-heading period-heading">
+        <div>
+          <span class="section-icon purple"><mat-icon>date_range</mat-icon></span>
+          <div>
+            <h2>Отчёт за период</h2>
+            <p>Средние значения и динамика питания</p>
+          </div>
+        </div>
+      </div>
+
+      <mat-card class="period-filters">
+        <label>
+          <span>С</span>
+          <input
+            #fromInput
+            type="date"
+            aria-label="Начало периода статистики"
+            [value]="dateFrom()"
+            (change)="dateFrom.set(fromInput.value)"
+          />
+        </label>
+        <label>
+          <span>По</span>
+          <input
+            #toInput
+            type="date"
+            aria-label="Конец периода статистики"
+            [max]="today"
+            [value]="dateTo()"
+            (change)="dateTo.set(toInput.value)"
+          />
+        </label>
+        <label class="granularity-filter">
+          <span>Группировка</span>
+          <mat-select
+            aria-label="Группировка статистики"
+            [value]="granularity()"
+            (selectionChange)="granularity.set($event.value)"
+          >
+            <mat-option value="day">По дням</mat-option>
+            <mat-option value="week">По неделям</mat-option>
+            <mat-option value="month">По месяцам</mat-option>
+          </mat-select>
+        </label>
+        <mat-slide-toggle
+          [checked]="includeEmptyDays()"
+          (change)="includeEmptyDays.set($event.checked)"
+        >
+          Учитывать дни без записей
+        </mat-slide-toggle>
+        <button mat-flat-button class="apply-button" (click)="applyPeriod()">
+          <mat-icon>refresh</mat-icon>Построить отчёт
+        </button>
+      </mat-card>
+
+      @if (periodError(); as error) {
+        <div class="inline-error period-error">
+          <mat-icon>error_outline</mat-icon><span>{{ error }}</span>
+          <button mat-button (click)="applyPeriod()">Повторить</button>
+        </div>
+      }
+
+      @if (loadingPeriod()) {
+        <mat-card class="section-loading period-loading">
+          <mat-spinner diameter="27"></mat-spinner><span>Строим отчёт за период…</span>
+        </mat-card>
+      } @else if (!periodError()) {
+        <div class="subsection-heading">
+          <div>
+            <h3>Средние значения в день</h3>
+            <p>
+              {{ dateFrom() | date: 'd MMM y' : '' : 'ru' }} —
+              {{ dateTo() | date: 'd MMM y' : '' : 'ru' }}
+            </p>
+          </div>
+        </div>
+
+        <div class="average-grid" [class.single]="averageReports().length === 1">
+          @for (report of averageReports(); track report.user.id) {
+            <mat-card class="average-card">
+              <div class="average-card-header">
+                <span class="avatar purple-avatar">{{ initials(report.user.name) }}</span>
+                <div>
+                  <h4>{{ report.user.name }}</h4>
+                  <span
+                    >Дней с рационом: <b>{{ report.average.active_days }}</b> из
+                    {{ report.average.calendar_days }}</span
+                  >
+                </div>
+              </div>
+              <div class="average-calories">
+                <mat-icon>local_fire_department</mat-icon>
+                <span
+                  >Калории<strong>{{
+                    report.average.calories_kcal | number: '1.0-0'
+                  }}</strong></span
+                >
+                <small>ккал/день</small>
+              </div>
+              <div class="average-nutrients">
+                <span class="protein"
+                  ><small>БЕЛКИ</small
+                  ><strong>{{ report.average.protein_g | number: '1.0-1' }}</strong
+                  ><b>г</b></span
+                >
+                <span class="fat"
+                  ><small>ЖИРЫ</small><strong>{{ report.average.fat_g | number: '1.0-1' }}</strong
+                  ><b>г</b></span
+                >
+                <span class="carbs"
+                  ><small>УГЛЕВОДЫ</small
+                  ><strong>{{ report.average.carbohydrates_g | number: '1.0-1' }}</strong
+                  ><b>г</b></span
+                >
+                <span class="fiber"
+                  ><small>КЛЕТЧАТКА</small
+                  ><strong>{{ report.average.fiber_g | number: '1.0-1' }}</strong
+                  ><b>г</b></span
+                >
+              </div>
+            </mat-card>
+          }
+        </div>
+
+        <div class="subsection-heading timeline-heading">
+          <div>
+            <h3>Динамика питания</h3>
+            <p>
+              {{ metricLabel() }} · {{ includeEmptyDays() ? 'все дни' : 'только дни с данными' }}
+            </p>
+          </div>
+          <mat-select
+            class="metric-select"
+            aria-label="Показатель графика"
+            [value]="selectedMetric()"
+            (selectionChange)="selectedMetric.set($event.value)"
+          >
+            @for (option of metricOptions; track option.value) {
+              <mat-option [value]="option.value">{{ option.label }}</mat-option>
+            }
+          </mat-select>
+        </div>
+
+        <div class="timeline-list">
+          @for (report of timelineReports(); track report.user.id) {
+            <mat-card class="timeline-card">
+              <div class="timeline-card-header">
+                <div>
+                  <span class="avatar small-avatar">{{ initials(report.user.name) }}</span>
+                  <div>
+                    <h4>{{ report.user.name }}</h4>
+                    <small>{{ report.timeline.points.length }} периодов</small>
+                  </div>
+                </div>
+                <span class="metric-badge">{{ metricLabel() }}</span>
+              </div>
+              @if (report.timeline.points.length) {
+                <div class="chart-scroll">
+                  <div class="bar-chart">
+                    @for (point of report.timeline.points; track point.period_start) {
+                      <div
+                        class="bar-column"
+                        [attr.title]="
+                          metricLabel() +
+                          ': ' +
+                          (metricValue(point) | number: '1.0-1') +
+                          ' ' +
+                          metricUnit()
+                        "
+                      >
+                        <strong
+                          >{{ metricValue(point) | number: '1.0-1' }}
+                          <small>{{ metricUnit() }}</small></strong
+                        >
+                        <div class="bar-track">
+                          <i
+                            [class.empty]="point.active_days === 0"
+                            [style.height.%]="barHeight(point, report.timeline.points)"
+                          ></i>
+                        </div>
+                        <span>
+                          {{ point.period_start | date: 'd MMM' : '' : 'ru' }}
+                          @if (!isSingleDay(point)) {
+                            <small>— {{ point.period_end | date: 'd MMM' : '' : 'ru' }}</small>
+                          }
+                        </span>
+                        <em>{{ point.active_days }}/{{ point.calendar_days }} дн.</em>
+                      </div>
+                    }
+                  </div>
+                </div>
+              } @else {
+                <div class="empty-chart">
+                  <mat-icon>query_stats</mat-icon>
+                  <span>За выбранный период данных нет</span>
+                </div>
+              }
+            </mat-card>
+          }
+        </div>
+      }
+    </section>
+  }
+</section>

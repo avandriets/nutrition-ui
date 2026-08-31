@@ -1,0 +1,49 @@
+<div class="dialog-heading">
+  <div class="dialog-icon"><mat-icon>content_copy</mat-icon></div>
+  <div>
+    <h2 mat-dialog-title>Копировать рацион</h2>
+    <p>Все приёмы пищи и порции семьи будут скопированы на новую дату.</p>
+  </div>
+</div>
+
+<mat-dialog-content>
+  <form id="copy-day-form" [formGroup]="form" (ngSubmit)="submit()">
+    <div class="dates">
+      <mat-form-field appearance="outline">
+        <mat-label>Исходный день</mat-label>
+        <input matInput type="date" formControlName="source_date" />
+      </mat-form-field>
+      <mat-icon>arrow_forward</mat-icon>
+      <mat-form-field appearance="outline">
+        <mat-label>Новый день</mat-label>
+        <input matInput type="date" formControlName="target_date" />
+      </mat-form-field>
+    </div>
+
+    @if (form.hasError('sameDate')) {
+      <p class="form-error"><mat-icon>error_outline</mat-icon>Выберите другую дату для копии.</p>
+    }
+
+    <mat-checkbox formControlName="replace_existing">
+      Заменить приёмы, если на новую дату уже внесён рацион
+    </mat-checkbox>
+    @if (form.controls.replace_existing.value) {
+      <p class="warning">
+        <mat-icon>warning_amber</mat-icon>Существующие приёмы целевого дня будут заменены.
+      </p>
+    }
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close>Отмена</button>
+  <button
+    mat-flat-button
+    class="primary"
+    form="copy-day-form"
+    type="submit"
+    [disabled]="form.invalid"
+  >
+    Копировать
+  </button>
+</mat-dialog-actions>
