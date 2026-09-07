@@ -75,6 +75,24 @@ environment:
 
 Контейнер слушает порт `8080`, healthcheck доступен по `/health`.
 
+## Авторизация через Auth0
+
+Frontend использует официальный пакет `@auth0/auth0-angular` и Authorization Code Flow with PKCE.
+Конфигурация tenant и SPA client находится в `src/app/core/auth/auth.config.ts`.
+
+В Auth0 Application должны быть разрешены следующие адреса:
+
+```text
+Allowed Callback URLs: http://localhost:4200/
+Allowed Logout URLs:   http://localhost:4200/
+Allowed Web Origins:   http://localhost:4200/
+```
+
+Встроенный interceptor Auth0 получает access token и добавляет
+`Authorization: Bearer <access-token>` ко всем запросам `/api` и `/api/*`.
+Клиент запрашивает JWT с audience `https://nutrition-api`; в Auth0 Dashboard
+должен существовать API с точно таким Identifier.
+
 ## Структура приложения
 
 Функциональные области загружаются лениво и находятся в `src/app/features`:

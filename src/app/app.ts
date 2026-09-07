@@ -8,15 +8,7 @@ import { SessionService } from './core/auth/session.service';
 
 @Component({
   selector: 'app-root',
-  imports: [
-    RouterOutlet,
-    RouterLink,
-    RouterLinkActive,
-    MatToolbarModule,
-    MatButtonModule,
-    MatIconModule,
-    MatMenuModule,
-  ],
+  imports: [RouterOutlet, RouterLink, RouterLinkActive, MatToolbarModule, MatButtonModule, MatIconModule, MatMenuModule],
   templateUrl: './app.html',
   styleUrl: './app.scss',
 })

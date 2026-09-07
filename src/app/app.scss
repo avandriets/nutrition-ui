@@ -112,6 +112,45 @@
 main {
   min-height: calc(100vh - 76px);
 }
+.auth-error {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 20px;
+  color: #8b2c20;
+  background: #fff0ed;
+  border-bottom: 1px solid #f0c5bd;
+  font-size: 14px;
+}
+.auth-required {
+  display: grid;
+  justify-items: center;
+  max-width: 520px;
+  margin: 0 auto;
+  padding: clamp(80px, 14vh, 150px) 24px 40px;
+  text-align: center;
+}
+.auth-required > mat-icon {
+  width: 52px;
+  height: 52px;
+  margin-bottom: 18px;
+  color: #31875d;
+  font-size: 52px;
+}
+.auth-required h1 {
+  margin: 0 0 10px;
+  color: #18231e;
+  font-size: 30px;
+}
+.auth-required p {
+  margin: 0 0 24px;
+  color: #65716b;
+  line-height: 1.5;
+}
+.auth-required .auth-action {
+  padding-inline: 20px;
+}
 @media (max-width: 1050px) {
   .desktop-nav {
     display: none;

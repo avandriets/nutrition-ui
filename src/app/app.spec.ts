@@ -1,12 +1,26 @@
+import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { App } from './app';
+import { SessionService } from './core/auth/session.service';
 
 describe('App', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [App],
-      providers: [provideRouter([])],
+      providers: [
+        provideRouter([]),
+        {
+          provide: SessionService,
+          useValue: {
+            authenticated: signal(false),
+            loading: signal(false),
+            error: signal(null),
+            login: vi.fn(),
+            logout: vi.fn(),
+          },
+        },
+      ],
     }).compileComponents();
   });
 
