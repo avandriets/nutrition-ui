@@ -13,6 +13,10 @@ export class ProductsApiService {
     return this.http.get<Product[]>('/api/products', { params });
   }
 
+  getById(productId: number): Observable<Product> {
+    return this.http.get<Product>(`/api/products/${productId}`);
+  }
+
   create(payload: ProductPayload): Observable<Product> {
     return this.http.post<Product>('/api/products', payload);
   }

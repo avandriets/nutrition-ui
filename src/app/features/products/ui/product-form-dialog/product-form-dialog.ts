@@ -36,15 +36,7 @@ export class ProductFormDialog {
     const value = this.form.getRawValue();
     this.dialogRef.close({
       ...value,
-      name: value.name.trim(),
-      brand: this.optional(value.brand),
-      category: this.optional(value.category),
       barcode: null,
-      description: this.optional(value.description),
     });
-  }
-
-  private optional(value: string): string | null {
-    return value.trim() || null;
   }
 }

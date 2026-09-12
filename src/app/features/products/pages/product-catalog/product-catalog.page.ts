@@ -5,7 +5,6 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
-import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { ActivatedRoute } from '@angular/router';
 import { filter, tap } from 'rxjs';
 
@@ -28,7 +27,6 @@ import { ProductTableComponent } from '../../ui/product-table/product-table';
     MatCardModule,
     MatDialogModule,
     MatIconModule,
-    MatSnackBarModule,
     ProductCardComponent,
     ProductCatalogFiltersComponent,
     ProductTableComponent,
@@ -41,7 +39,6 @@ import { ProductTableComponent } from '../../ui/product-table/product-table';
 export class ProductCatalogPage implements OnInit {
   private readonly productCatalogStore = inject(ProductCatalogStore);
   private readonly dialog = inject(MatDialog);
-  private readonly snackBar = inject(MatSnackBar);
   private readonly route = inject(ActivatedRoute);
   private readonly queryParamMap = toSignal(this.route.queryParamMap, {
     initialValue: this.route.snapshot.queryParamMap,
@@ -145,24 +142,15 @@ export class ProductCatalogPage implements OnInit {
   }
 
   private createProduct(payload: ProductPayload): void {
-    this.productCatalogStore
-      .create(payload)
-      .pipe(tap(() => this.snackBar.open('Продукт добавлен в общий каталог', 'Закрыть', { duration: 3000 })))
-      .subscribe();
+    this.productCatalogStore.create(payload).subscribe();
   }
 
   private updateProduct(productId: number, payload: ProductPayload): void {
-    this.productCatalogStore
-      .update({ id: productId, payload })
-      .pipe(tap(() => this.snackBar.open('Изменения сохранены', 'Закрыть', { duration: 3000 })))
-      .subscribe();
+    this.productCatalogStore.update({ id: productId, payload }).subscribe();
   }
 
   private deleteProduct(product: Product): void {
-    this.productCatalogStore
-      .remove(product.id)
-      .pipe(tap(() => this.snackBar.open('Продукт удалён', 'Закрыть', { duration: 3000 })))
-      .subscribe();
+    this.productCatalogStore.remove(product.id).subscribe();
   }
 
   private loadProducts(): void {
