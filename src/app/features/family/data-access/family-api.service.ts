@@ -1,14 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
-import {
-  FamilyUser,
-  GoalPayload,
-  MeasurementPayload,
-  UserGoal,
-  UserMeasurement,
-  UserPayload,
-} from './family.models';
+import type { Observable } from 'rxjs';
+
+import type { FamilyUser, GoalPayload, MeasurementPayload, UserGoal, UserMeasurement, UserPayload } from '../types/family.types';
 
 @Injectable()
 export class FamilyApiService {
@@ -38,50 +32,23 @@ export class FamilyApiService {
     return this.http.post<UserGoal>(`/api/accounts/${accountId}/users/${userId}/goals`, payload);
   }
 
-  updateGoal(
-    accountId: number,
-    userId: number,
-    goalId: number,
-    payload: GoalPayload,
-  ): Observable<UserGoal> {
-    return this.http.put<UserGoal>(
-      `/api/accounts/${accountId}/users/${userId}/goals/${goalId}`,
-      payload,
-    );
+  updateGoal(accountId: number, userId: number, goalId: number, payload: GoalPayload): Observable<UserGoal> {
+    return this.http.put<UserGoal>(`/api/accounts/${accountId}/users/${userId}/goals/${goalId}`, payload);
   }
 
   listMeasurements(accountId: number, userId: number): Observable<UserMeasurement[]> {
-    return this.http.get<UserMeasurement[]>(
-      `/api/accounts/${accountId}/users/${userId}/measurements`,
-    );
+    return this.http.get<UserMeasurement[]>(`/api/accounts/${accountId}/users/${userId}/measurements`);
   }
 
-  createMeasurement(
-    accountId: number,
-    userId: number,
-    payload: MeasurementPayload,
-  ): Observable<UserMeasurement> {
-    return this.http.post<UserMeasurement>(
-      `/api/accounts/${accountId}/users/${userId}/measurements`,
-      payload,
-    );
+  createMeasurement(accountId: number, userId: number, payload: MeasurementPayload): Observable<UserMeasurement> {
+    return this.http.post<UserMeasurement>(`/api/accounts/${accountId}/users/${userId}/measurements`, payload);
   }
 
-  updateMeasurement(
-    accountId: number,
-    userId: number,
-    measurementId: number,
-    payload: MeasurementPayload,
-  ): Observable<UserMeasurement> {
-    return this.http.put<UserMeasurement>(
-      `/api/accounts/${accountId}/users/${userId}/measurements/${measurementId}`,
-      payload,
-    );
+  updateMeasurement(accountId: number, userId: number, measurementId: number, payload: MeasurementPayload): Observable<UserMeasurement> {
+    return this.http.put<UserMeasurement>(`/api/accounts/${accountId}/users/${userId}/measurements/${measurementId}`, payload);
   }
 
   deleteMeasurement(accountId: number, userId: number, measurementId: number): Observable<void> {
-    return this.http.delete<void>(
-      `/api/accounts/${accountId}/users/${userId}/measurements/${measurementId}`,
-    );
+    return this.http.delete<void>(`/api/accounts/${accountId}/users/${userId}/measurements/${measurementId}`);
   }
 }

@@ -1,5 +1,6 @@
 import { DatePipe, DecimalPipe } from '@angular/common';
-import { Component, computed, inject, OnInit, signal } from '@angular/core';
+import type { OnInit } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
@@ -7,51 +8,30 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import { catchError, finalize, forkJoin, Observable, of, switchMap } from 'rxjs';
+import type { Observable } from 'rxjs';
+import { catchError, finalize, forkJoin, of, switchMap } from 'rxjs';
+
 import { AccountBootstrapService } from '../../../../core/account/account-bootstrap.service';
 import { AccountContextService } from '../../../../core/account/account-context.service';
-import {
-  Meal,
-  GoalTimelineItem,
-  MealDayTotals,
-  MealEntryPayload,
-  MealProduct,
-  MealRow,
-  MealType,
-  MealUser,
-  NutrientTotals,
-} from '../../data-access/meal.models';
+import type { GoalTimelineItem } from '../../../../shared/domain/goal.types';
+import type { UserIdentity } from '../../../../shared/domain/identity.types';
+import type { MealType } from '../../../../shared/domain/meal.types';
+import type { NutrientValues } from '../../../../shared/domain/nutrition.types';
+import type { UIConfirmDialogData } from '../../../../shared/types/confirm-dialog.types';
+import { UIConfirmDialogComponent } from '../../../../shared/ui/confirm-dialog/confirm-dialog';
+import { UIPageComponent } from '../../../../shared/ui/page/page';
+import { mealTypeLabel } from '../../../../shared/utils/meal.utils';
+import { emptyNutrientValues } from '../../../../shared/utils/nutrition.utils';
 import { MealsApiService } from '../../data-access/meals-api.service';
-import {
-  EntryDialogData,
-  MealEntryDialog,
-  MealEntryDialogResult,
-} from '../../ui/meal-entry-dialog/meal-entry-dialog';
-import {
-  MealRowDeleteDialog,
-  MealRowDeleteDialogData,
-} from '../../ui/meal-row-delete-dialog/meal-row-delete-dialog';
+import type { Meal, MealDayTotals, MealEntryPayload, MealProduct, MealRow } from '../../types/meal.types';
+import type { EntryDialogData, MealEntryDialogResult } from '../../ui/meal-entry-dialog/meal-entry-dialog';
+import { MealEntryDialog } from '../../ui/meal-entry-dialog/meal-entry-dialog';
 
-const EMPTY_TOTALS: NutrientTotals = {
-  calories_kcal: 0,
-  protein_g: 0,
-  fat_g: 0,
-  carbohydrates_g: 0,
-  fiber_g: 0,
-};
+const EMPTY_TOTALS = emptyNutrientValues();
 
 @Component({
   selector: 'app-meal-detail-page',
-  imports: [
-    DatePipe,
-    DecimalPipe,
-    MatButtonModule,
-    MatCardModule,
-    MatIconModule,
-    MatInputModule,
-    MatProgressSpinnerModule,
-    RouterLink,
-  ],
+  imports: [DatePipe, DecimalPipe, MatButtonModule, MatCardModule, MatIconModule, MatInputModule, MatProgressSpinnerModule, RouterLink, UIPageComponent],
   templateUrl: './meal-detail.page.html',
   styleUrl: './meal-detail.page.scss',
 })
@@ -64,28 +44,24 @@ export class MealDetailPage implements OnInit {
   private readonly mealId = Number(this.route.snapshot.paramMap.get('mealId'));
   private accountId: number | null = null;
 
-  protected readonly meal = signal<Meal | null>(null);
-  protected readonly users = signal<MealUser[]>([]);
-  protected readonly products = signal<MealProduct[]>([]);
-  protected readonly dayTotals = signal<MealDayTotals | null>(null);
-  protected readonly goals = signal<ReadonlyMap<number, GoalTimelineItem | null>>(new Map());
-  protected readonly loading = signal(true);
-  protected readonly loadingDayTotals = signal(false);
-  protected readonly saving = signal(false);
-  protected readonly savingCells = signal<ReadonlySet<string>>(new Set());
-  protected readonly deletingRows = signal<ReadonlySet<number>>(new Set());
-  protected readonly error = signal<string | null>(null);
+  readonly meal = signal<Meal | null>(null);
+  readonly users = signal<UserIdentity[]>([]);
+  readonly products = signal<MealProduct[]>([]);
+  readonly dayTotals = signal<MealDayTotals | null>(null);
+  readonly goals = signal<ReadonlyMap<number, GoalTimelineItem | null>>(new Map());
+  readonly loading = signal(true);
+  readonly loadingDayTotals = signal(false);
+  readonly saving = signal(false);
+  readonly savingCells = signal<ReadonlySet<string>>(new Set());
+  readonly deletingRows = signal<ReadonlySet<number>>(new Set());
+  readonly error = signal<string | null>(null);
 
-  protected readonly familyMealTotals = computed(() =>
-    this.users().map((user) => ({ user, totals: this.calculateMealTotals(user.id) })),
-  );
+  readonly familyMealTotals = computed(() => this.users().map(user => ({ user, totals: this.calculateMealTotals(user.id) })));
 
-  protected readonly familyDayTotals = computed(() => {
-    const totalsByUser = new Map(
-      (this.dayTotals()?.users ?? []).map((totals) => [totals.user_id, totals]),
-    );
+  readonly familyDayTotals = computed(() => {
+    const totalsByUser = new Map((this.dayTotals()?.users ?? []).map(totals => [totals.user_id, totals]));
 
-    return this.users().map((user) => ({
+    return this.users().map(user => ({
       user,
       totals: totalsByUser.get(user.id) ?? EMPTY_TOTALS,
     }));
@@ -95,14 +71,12 @@ export class MealDetailPage implements OnInit {
     this.loadPage();
   }
 
-  protected addEntry(): void {
+  addEntry(): void {
     const meal = this.meal();
     if (!meal || !this.accountId) return;
 
-    const existingProductIds = new Set(meal.rows.map((row) => row.product_id));
-    const availableProducts = this.products().filter(
-      (product) => !existingProductIds.has(product.id),
-    );
+    const existingProductIds = new Set(meal.rows.map(row => row.product_id));
+    const availableProducts = this.products().filter(product => !existingProductIds.has(product.id));
 
     this.dialog
       .open<MealEntryDialog, EntryDialogData, MealEntryDialogResult>(MealEntryDialog, {
@@ -114,11 +88,11 @@ export class MealDetailPage implements OnInit {
         },
       })
       .afterClosed()
-      .subscribe((payload) => {
+      .subscribe(payload => {
         const currentMeal = this.meal();
         if (!payload || !this.accountId || !currentMeal) return;
 
-        const entries: MealEntryPayload[] = payload.portions.map((portion) => ({
+        const entries: MealEntryPayload[] = payload.portions.map(portion => ({
           ...portion,
           product_id: payload.product_id,
           version: null,
@@ -133,13 +107,13 @@ export class MealDetailPage implements OnInit {
             finalize(() => this.saving.set(false)),
           )
           .subscribe({
-            next: (updatedMeal) => this.applyUpdatedMeal(updatedMeal),
+            next: updatedMeal => this.applyUpdatedMeal(updatedMeal),
             error: () => this.error.set('Не удалось добавить продукт.'),
           });
       });
   }
 
-  protected savePortion(row: MealRow, userId: number, rawValue: string): void {
+  savePortion(row: MealRow, userId: number, rawValue: string): void {
     const meal = this.meal();
     if (!meal || !this.accountId || !row.product_id) return;
 
@@ -149,7 +123,7 @@ export class MealDetailPage implements OnInit {
       return;
     }
 
-    const existingPortion = row.portions.find((portion) => portion.user_id === userId);
+    const existingPortion = row.portions.find(portion => portion.user_id === userId);
     if ((!existingPortion && amount === 0) || existingPortion?.amount_g === amount) return;
 
     const cellKey = this.cellKey(row.id, userId);
@@ -172,60 +146,67 @@ export class MealDetailPage implements OnInit {
         finalize(() => this.setCellSaving(cellKey, false)),
       )
       .subscribe({
-        next: (updatedMeal) => this.applyUpdatedMeal(updatedMeal),
+        next: updatedMeal => this.applyUpdatedMeal(updatedMeal),
         error: () => this.error.set('Не удалось сохранить порцию. Обновите страницу и повторите.'),
       });
   }
 
-  protected confirmDeleteRow(row: MealRow): void {
+  confirmDeleteRow(row: MealRow): void {
     if (this.isRowDeleting(row.id)) return;
 
     this.dialog
-      .open<MealRowDeleteDialog, MealRowDeleteDialogData, boolean>(MealRowDeleteDialog, {
-        data: { productName: row.product_name },
+      .open<UIConfirmDialogComponent, UIConfirmDialogData, boolean>(UIConfirmDialogComponent, {
+        data: {
+          icon: 'delete_sweep',
+          title: 'Удалить продукт из приёма пищи?',
+          message: [{ text: 'Строка ' }, { text: row.product_name, emphasis: true }, { text: ' и порции всех членов семьи будут удалены из этого приёма пищи.' }],
+          confirmText: 'Удалить строку',
+          tone: 'danger',
+          minWidth: 'min(440px, 82vw)',
+        },
       })
       .afterClosed()
-      .subscribe((confirmed) => {
+      .subscribe(confirmed => {
         if (confirmed) this.deleteRow(row);
       });
   }
 
-  protected isRowDeleting(rowId: number): boolean {
+  isRowDeleting(rowId: number): boolean {
     return this.deletingRows().has(rowId);
   }
 
-  protected portionFor(row: MealRow, userId: number): number {
-    return row.portions.find((portion) => portion.user_id === userId)?.amount_g ?? 0;
+  portionFor(row: MealRow, userId: number): number {
+    return row.portions.find(portion => portion.user_id === userId)?.amount_g ?? 0;
   }
 
-  protected nutrientFor(row: MealRow, userId: number, nutrient: keyof NutrientTotals): number {
+  nutrientFor(row: MealRow, userId: number, nutrient: keyof NutrientValues): number {
     return (row[nutrient] * this.portionFor(row, userId)) / 100;
   }
 
-  protected isCellSaving(rowId: number, userId: number): boolean {
+  isCellSaving(rowId: number, userId: number): boolean {
     return this.savingCells().has(this.cellKey(rowId, userId));
   }
 
-  protected goalFor(userId: number): GoalTimelineItem | null {
+  goalFor(userId: number): GoalTimelineItem | null {
     return this.goals().get(userId) ?? null;
   }
 
-  protected goalStatus(value: number, target: number): string {
+  goalStatus(value: number, target: number): string {
     if (target <= 0) return 'Не задана';
     const ratio = value / target;
     if (ratio < 1) return `${Math.round(ratio * 100)}%`;
     if (ratio <= 1.05) return 'Достигнута';
-    return `+ ${Math.round((ratio - 1) * 100)}%`;
+    return `+\u00a0${Math.round((ratio - 1) * 100)}%`;
   }
 
-  protected goalStatusClass(value: number, target: number): string {
+  goalStatusClass(value: number, target: number): string {
     const ratio = target > 0 ? value / target : 0;
     if (ratio < 1) return 'pending';
     return ratio <= 1.05 ? 'achieved' : 'exceeded';
   }
 
-  protected typeLabel(type: MealType): string {
-    return { breakfast: 'Завтрак', lunch: 'Обед', dinner: 'Ужин', other: 'Другое' }[type];
+  typeLabel(type: MealType): string {
+    return mealTypeLabel(type);
   }
 
   private loadPage(): void {
@@ -239,7 +220,7 @@ export class MealDetailPage implements OnInit {
     this.accountBootstrap
       .ensureAccount()
       .pipe(
-        switchMap((account) => {
+        switchMap(account => {
           this.accountId = account.id;
           return forkJoin({
             meal: this.api.getMeal(account.id, this.mealId),
@@ -266,11 +247,7 @@ export class MealDetailPage implements OnInit {
     if (!meal || !this.accountId) return;
 
     this.loadingDayTotals.set(true);
-    const goalRequests = this.users().map((user) =>
-      this.api
-        .getGoalForDate(this.accountId!, user.id, meal.meal_date)
-        .pipe(catchError(() => of(null))),
-    );
+    const goalRequests = this.users().map(user => this.api.getGoalForDate(this.accountId!, user.id, meal.meal_date).pipe(catchError(() => of(null))));
 
     forkJoin({
       totals: this.api.getDayTotals(this.accountId, meal.meal_date),
@@ -280,9 +257,7 @@ export class MealDetailPage implements OnInit {
       .subscribe({
         next: ({ totals, goals }) => {
           this.dayTotals.set(totals);
-          this.goals.set(
-            new Map(this.users().map((user, index) => [user.id, goals[index]?.periods[0] ?? null])),
-          );
+          this.goals.set(new Map(this.users().map((user, index) => [user.id, goals[index]?.periods[0] ?? null])));
         },
         error: () => this.error.set('Не удалось загрузить дневные итоги.'),
       });
@@ -305,15 +280,13 @@ export class MealDetailPage implements OnInit {
     this.setRowDeleting(row.id, true);
     this.error.set(null);
 
-    forkJoin(
-      row.portions.map((portion) => this.api.deleteEntry(this.accountId!, meal.id, portion.id)),
-    )
+    forkJoin(row.portions.map(portion => this.api.deleteEntry(this.accountId!, meal.id, portion.id)))
       .pipe(
         switchMap(() => this.api.getMeal(this.accountId!, meal.id)),
         finalize(() => this.setRowDeleting(row.id, false)),
       )
       .subscribe({
-        next: (updatedMeal) => this.applyUpdatedMeal(updatedMeal),
+        next: updatedMeal => this.applyUpdatedMeal(updatedMeal),
         error: () => {
           this.error.set('Не удалось удалить строку полностью. Данные будут обновлены.');
           this.reloadMeal(meal.id);
@@ -325,12 +298,12 @@ export class MealDetailPage implements OnInit {
     if (!this.accountId) return;
 
     this.api.getMeal(this.accountId, mealId).subscribe({
-      next: (updatedMeal) => this.applyUpdatedMeal(updatedMeal),
+      next: updatedMeal => this.applyUpdatedMeal(updatedMeal),
     });
   }
 
-  private calculateMealTotals(userId: number): NutrientTotals {
-    return (this.meal()?.rows ?? []).reduce<NutrientTotals>(
+  private calculateMealTotals(userId: number): NutrientValues {
+    return (this.meal()?.rows ?? []).reduce<NutrientValues>(
       (totals, row) => {
         const factor = this.portionFor(row, userId) / 100;
         return {
@@ -350,17 +323,25 @@ export class MealDetailPage implements OnInit {
   }
 
   private setCellSaving(cellKey: string, saving: boolean): void {
-    this.savingCells.update((current) => {
+    this.savingCells.update(current => {
       const next = new Set(current);
-      saving ? next.add(cellKey) : next.delete(cellKey);
+      if (saving) {
+        next.add(cellKey);
+      } else {
+        next.delete(cellKey);
+      }
       return next;
     });
   }
 
   private setRowDeleting(rowId: number, deleting: boolean): void {
-    this.deletingRows.update((current) => {
+    this.deletingRows.update(current => {
       const next = new Set(current);
-      deleting ? next.add(rowId) : next.delete(rowId);
+      if (deleting) {
+        next.add(rowId);
+      } else {
+        next.delete(rowId);
+      }
       return next;
     });
   }

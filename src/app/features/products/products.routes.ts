@@ -1,18 +1,17 @@
-import { Routes } from '@angular/router';
+import type { Routes } from '@angular/router';
+
+import { ProductCatalogStore } from './data-access/product-catalog.store';
 import { ProductsApiService } from './data-access/products-api.service';
 
 export const PRODUCTS_ROUTES: Routes = [
   {
     path: '',
-    providers: [ProductsApiService],
+    providers: [ProductCatalogStore, ProductsApiService],
     children: [
       {
         path: '',
         title: 'Продукты — NutriFlow',
-        loadComponent: () =>
-          import('./pages/product-catalog/product-catalog.page').then(
-            (page) => page.ProductCatalogPage,
-          ),
+        loadComponent: () => import('./pages/product-catalog/product-catalog.page').then(page => page.ProductCatalogPage),
       },
     ],
   },

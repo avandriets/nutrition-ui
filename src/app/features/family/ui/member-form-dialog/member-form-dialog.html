@@ -7,21 +7,31 @@
 </div>
 
 <mat-dialog-content>
-  <form id="member-form" [formGroup]="form" (ngSubmit)="submit()">
+  <form id="member-form"
+        [formGroup]="form"
+        (ngSubmit)="submit()">
     <mat-form-field appearance="outline">
       <mat-label>Имя</mat-label>
-      <input matInput formControlName="name" autocomplete="off" />
+      <input matInput
+             formControlName="name"
+             autocomplete="off" />
       @if (form.controls.name.hasError('required')) {
         <mat-error>Укажите имя</mat-error>
       }
     </mat-form-field>
     <mat-form-field appearance="outline">
       <mat-label>Дата рождения</mat-label>
-      <input matInput type="date" formControlName="birth_date" />
+      <input matInput
+             type="date"
+             formControlName="birth_date" />
     </mat-form-field>
     <mat-form-field appearance="outline">
       <mat-label>Рост</mat-label>
-      <input matInput type="number" min="1" max="300" formControlName="height_cm" />
+      <input matInput
+             type="number"
+             min="1"
+             max="300"
+             formControlName="height_cm" />
       <span matTextSuffix>см</span>
       @if (form.controls.height_cm.hasError('min') || form.controls.height_cm.hasError('max')) {
         <mat-error>Укажите рост от 1 до 300 см</mat-error>
@@ -31,14 +41,13 @@
 </mat-dialog-content>
 
 <mat-dialog-actions align="end">
-  <button mat-button mat-dialog-close>Отмена</button>
-  <button
-    mat-flat-button
-    class="primary"
-    form="member-form"
-    type="submit"
-    [disabled]="form.invalid"
-  >
+  <button mat-button
+          mat-dialog-close>Отмена</button>
+  <button mat-flat-button
+          class="primary"
+          form="member-form"
+          type="submit"
+          [disabled]="form.invalid">
     {{ user ? 'Сохранить' : 'Добавить' }}
   </button>
 </mat-dialog-actions>

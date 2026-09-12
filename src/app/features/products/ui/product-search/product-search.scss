@@ -1,0 +1,44 @@
+:host {
+  display: block;
+  min-width: 0;
+}
+
+.search-field {
+  display: flex;
+  align-items: center;
+  height: 48px;
+  padding: 0 10px 0 15px;
+  border-radius: 12px;
+  background: #f5f7f5;
+  color: #8b958f;
+}
+
+.search-field mat-icon {
+  flex: none;
+}
+
+.search-field input {
+  width: 100%;
+  height: 100%;
+  padding: 0 12px;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: #243129;
+  font: inherit;
+}
+
+.search-field input::placeholder {
+  color: #9ba49f;
+}
+
+.search-field input::-webkit-search-cancel-button {
+  display: none;
+  -webkit-appearance: none;
+}
+
+.search-field button {
+  width: 36px;
+  height: 36px;
+  padding: 6px;
+}

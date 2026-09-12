@@ -1,4 +1,4 @@
-import { AuthConfig } from '@auth0/auth0-angular';
+import type { AuthConfig } from '@auth0/auth0-angular';
 
 export const AUTH0_RETURN_URI = 'http://localhost:4200/';
 export const AUTH0_AUDIENCE = 'https://nutrition-api';

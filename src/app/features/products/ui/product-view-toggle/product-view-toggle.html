@@ -1,0 +1,14 @@
+<mat-button-toggle-group class="view-toggle"
+                         aria-label="Вид каталога"
+                         hideSingleSelectionIndicator
+                         [value]="viewMode()"
+                         (change)="viewModeChange.emit($event.value)">
+  <mat-button-toggle value="cards"
+                     matTooltip="Карточки">
+    <mat-icon>grid_view</mat-icon>
+  </mat-button-toggle>
+  <mat-button-toggle value="table"
+                     matTooltip="Таблица">
+    <mat-icon>table_rows</mat-icon>
+  </mat-button-toggle>
+</mat-button-toggle-group>

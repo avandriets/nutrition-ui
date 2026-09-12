@@ -7,3 +7,6 @@ coverage
 # Generated and machine-maintained files
 openapi.json
 package-lock.json
+
+# HTML is formatted by js-beautify
+**/*.html

@@ -11,5 +11,5 @@ import { ActivatedRoute } from '@angular/router';
 })
 export class FeaturePlaceholder {
   private readonly route = inject(ActivatedRoute);
-  protected readonly data = this.route.snapshot.data;
+  readonly data = this.route.snapshot.data;
 }

@@ -1,40 +1,31 @@
 import { DatePipe, DecimalPipe } from '@angular/common';
-import { Component, computed, inject, OnInit, signal } from '@angular/core';
+import type { OnInit } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { ActivatedRoute, RouterLink } from '@angular/router';
+import { format } from 'date-fns';
 import { catchError, finalize, forkJoin, of, switchMap } from 'rxjs';
-import { AccountBootstrapService } from '../../../../core/account/account-bootstrap.service';
-import { FamilyDiaryApiService } from '../../data-access/family-diary-api.service';
-import {
-  DiaryMeal,
-  DiaryMealRow,
-  DiaryMealType,
-  DiaryNutrients,
-} from '../../data-access/family-diary.models';
-import { FamilyUser, GoalTimelineItem } from '../../data-access/family.models';
 
-const EMPTY_NUTRIENTS: DiaryNutrients = {
-  calories_kcal: 0,
-  protein_g: 0,
-  fat_g: 0,
-  carbohydrates_g: 0,
-  fiber_g: 0,
-};
+import { AccountBootstrapService } from '../../../../core/account/account-bootstrap.service';
+import type { GoalTimelineItem } from '../../../../shared/domain/goal.types';
+import type { MealType } from '../../../../shared/domain/meal.types';
+import type { NutrientValues } from '../../../../shared/domain/nutrition.types';
+import { UIPageComponent } from '../../../../shared/ui/page/page';
+import { mealTypeIcon, mealTypeLabel } from '../../../../shared/utils/meal.utils';
+import { initials } from '../../../../shared/utils/name.utils';
+import { emptyNutrientValues } from '../../../../shared/utils/nutrition.utils';
+import { FamilyDiaryApiService } from '../../data-access/family-diary-api.service';
+import type { FamilyUser } from '../../types/family.types';
+import type { DiaryMeal, DiaryMealRow } from '../../types/family-diary.types';
+
+const EMPTY_NUTRIENTS = emptyNutrientValues();
 
 @Component({
   selector: 'app-personal-diary-page',
-  imports: [
-    DatePipe,
-    DecimalPipe,
-    MatButtonModule,
-    MatCardModule,
-    MatIconModule,
-    MatProgressSpinnerModule,
-    RouterLink,
-  ],
+  imports: [DatePipe, DecimalPipe, MatButtonModule, MatCardModule, MatIconModule, MatProgressSpinnerModule, RouterLink, UIPageComponent],
   templateUrl: './personal-diary.page.html',
   styleUrl: './personal-diary.page.scss',
 })
@@ -44,64 +35,59 @@ export class PersonalDiaryPage implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly userId = Number(this.route.snapshot.paramMap.get('userId'));
 
-  protected readonly user = signal<FamilyUser | null>(null);
-  protected readonly meals = signal<DiaryMeal[]>([]);
-  protected readonly goal = signal<GoalTimelineItem | null>(null);
-  protected readonly dayTotals = signal<DiaryNutrients>(EMPTY_NUTRIENTS);
-  protected readonly dateFilter = signal(this.todayIsoDate());
-  protected readonly loading = signal(true);
-  protected readonly error = signal<string | null>(null);
+  readonly user = signal<FamilyUser | null>(null);
+  readonly meals = signal<DiaryMeal[]>([]);
+  readonly goal = signal<GoalTimelineItem | null>(null);
+  readonly dayTotals = signal<NutrientValues>(EMPTY_NUTRIENTS);
+  readonly dateFilter = signal(format(new Date(), 'yyyy-MM-dd'));
+  readonly loading = signal(true);
+  readonly error = signal<string | null>(null);
 
-  protected readonly mealViews = computed(() =>
+  readonly mealViews = computed(() =>
     this.meals()
-      .map((meal) => {
-        const rows = meal.rows.filter((row) => this.portionFor(row) > 0);
+      .map(meal => {
+        const rows = meal.rows.filter(row => this.portionFor(row) > 0);
         return { meal, rows, totals: this.calculateTotals(rows) };
       })
-      .filter((view) => view.rows.length > 0),
+      .filter(view => view.rows.length > 0),
   );
 
   ngOnInit(): void {
     this.loadDiary();
   }
 
-  protected setDate(date: string): void {
+  setDate(date: string): void {
     if (!date) return;
     this.dateFilter.set(date);
     this.loadDiary();
   }
 
-  protected portionFor(row: DiaryMealRow): number {
-    return row.portions.find((portion) => portion.user_id === this.userId)?.amount_g ?? 0;
+  portionFor(row: DiaryMealRow): number {
+    return row.portions.find(portion => portion.user_id === this.userId)?.amount_g ?? 0;
   }
 
-  protected nutrientFor(row: DiaryMealRow, nutrient: keyof DiaryNutrients): number {
+  nutrientFor(row: DiaryMealRow, nutrient: keyof NutrientValues): number {
     return (row[nutrient] * this.portionFor(row)) / 100;
   }
 
-  protected typeLabel(type: DiaryMealType): string {
-    return { breakfast: 'Завтрак', lunch: 'Обед', dinner: 'Ужин', other: 'Другое' }[type];
+  typeLabel(type: MealType): string {
+    return mealTypeLabel(type);
   }
 
-  protected typeIcon(type: DiaryMealType): string {
-    return {
-      breakfast: 'bakery_dining',
-      lunch: 'lunch_dining',
-      dinner: 'dinner_dining',
-      other: 'restaurant',
-    }[type];
+  typeIcon(type: MealType): string {
+    return mealTypeIcon(type);
   }
 
-  protected goalPercent(value: number, target: number): number {
+  goalPercent(value: number, target: number): number {
     return target > 0 ? Math.min((value / target) * 100, 100) : 0;
   }
 
-  protected goalState(value: number, target: number): string {
+  goalState(value: number, target: number): string {
     if (target <= 0 || value < target) return 'pending';
     return value <= target * 1.05 ? 'achieved' : 'exceeded';
   }
 
-  protected goalCaption(value: number, target: number, unit: string): string {
+  goalCaption(value: number, target: number, unit: string): string {
     if (target <= 0) return 'Цель не задана';
     const difference = target - value;
     if (difference > 0) return `Осталось ${this.formatNumber(difference)} ${unit}`;
@@ -109,7 +95,7 @@ export class PersonalDiaryPage implements OnInit {
     return `Превышено на ${this.formatNumber(Math.abs(difference))} ${unit}`;
   }
 
-  protected mealsCountLabel(count: number): string {
+  mealsCountLabel(count: number): string {
     const lastTwo = count % 100;
     const last = count % 10;
     if (lastTwo >= 11 && lastTwo <= 14) return `${count} приёмов пищи`;
@@ -118,16 +104,11 @@ export class PersonalDiaryPage implements OnInit {
     return `${count} приёмов пищи`;
   }
 
-  protected initials(name: string): string {
-    return name
-      .split(/\s+/)
-      .slice(0, 2)
-      .map((part) => part[0])
-      .join('')
-      .toLocaleUpperCase('ru');
+  initials(name: string): string {
+    return initials(name);
   }
 
-  protected loadDiary(): void {
+  loadDiary(): void {
     if (!Number.isInteger(this.userId) || this.userId <= 0) {
       this.loading.set(false);
       this.error.set('Некорректный идентификатор пользователя.');
@@ -139,14 +120,12 @@ export class PersonalDiaryPage implements OnInit {
     this.accountBootstrap
       .ensureAccount()
       .pipe(
-        switchMap((account) =>
+        switchMap(account =>
           forkJoin({
             user: this.api.getUser(account.id, this.userId),
             meals: this.api.listMeals(account.id, this.dateFilter()),
             totals: this.api.getDayTotals(account.id, this.dateFilter()),
-            goalTimeline: this.api
-              .getGoalForDate(account.id, this.userId, this.dateFilter())
-              .pipe(catchError(() => of(null))),
+            goalTimeline: this.api.getGoalForDate(account.id, this.userId, this.dateFilter()).pipe(catchError(() => of(null))),
           }),
         ),
         finalize(() => this.loading.set(false)),
@@ -156,16 +135,14 @@ export class PersonalDiaryPage implements OnInit {
           this.user.set(user);
           this.meals.set(meals);
           this.goal.set(goalTimeline?.periods[0] ?? null);
-          this.dayTotals.set(
-            totals.users.find((total) => total.user_id === this.userId) ?? EMPTY_NUTRIENTS,
-          );
+          this.dayTotals.set(totals.users.find(total => total.user_id === this.userId) ?? EMPTY_NUTRIENTS);
         },
         error: () => this.error.set('Не удалось загрузить персональный дневник.'),
       });
   }
 
-  private calculateTotals(rows: DiaryMealRow[]): DiaryNutrients {
-    return rows.reduce<DiaryNutrients>(
+  private calculateTotals(rows: DiaryMealRow[]): NutrientValues {
+    return rows.reduce<NutrientValues>(
       (totals, row) => {
         const factor = this.portionFor(row) / 100;
         return {
@@ -182,13 +159,5 @@ export class PersonalDiaryPage implements OnInit {
 
   private formatNumber(value: number): string {
     return new Intl.NumberFormat('ru-RU', { maximumFractionDigits: 1 }).format(value);
-  }
-
-  private todayIsoDate(): string {
-    const today = new Date();
-    const year = today.getFullYear();
-    const month = String(today.getMonth() + 1).padStart(2, '0');
-    const day = String(today.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`;
   }
 }

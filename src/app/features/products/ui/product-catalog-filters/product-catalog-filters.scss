@@ -1,0 +1,28 @@
+:host {
+  display: block;
+}
+
+.filters {
+  display: grid;
+  grid-template-columns: minmax(250px, 1fr) 190px auto;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border: 1px solid #e5ebe7;
+  border-radius: 18px;
+  box-shadow: 0 7px 24px rgba(29, 59, 43, 0.045);
+}
+
+@media (max-width: 620px) {
+  .filters {
+    grid-template-columns: 1fr auto;
+  }
+
+  app-product-search {
+    grid-column: 1/-1;
+  }
+
+  app-product-view-toggle {
+    justify-self: end;
+  }
+}

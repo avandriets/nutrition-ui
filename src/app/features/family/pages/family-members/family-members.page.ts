@@ -1,46 +1,34 @@
 import { DatePipe, DecimalPipe } from '@angular/common';
-import { Component, effect, inject, OnInit } from '@angular/core';
+import type { OnInit } from '@angular/core';
+import { Component, effect, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import {
-  FamilyUser,
-  GoalPayload,
-  MeasurementPayload,
-  UserGoal,
-  UserMeasurement,
-  UserPayload,
-} from '../../data-access/family.models';
+import { format, parseISO } from 'date-fns';
+import { ru } from 'date-fns/locale';
+
+import type { UIConfirmDialogData } from '../../../../shared/types/confirm-dialog.types';
+import { UIConfirmDialogComponent } from '../../../../shared/ui/confirm-dialog/confirm-dialog';
+import { UIPageComponent } from '../../../../shared/ui/page/page';
+import { initials } from '../../../../shared/utils/name.utils';
 import { FamilyStore } from '../../state/family.store';
-import { ConfirmDialog } from '../../ui/confirm-dialog/confirm-dialog';
-import { GoalFormDialog, GoalFormDialogData } from '../../ui/goal-form-dialog/goal-form-dialog';
-import {
-  MeasurementDeleteDialog,
-  MeasurementDeleteDialogData,
-} from '../../ui/measurement-delete-dialog/measurement-delete-dialog';
+import type { FamilyUser, GoalPayload, MeasurementPayload, UserGoal, UserMeasurement, UserPayload } from '../../types/family.types';
+import type { GoalFormDialogData } from '../../ui/goal-form-dialog/goal-form-dialog';
+import { GoalFormDialog } from '../../ui/goal-form-dialog/goal-form-dialog';
 import { MeasurementFormDialog } from '../../ui/measurement-form-dialog/measurement-form-dialog';
 import { MemberFormDialog } from '../../ui/member-form-dialog/member-form-dialog';
 
 @Component({
   selector: 'app-family-members-page',
-  imports: [
-    DatePipe,
-    DecimalPipe,
-    MatButtonModule,
-    MatCardModule,
-    MatDialogModule,
-    MatIconModule,
-    MatProgressSpinnerModule,
-    RouterLink,
-  ],
+  imports: [DatePipe, DecimalPipe, MatButtonModule, MatCardModule, MatDialogModule, MatIconModule, MatProgressSpinnerModule, RouterLink, UIPageComponent],
   templateUrl: './family-members.page.html',
   styleUrl: './family-members.page.scss',
 })
 export class FamilyMembersPage implements OnInit {
-  protected readonly store = inject(FamilyStore);
+  readonly store = inject(FamilyStore);
   private readonly dialog = inject(MatDialog);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
@@ -63,56 +51,65 @@ export class FamilyMembersPage implements OnInit {
     this.store.initialize();
   }
 
-  protected addMember(): void {
+  addMember(): void {
     this.dialog
       .open<MemberFormDialog, null, UserPayload>(MemberFormDialog, { data: null })
       .afterClosed()
-      .subscribe((payload) => {
+      .subscribe(payload => {
         if (payload) this.store.createUser(payload);
       });
   }
 
-  protected editMember(user: FamilyUser): void {
+  editMember(user: FamilyUser): void {
     this.dialog
       .open<MemberFormDialog, FamilyUser, UserPayload>(MemberFormDialog, { data: user })
       .afterClosed()
-      .subscribe((payload) => {
+      .subscribe(payload => {
         if (payload) this.store.updateUser(user.id, payload);
       });
   }
 
-  protected deleteMember(user: FamilyUser): void {
+  deleteMember(user: FamilyUser): void {
     this.dialog
-      .open<ConfirmDialog, { name: string }, boolean>(ConfirmDialog, { data: { name: user.name } })
+      .open<UIConfirmDialogComponent, UIConfirmDialogData, boolean>(UIConfirmDialogComponent, {
+        data: {
+          icon: 'person_remove',
+          title: 'Удалить профиль?',
+          message: [{ text: 'Профиль ' }, { text: user.name, emphasis: true }, { text: ', его цели и измерения будут удалены.' }],
+          confirmText: 'Удалить',
+          tone: 'danger',
+          minWidth: 'min(390px, 82vw)',
+        },
+      })
       .afterClosed()
-      .subscribe((confirmed) => {
+      .subscribe(confirmed => {
         if (confirmed) this.store.deleteUser(user.id);
       });
   }
 
-  protected addGoal(): void {
+  addGoal(): void {
     this.dialog
       .open<GoalFormDialog, GoalFormDialogData, GoalPayload>(GoalFormDialog, {
         data: { goal: null, template: this.store.currentGoal() },
       })
       .afterClosed()
-      .subscribe((payload) => {
+      .subscribe(payload => {
         if (payload) this.store.createGoal(payload);
       });
   }
 
-  protected editGoal(goal: UserGoal): void {
+  editGoal(goal: UserGoal): void {
     this.dialog
       .open<GoalFormDialog, GoalFormDialogData, GoalPayload>(GoalFormDialog, {
         data: { goal, template: null },
       })
       .afterClosed()
-      .subscribe((payload) => {
+      .subscribe(payload => {
         if (payload) this.store.updateGoal(goal.id, payload);
       });
   }
 
-  protected addMeasurement(): void {
+  addMeasurement(): void {
     this.dialog
       .open<MeasurementFormDialog, null, MeasurementPayload>(MeasurementFormDialog, {
         data: null,
@@ -120,12 +117,12 @@ export class FamilyMembersPage implements OnInit {
         maxWidth: 'calc(100vw - 32px)',
       })
       .afterClosed()
-      .subscribe((payload) => {
+      .subscribe(payload => {
         if (payload) this.store.createMeasurement(payload);
       });
   }
 
-  protected editMeasurement(measurement: UserMeasurement): void {
+  editMeasurement(measurement: UserMeasurement): void {
     this.dialog
       .open<MeasurementFormDialog, UserMeasurement, MeasurementPayload>(MeasurementFormDialog, {
         data: measurement,
@@ -133,56 +130,53 @@ export class FamilyMembersPage implements OnInit {
         maxWidth: 'calc(100vw - 32px)',
       })
       .afterClosed()
-      .subscribe((payload) => {
+      .subscribe(payload => {
         if (payload) this.store.updateMeasurement(measurement.id, payload);
       });
   }
 
-  protected confirmDeleteMeasurement(measurement: UserMeasurement): void {
+  confirmDeleteMeasurement(measurement: UserMeasurement): void {
+    const measuredOn = measurement.measured_on;
     this.dialog
-      .open<MeasurementDeleteDialog, MeasurementDeleteDialogData, boolean>(
-        MeasurementDeleteDialog,
-        { data: { measuredOn: measurement.measured_on } },
-      )
+      .open<UIConfirmDialogComponent, UIConfirmDialogData, boolean>(UIConfirmDialogComponent, {
+        data: {
+          icon: 'delete_outline',
+          title: 'Удалить замер?',
+          message: [
+            { text: measuredOn ? 'Запись от ' : 'Запись ' },
+            ...(measuredOn ? [{ text: format(parseISO(measuredOn), 'd MMMM yyyy', { locale: ru }), emphasis: true }] : []),
+            { text: ' будет удалена. Это действие нельзя отменить.' },
+          ],
+          confirmText: 'Удалить',
+          tone: 'danger',
+        },
+      })
       .afterClosed()
-      .subscribe((confirmed) => {
+      .subscribe(confirmed => {
         if (confirmed) this.store.deleteMeasurement(measurement.id);
       });
   }
 
-  protected initials(name: string): string {
-    return name
-      .split(/\s+/)
-      .slice(0, 2)
-      .map((part) => part[0])
-      .join('')
-      .toLocaleUpperCase('ru');
+  initials(name: string): string {
+    return initials(name);
   }
 
-  protected goalStatusLabel(goal: UserGoal): string {
+  goalStatusLabel(goal: UserGoal): string {
     if (this.store.currentGoal()?.id === goal.id) return 'Текущая';
-    return goal.effective_from > this.todayIsoDate() ? 'Запланирована' : 'Завершена';
+    return goal.effective_from > format(new Date(), 'yyyy-MM-dd') ? 'Запланирована' : 'Завершена';
   }
 
-  protected goalStatusClass(goal: UserGoal): string {
+  goalStatusClass(goal: UserGoal): string {
     if (this.store.currentGoal()?.id === goal.id) return 'current';
-    return goal.effective_from > this.todayIsoDate() ? 'scheduled' : 'past';
+    return goal.effective_from > format(new Date(), 'yyyy-MM-dd') ? 'scheduled' : 'past';
   }
 
-  protected recordsCountLabel(count: number): string {
+  recordsCountLabel(count: number): string {
     const lastTwo = count % 100;
     const last = count % 10;
     if (lastTwo >= 11 && lastTwo <= 14) return `${count} записей`;
     if (last === 1) return `${count} запись`;
     if (last >= 2 && last <= 4) return `${count} записи`;
     return `${count} записей`;
-  }
-
-  private todayIsoDate(): string {
-    const today = new Date();
-    const year = today.getFullYear();
-    const month = String(today.getMonth() + 1).padStart(2, '0');
-    const day = String(today.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`;
   }
 }

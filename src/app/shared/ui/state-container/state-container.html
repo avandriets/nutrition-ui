@@ -1,0 +1,59 @@
+@if (showResolved()) {
+  <div class="ui-state-container__resolved">
+    <ng-container [ngTemplateOutlet]="resolved() ?? resolvedDefault"></ng-container>
+  </div>
+}
+
+@if (showEmpty()) {
+  <div class="ui-state-container__empty"
+       [style.min-height]="height()">
+    <ng-container [ngTemplateOutlet]="empty() ?? emptyDefault"></ng-container>
+  </div>
+}
+
+@if (showRejected()) {
+  <div class="ui-state-container__rejected"
+       role="alert"
+       [style.min-height]="height()">
+    <ng-container [ngTemplateOutlet]="rejected() ?? rejectedDefault"></ng-container>
+  </div>
+}
+
+@if (showPending()) {
+  <div class="ui-state-container__pending"
+       [style.min-height]="height()">
+    <ng-container [ngTemplateOutlet]="pending() ?? pendingDefault"></ng-container>
+  </div>
+}
+
+@if (showUpdating()) {
+  <div class="ui-state-container__updating">
+    <ng-container [ngTemplateOutlet]="updating() ?? updatingDefault"></ng-container>
+  </div>
+}
+
+<ng-template #resolvedDefault></ng-template>
+
+<ng-template #emptyDefault>
+  <div class="ui-state-container__default-state">
+    <h2>Нет данных</h2>
+  </div>
+</ng-template>
+
+<ng-template #rejectedDefault>
+  <div class="ui-state-container__default-state ui-state-container__default-state--error">
+    <h2>Произошла ошибка при загрузке данных</h2>
+    <p>{{ errorMessage() }}</p>
+  </div>
+</ng-template>
+
+<ng-template #pendingDefault>
+  <div class="ui-state-container__default-state">
+    <mat-spinner diameter="42"></mat-spinner>
+    <p>Загрузка данных…</p>
+  </div>
+</ng-template>
+
+<ng-template #updatingDefault>
+  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+</ng-template>

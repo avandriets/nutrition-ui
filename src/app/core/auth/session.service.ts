@@ -1,6 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { AuthService } from '@auth0/auth0-angular';
+
 import { AUTH0_RETURN_URI } from './auth.config';
 
 @Injectable({ providedIn: 'root' })

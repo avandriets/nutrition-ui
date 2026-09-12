@@ -1,7 +1,10 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { Observable, of, shareReplay, switchMap, tap } from 'rxjs';
-import { AccountContextService, AccountIdentity } from './account-context.service';
+import type { Observable } from 'rxjs';
+import { of, shareReplay, switchMap, tap } from 'rxjs';
+
+import type { AccountIdentity } from './account.types';
+import { AccountContextService } from './account-context.service';
 
 const DEFAULT_ACCOUNT_NAME = 'Наша семья';
 
@@ -10,7 +13,7 @@ export class AccountBootstrapService {
   private readonly http = inject(HttpClient);
   private readonly context = inject(AccountContextService);
   private readonly account$ = this.loadOrCreateAccount().pipe(
-    tap((account) => this.context.setAccount(account)),
+    tap(account => this.context.setAccount(account)),
     shareReplay({ bufferSize: 1, refCount: false }),
   );
 
@@ -20,14 +23,19 @@ export class AccountBootstrapService {
 
   private loadOrCreateAccount(): Observable<AccountIdentity> {
     const params = new HttpParams().set('skip', 0).set('limit', 1);
-    return this.http
-      .get<AccountIdentity[]>('/api/accounts', { params })
-      .pipe(
-        switchMap((accounts) =>
-          accounts[0]
-            ? of(accounts[0])
-            : this.http.post<AccountIdentity>('/api/accounts', { name: DEFAULT_ACCOUNT_NAME }),
-        ),
-      );
+
+    return this.http.get<AccountIdentity[]>('/api/accounts', { params }).pipe(
+      switchMap(accounts => {
+        const [account] = accounts;
+
+        if (account) {
+          return of(account);
+        }
+
+        return this.http.post<AccountIdentity>('/api/accounts', {
+          name: DEFAULT_ACCOUNT_NAME,
+        });
+      }),
+    );
   }
 }

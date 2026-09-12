@@ -1,6 +1,7 @@
-import { Routes } from '@angular/router';
-import { FamilyDiaryApiService } from './data-access/family-diary-api.service';
+import type { Routes } from '@angular/router';
+
 import { FamilyApiService } from './data-access/family-api.service';
+import { FamilyDiaryApiService } from './data-access/family-diary-api.service';
 import { FamilyStore } from './state/family.store';
 
 export const FAMILY_ROUTES: Routes = [
@@ -12,19 +13,13 @@ export const FAMILY_ROUTES: Routes = [
         path: '',
         pathMatch: 'full',
         title: 'Семья — NutriFlow',
-        loadComponent: () =>
-          import('./pages/family-members/family-members.page').then(
-            (page) => page.FamilyMembersPage,
-          ),
+        loadComponent: () => import('./pages/family-members/family-members.page').then(page => page.FamilyMembersPage),
       },
       {
         path: 'users/:userId/diary',
         providers: [FamilyDiaryApiService],
         title: 'Персональный дневник — NutriFlow',
-        loadComponent: () =>
-          import('./pages/personal-diary/personal-diary.page').then(
-            (page) => page.PersonalDiaryPage,
-          ),
+        loadComponent: () => import('./pages/personal-diary/personal-diary.page').then(page => page.PersonalDiaryPage),
       },
     ],
   },

@@ -5,31 +5,22 @@ import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/materia
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
-import { Product, ProductPayload } from '../../data-access/product.model';
+
+import type { Product, ProductPayload } from '../../types/product.types';
 
 @Component({
   selector: 'app-product-form-dialog',
-  imports: [
-    ReactiveFormsModule,
-    MatButtonModule,
-    MatDialogModule,
-    MatFormFieldModule,
-    MatIconModule,
-    MatInputModule,
-  ],
+  imports: [ReactiveFormsModule, MatButtonModule, MatDialogModule, MatFormFieldModule, MatIconModule, MatInputModule],
   templateUrl: './product-form-dialog.html',
   styleUrl: './product-form-dialog.scss',
 })
 export class ProductFormDialog {
   private readonly dialogRef = inject(MatDialogRef<ProductFormDialog, ProductPayload>);
-  protected readonly product = inject<Product | null>(MAT_DIALOG_DATA);
+  readonly product = inject<Product | null>(MAT_DIALOG_DATA);
   private readonly formBuilder = inject(FormBuilder);
 
-  protected readonly form = this.formBuilder.nonNullable.group({
-    name: [
-      this.product?.name ?? '',
-      [Validators.required, Validators.pattern(/\S/), Validators.maxLength(200)],
-    ],
+  readonly form = this.formBuilder.nonNullable.group({
+    name: [this.product?.name ?? '', [Validators.required, Validators.pattern(/\S/), Validators.maxLength(200)]],
     brand: [this.product?.brand ?? '', Validators.maxLength(200)],
     category: [this.product?.category ?? '', Validators.maxLength(100)],
     description: [this.product?.description ?? ''],
@@ -40,7 +31,7 @@ export class ProductFormDialog {
     fiber_g: [this.product?.fiber_g ?? 0, [Validators.required, Validators.min(0)]],
   });
 
-  protected submit(): void {
+  submit(): void {
     if (this.form.invalid) return;
     const value = this.form.getRawValue();
     this.dialogRef.close({

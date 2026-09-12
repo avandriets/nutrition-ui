@@ -1,0 +1,58 @@
+<mat-card class="table-shell">
+  <table class="product-table">
+    <thead>
+      <tr>
+        <th>Продукт</th>
+        <th>Категория</th>
+        <th class="number">Ккал</th>
+        <th class="number">Белки</th>
+        <th class="number">Жиры</th>
+        <th class="number">Углеводы</th>
+        <th class="number">Клетчатка</th>
+        <th aria-label="Действия"></th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (product of products(); track product.id) {
+        <tr>
+          <td>
+            <div class="table-product">
+              <span class="table-icon"><mat-icon>nutrition</mat-icon></span>
+              <div>
+                <strong>{{ product.name }}</strong>
+                <small>{{ product.brand || 'Без бренда' }}</small>
+              </div>
+            </div>
+          </td>
+          <td>
+            <span class="table-category">{{ product.category || 'Без категории' }}</span>
+          </td>
+          <td class="number calories-cell">{{ product.calories_kcal | number: '1.0-1' }}</td>
+          <td class="number">{{ product.protein_g | number: '1.0-1' }} г</td>
+          <td class="number">{{ product.fat_g | number: '1.0-1' }} г</td>
+          <td class="number">{{ product.carbohydrates_g | number: '1.0-1' }} г</td>
+          <td class="number">{{ product.fiber_g | number: '1.0-1' }} г</td>
+          <td class="actions">
+            <button mat-icon-button
+                    aria-label="Меню продукта"
+                    [matMenuTriggerFor]="tableMenu">
+              <mat-icon>more_horiz</mat-icon>
+            </button>
+            <mat-menu #tableMenu="matMenu">
+              <button mat-menu-item
+                      (click)="editRequested.emit(product)">
+                <mat-icon>edit</mat-icon>
+                Редактировать
+              </button>
+              <button mat-menu-item
+                      (click)="deleteRequested.emit(product)">
+                <mat-icon>delete_outline</mat-icon>
+                Удалить
+              </button>
+            </mat-menu>
+          </td>
+        </tr>
+      }
+    </tbody>
+  </table>
+</mat-card>

@@ -1,0 +1,48 @@
+<mat-card class="product-card">
+  <div class="card-top">
+    <div class="food-icon"><mat-icon>nutrition</mat-icon></div>
+    <span class="category">{{ product().category || 'Без категории' }}</span>
+    <button mat-icon-button
+            aria-label="Меню продукта"
+            [matMenuTriggerFor]="productMenu">
+      <mat-icon>more_horiz</mat-icon>
+    </button>
+    <mat-menu #productMenu="matMenu">
+      <button mat-menu-item
+              (click)="editRequested.emit(product())">
+        <mat-icon>edit</mat-icon>
+        Редактировать
+      </button>
+      <button mat-menu-item
+              (click)="deleteRequested.emit(product())">
+        <mat-icon>delete_outline</mat-icon>
+        Удалить
+      </button>
+    </mat-menu>
+  </div>
+  <div class="product-copy">
+    <h2>{{ product().name }}</h2>
+    <p>{{ product().brand || product().description || 'Описание не указано' }}</p>
+  </div>
+  <div class="calories">
+    <strong>{{ product().calories_kcal | number: '1.0-1' }}</strong>
+    <span>ккал</span>
+  </div>
+  <div class="macros">
+    <div>
+      <i class="protein"></i>
+      <span>Белки</span>
+      <strong>{{ product().protein_g | number: '1.0-1' }} г</strong>
+    </div>
+    <div>
+      <i class="fat"></i>
+      <span>Жиры</span>
+      <strong>{{ product().fat_g | number: '1.0-1' }} г</strong>
+    </div>
+    <div>
+      <i class="carbs"></i>
+      <span>Углеводы</span>
+      <strong>{{ product().carbohydrates_g | number: '1.0-1' }} г</strong>
+    </div>
+  </div>
+</mat-card>

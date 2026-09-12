@@ -1,105 +1,91 @@
-import { Component, computed, inject, OnInit, signal } from '@angular/core';
-import { DecimalPipe } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import type { OnInit } from '@angular/core';
+import { Component, computed, inject } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
-import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatCardModule } from '@angular/material/card';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
-import { MatMenuModule } from '@angular/material/menu';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { MatTooltipModule } from '@angular/material/tooltip';
-import { finalize } from 'rxjs';
-import { Product, ProductPayload } from '../../data-access/product.model';
-import { ProductsApiService } from '../../data-access/products-api.service';
-import { ProductDeleteDialog } from '../../ui/product-delete-dialog/product-delete-dialog';
+import { ActivatedRoute } from '@angular/router';
+import { filter, tap } from 'rxjs';
+
+import type { UIConfirmDialogData } from '../../../../shared/types/confirm-dialog.types';
+import type { UIStateStatus } from '../../../../shared/types/state-container.types';
+import { UIConfirmDialogComponent } from '../../../../shared/ui/confirm-dialog/confirm-dialog';
+import { UIPageComponent } from '../../../../shared/ui/page/page';
+import { UIStateContainerComponent } from '../../../../shared/ui/state-container/state-container';
+import { ProductCatalogStore } from '../../data-access/product-catalog.store';
+import type { Product, ProductCatalogView, ProductPayload } from '../../types/product.types';
+import { ProductCardComponent } from '../../ui/product-card/product-card';
+import { ProductCatalogFiltersComponent } from '../../ui/product-catalog-filters/product-catalog-filters';
 import { ProductFormDialog } from '../../ui/product-form-dialog/product-form-dialog';
+import { ProductTableComponent } from '../../ui/product-table/product-table';
 
 @Component({
   selector: 'app-product-catalog-page',
   imports: [
-    DecimalPipe,
-    FormsModule,
     MatButtonModule,
-    MatButtonToggleModule,
     MatCardModule,
     MatDialogModule,
     MatIconModule,
-    MatMenuModule,
-    MatProgressSpinnerModule,
-    MatSelectModule,
     MatSnackBarModule,
-    MatTooltipModule,
+    ProductCardComponent,
+    ProductCatalogFiltersComponent,
+    ProductTableComponent,
+    UIPageComponent,
+    UIStateContainerComponent,
   ],
   templateUrl: './product-catalog.page.html',
   styleUrl: './product-catalog.page.scss',
 })
 export class ProductCatalogPage implements OnInit {
-  private readonly productsApi = inject(ProductsApiService);
+  private readonly productCatalogStore = inject(ProductCatalogStore);
   private readonly dialog = inject(MatDialog);
   private readonly snackBar = inject(MatSnackBar);
-  protected readonly products = signal<Product[]>([]);
-  protected readonly loading = signal(true);
-  protected readonly error = signal(false);
-  protected readonly actionError = signal<string | null>(null);
-  protected readonly saving = signal(false);
-  protected readonly search = signal('');
-  protected readonly category = signal('all');
-  protected readonly viewMode = signal<'cards' | 'table'>('cards');
-
-  protected readonly categories = computed(() =>
+  private readonly route = inject(ActivatedRoute);
+  private readonly queryParamMap = toSignal(this.route.queryParamMap, {
+    initialValue: this.route.snapshot.queryParamMap,
+  });
+  readonly products = this.productCatalogStore.entities;
+  readonly actionError = this.productCatalogStore.actionError;
+  readonly saving = this.productCatalogStore.saving;
+  readonly search = computed(() => this.queryParamMap().get('search') ?? '');
+  readonly category = computed(() => this.queryParamMap().get('category') ?? 'all');
+  readonly viewMode = computed<ProductCatalogView>(() => (this.queryParamMap().get('view') === 'table' ? 'table' : 'cards'));
+  readonly categories = computed(() =>
     [
       ...new Set(
         this.products()
-          .map((product) => product.category)
+          .map(product => product.category)
           .filter((value): value is string => !!value),
       ),
     ].sort(),
   );
 
-  protected readonly filteredProducts = computed(() => {
+  readonly filteredProducts = computed(() => {
     const query = this.search().trim().toLocaleLowerCase('ru');
     const category = this.category();
-    return this.products().filter((product) => {
+    return this.products().filter(product => {
       const matchesCategory = category === 'all' || product.category === category;
-      const searchable = [product.name, product.brand, product.category]
-        .filter(Boolean)
-        .join(' ')
-        .toLocaleLowerCase('ru');
+      const searchable = [product.name, product.brand, product.category].filter(Boolean).join(' ').toLocaleLowerCase('ru');
       return matchesCategory && (!query || searchable.includes(query));
     });
+  });
+
+  readonly catalogState = computed<UIStateStatus<string>>(() => {
+    const entityState = this.productCatalogStore.entityState();
+
+    return {
+      ...entityState,
+      empty: entityState.resolved && !this.filteredProducts().length,
+    };
   });
 
   ngOnInit(): void {
     this.loadProducts();
   }
 
-  protected loadProducts(): void {
-    this.loading.set(true);
-    this.error.set(false);
-    this.productsApi
-      .list()
-      .pipe(finalize(() => this.loading.set(false)))
-      .subscribe({
-        next: (products) => this.products.set(products),
-        error: () => this.error.set(true),
-      });
-  }
-
-  protected setSearch(value: string): void {
-    this.search.set(value);
-  }
-  protected setCategory(value: string): void {
-    this.category.set(value);
-  }
-
-  protected setViewMode(mode: 'cards' | 'table'): void {
-    this.viewMode.set(mode);
-  }
-
-  protected addProduct(): void {
+  addProduct(): void {
     this.dialog
       .open<ProductFormDialog, null, ProductPayload>(ProductFormDialog, {
         data: null,
@@ -107,12 +93,14 @@ export class ProductCatalogPage implements OnInit {
         maxWidth: '94vw',
       })
       .afterClosed()
-      .subscribe((payload) => {
-        if (payload) this.createProduct(payload);
-      });
+      .pipe(
+        filter(Boolean),
+        tap(payload => this.createProduct(payload)),
+      )
+      .subscribe();
   }
 
-  protected editProduct(product: Product): void {
+  editProduct(product: Product): void {
     this.dialog
       .open<ProductFormDialog, Product, ProductPayload>(ProductFormDialog, {
         data: product,
@@ -120,70 +108,64 @@ export class ProductCatalogPage implements OnInit {
         maxWidth: '94vw',
       })
       .afterClosed()
-      .subscribe((payload) => {
-        if (payload) this.updateProduct(product.id, payload);
-      });
+      .pipe(
+        filter(Boolean),
+        tap(payload => this.updateProduct(product.id, payload)),
+      )
+      .subscribe();
   }
 
-  protected confirmDelete(product: Product): void {
+  confirmDelete(product: Product): void {
     this.dialog
-      .open<ProductDeleteDialog, { name: string }, boolean>(ProductDeleteDialog, {
-        data: { name: product.name },
+      .open<UIConfirmDialogComponent, UIConfirmDialogData, boolean>(UIConfirmDialogComponent, {
+        data: {
+          icon: 'delete_outline',
+          title: 'Удалить продукт?',
+          message: [
+            {
+              text: product.name,
+              emphasis: true,
+            },
+            { text: ' будет удалён из общего каталога. Это действие нельзя отменить.' },
+          ],
+          confirmText: 'Удалить',
+          tone: 'danger',
+        },
       })
       .afterClosed()
-      .subscribe((confirmed) => {
-        if (confirmed) this.deleteProduct(product);
-      });
+      .pipe(
+        filter(Boolean),
+        tap(() => this.deleteProduct(product)),
+      )
+      .subscribe();
   }
 
-  protected dismissActionError(): void {
-    this.actionError.set(null);
+  dismissActionError(): void {
+    this.productCatalogStore.dismissActionError();
   }
 
   private createProduct(payload: ProductPayload): void {
-    this.saving.set(true);
-    this.actionError.set(null);
-    this.productsApi
+    this.productCatalogStore
       .create(payload)
-      .pipe(finalize(() => this.saving.set(false)))
-      .subscribe({
-        next: (product) => {
-          this.products.update((products) => [product, ...products]);
-          this.snackBar.open('Продукт добавлен в общий каталог', 'Закрыть', { duration: 3000 });
-        },
-        error: () => this.actionError.set('Не удалось добавить продукт.'),
-      });
+      .pipe(tap(() => this.snackBar.open('Продукт добавлен в общий каталог', 'Закрыть', { duration: 3000 })))
+      .subscribe();
   }
 
   private updateProduct(productId: number, payload: ProductPayload): void {
-    this.saving.set(true);
-    this.actionError.set(null);
-    this.productsApi
-      .update(productId, payload)
-      .pipe(finalize(() => this.saving.set(false)))
-      .subscribe({
-        next: (updated) => {
-          this.products.update((products) =>
-            products.map((product) => (product.id === updated.id ? updated : product)),
-          );
-          this.snackBar.open('Изменения сохранены', 'Закрыть', { duration: 3000 });
-        },
-        error: () => this.actionError.set('Не удалось сохранить изменения.'),
-      });
+    this.productCatalogStore
+      .update({ id: productId, payload })
+      .pipe(tap(() => this.snackBar.open('Изменения сохранены', 'Закрыть', { duration: 3000 })))
+      .subscribe();
   }
 
   private deleteProduct(product: Product): void {
-    this.saving.set(true);
-    this.actionError.set(null);
-    this.productsApi
-      .delete(product.id)
-      .pipe(finalize(() => this.saving.set(false)))
-      .subscribe({
-        next: () => {
-          this.products.update((products) => products.filter((item) => item.id !== product.id));
-          this.snackBar.open('Продукт удалён', 'Закрыть', { duration: 3000 });
-        },
-        error: () => this.actionError.set('Не удалось удалить продукт.'),
-      });
+    this.productCatalogStore
+      .remove(product.id)
+      .pipe(tap(() => this.snackBar.open('Продукт удалён', 'Закрыть', { duration: 3000 })))
+      .subscribe();
+  }
+
+  private loadProducts(): void {
+    this.productCatalogStore.load({}).subscribe();
   }
 }

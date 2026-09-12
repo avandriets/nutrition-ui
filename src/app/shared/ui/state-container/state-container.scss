@@ -1,0 +1,52 @@
+:host {
+  position: relative;
+  display: block;
+}
+
+.ui-state-container__pending {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ui-state-container__updating {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  z-index: 1;
+  height: 4px;
+  overflow: hidden;
+}
+
+.ui-state-container__default-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: inherit;
+  color: #78847e;
+  text-align: center;
+}
+
+.ui-state-container__default-state h2 {
+  margin: 0;
+  color: #26342c;
+  font-size: 20px;
+}
+
+.ui-state-container__default-state p {
+  margin: 14px 0 0;
+}
+
+.ui-state-container__default-state--error {
+  min-height: inherit;
+}
+
+.ui-state-container__default-state--error p {
+  color: var(--mat-sys-error);
+}
+
+mat-spinner {
+  --mat-progress-spinner-active-indicator-color: #388960;
+}

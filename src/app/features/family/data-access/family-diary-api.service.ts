@@ -1,8 +1,10 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
-import { FamilyUser, GoalTimelineResponse } from './family.models';
-import { DiaryDayTotals, DiaryMeal } from './family-diary.models';
+import type { Observable } from 'rxjs';
+
+import type { GoalTimelineResponse } from '../../../shared/domain/goal.types';
+import type { FamilyUser } from '../types/family.types';
+import type { DiaryDayTotals, DiaryMeal } from '../types/family-diary.types';
 
 @Injectable()
 export class FamilyDiaryApiService {
@@ -21,15 +23,8 @@ export class FamilyDiaryApiService {
     return this.http.get<DiaryDayTotals>(`/api/accounts/${accountId}/meal-days/${mealDate}/totals`);
   }
 
-  getGoalForDate(
-    accountId: number,
-    userId: number,
-    diaryDate: string,
-  ): Observable<GoalTimelineResponse> {
+  getGoalForDate(accountId: number, userId: number, diaryDate: string): Observable<GoalTimelineResponse> {
     const params = new HttpParams().set('date_from', diaryDate).set('date_to', diaryDate);
-    return this.http.get<GoalTimelineResponse>(
-      `/api/accounts/${accountId}/users/${userId}/goals/timeline`,
-      { params },
-    );
+    return this.http.get<GoalTimelineResponse>(`/api/accounts/${accountId}/users/${userId}/goals/timeline`, { params });
   }
 }

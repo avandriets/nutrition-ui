@@ -1,16 +1,11 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
+import { format } from 'date-fns';
 import { finalize, switchMap } from 'rxjs';
-import { AccountContextService } from '../../../core/account/account-context.service';
+
 import { AccountBootstrapService } from '../../../core/account/account-bootstrap.service';
+import { AccountContextService } from '../../../core/account/account-context.service';
 import { FamilyApiService } from '../data-access/family-api.service';
-import {
-  FamilyUser,
-  GoalPayload,
-  MeasurementPayload,
-  UserGoal,
-  UserMeasurement,
-  UserPayload,
-} from '../data-access/family.models';
+import type { FamilyUser, GoalPayload, MeasurementPayload, UserGoal, UserMeasurement, UserPayload } from '../types/family.types';
 
 @Injectable()
 export class FamilyStore {
@@ -28,8 +23,8 @@ export class FamilyStore {
   readonly selectedUserId = this.selectedUserIdState.asReadonly();
   readonly goals = this.goalsState.asReadonly();
   readonly currentGoal = computed(() => {
-    const today = this.todayIsoDate();
-    return this.goalsState().find((goal) => goal.effective_from <= today) ?? null;
+    const today = format(new Date(), 'yyyy-MM-dd');
+    return this.goalsState().find(goal => goal.effective_from <= today) ?? null;
   });
   readonly measurements = this.measurementsState.asReadonly();
   readonly latestMeasurement = computed(() => this.measurementsState()[0] ?? null);
@@ -38,9 +33,7 @@ export class FamilyStore {
   readonly loadingGoals = signal(false);
   readonly saving = signal(false);
   readonly error = signal<string | null>(null);
-  readonly selectedUser = computed(() =>
-    this.usersState().find((user) => user.id === this.selectedUserIdState()),
-  );
+  readonly selectedUser = computed(() => this.usersState().find(user => user.id === this.selectedUserIdState()));
 
   initialize(): void {
     this.loading.set(true);
@@ -48,7 +41,7 @@ export class FamilyStore {
     this.accountBootstrap
       .ensureAccount()
       .pipe(
-        switchMap((account) => {
+        switchMap(account => {
           this.accountState.set(account);
           this.accountContext.setAccount(account);
           return this.api.listUsers(account.id);
@@ -56,7 +49,7 @@ export class FamilyStore {
         finalize(() => this.loading.set(false)),
       )
       .subscribe({
-        next: (users) => {
+        next: users => {
           this.setUsers(users);
           const activeId = this.accountContext.activeUserId();
           this.selectUser(activeId ?? users[0]?.id ?? null);
@@ -83,7 +76,7 @@ export class FamilyStore {
       .createUser(account.id, payload)
       .pipe(finalize(() => this.saving.set(false)))
       .subscribe({
-        next: (user) => {
+        next: user => {
           this.setUsers([...this.usersState(), user]);
           this.selectUser(user.id);
         },
@@ -99,8 +92,7 @@ export class FamilyStore {
       .updateUser(account.id, userId, payload)
       .pipe(finalize(() => this.saving.set(false)))
       .subscribe({
-        next: (updated) =>
-          this.setUsers(this.usersState().map((user) => (user.id === updated.id ? updated : user))),
+        next: updated => this.setUsers(this.usersState().map(user => (user.id === updated.id ? updated : user))),
         error: () => this.error.set('Не удалось обновить профиль.'),
       });
   }
@@ -114,7 +106,7 @@ export class FamilyStore {
       .pipe(finalize(() => this.saving.set(false)))
       .subscribe({
         next: () => {
-          const users = this.usersState().filter((user) => user.id !== userId);
+          const users = this.usersState().filter(user => user.id !== userId);
           this.setUsers(users);
           this.selectUser(users[0]?.id ?? null);
         },
@@ -132,7 +124,7 @@ export class FamilyStore {
       .createGoal(account.id, user.id, payload)
       .pipe(finalize(() => this.saving.set(false)))
       .subscribe({
-        next: (savedGoal) => this.setGoals([savedGoal, ...this.goalsState()]),
+        next: savedGoal => this.setGoals([savedGoal, ...this.goalsState()]),
         error: () => this.error.set('Не удалось сохранить цель.'),
       });
   }
@@ -148,8 +140,7 @@ export class FamilyStore {
       .updateGoal(account.id, user.id, goalId, payload)
       .pipe(finalize(() => this.saving.set(false)))
       .subscribe({
-        next: (updated) =>
-          this.setGoals(this.goalsState().map((goal) => (goal.id === updated.id ? updated : goal))),
+        next: updated => this.setGoals(this.goalsState().map(goal => (goal.id === updated.id ? updated : goal))),
         error: () => this.error.set('Не удалось обновить цель.'),
       });
   }
@@ -165,7 +156,7 @@ export class FamilyStore {
       .createMeasurement(account.id, user.id, payload)
       .pipe(finalize(() => this.saving.set(false)))
       .subscribe({
-        next: (measurement) => this.setMeasurements([measurement, ...this.measurementsState()]),
+        next: measurement => this.setMeasurements([measurement, ...this.measurementsState()]),
         error: () => this.error.set('Не удалось добавить замер.'),
       });
   }
@@ -181,12 +172,7 @@ export class FamilyStore {
       .updateMeasurement(account.id, user.id, measurementId, payload)
       .pipe(finalize(() => this.saving.set(false)))
       .subscribe({
-        next: (updated) =>
-          this.setMeasurements(
-            this.measurementsState().map((measurement) =>
-              measurement.id === updated.id ? updated : measurement,
-            ),
-          ),
+        next: updated => this.setMeasurements(this.measurementsState().map(measurement => (measurement.id === updated.id ? updated : measurement))),
         error: () => this.error.set('Не удалось обновить замер.'),
       });
   }
@@ -202,10 +188,7 @@ export class FamilyStore {
       .deleteMeasurement(account.id, user.id, measurementId)
       .pipe(finalize(() => this.saving.set(false)))
       .subscribe({
-        next: () =>
-          this.setMeasurements(
-            this.measurementsState().filter((measurement) => measurement.id !== measurementId),
-          ),
+        next: () => this.setMeasurements(this.measurementsState().filter(measurement => measurement.id !== measurementId)),
         error: () => this.error.set('Не удалось удалить замер.'),
       });
   }
@@ -232,7 +215,7 @@ export class FamilyStore {
         }),
       )
       .subscribe({
-        next: (goals) => {
+        next: goals => {
           if (this.selectedUserIdState() === userId) this.setGoals(goals);
         },
         error: () => {
@@ -256,7 +239,7 @@ export class FamilyStore {
         }),
       )
       .subscribe({
-        next: (measurements) => {
+        next: measurements => {
           if (this.selectedUserIdState() === userId) this.setMeasurements(measurements);
         },
         error: () => {
@@ -277,19 +260,6 @@ export class FamilyStore {
   }
 
   private setGoals(goals: UserGoal[]): void {
-    this.goalsState.set(
-      [...goals].sort(
-        (left, right) =>
-          right.effective_from.localeCompare(left.effective_from) || right.id - left.id,
-      ),
-    );
-  }
-
-  private todayIsoDate(): string {
-    const today = new Date();
-    const year = today.getFullYear();
-    const month = String(today.getMonth() + 1).padStart(2, '0');
-    const day = String(today.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`;
+    this.goalsState.set([...goals].sort((left, right) => right.effective_from.localeCompare(left.effective_from) || right.id - left.id));
   }
 }

@@ -1,5 +1,6 @@
 import { DatePipe, DecimalPipe } from '@angular/common';
-import { Component, computed, inject, OnInit, signal } from '@angular/core';
+import type { OnInit } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
@@ -8,30 +9,28 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { RouterLink } from '@angular/router';
+import { addDays, format, parseISO } from 'date-fns';
 import { catchError, finalize, forkJoin, map, of, switchMap } from 'rxjs';
+
 import { AccountBootstrapService } from '../../../../core/account/account-bootstrap.service';
 import { AccountContextService } from '../../../../core/account/account-context.service';
+import type { UserIdentity } from '../../../../shared/domain/identity.types';
+import { UIPageComponent } from '../../../../shared/ui/page/page';
+import { initials } from '../../../../shared/utils/name.utils';
+import { emptyNutrientValues } from '../../../../shared/utils/nutrition.utils';
 import { StatisticsApiService } from '../../data-access/statistics-api.service';
-import {
+import type {
   AverageReport,
   DailyGoalReport,
   GoalTarget,
   NutritionTimelinePoint,
-  NutrientValues,
   StatisticsMetric,
-  StatisticsUser,
   TimelineGranularity,
   TimelineReport,
   UserDailyTotal,
-} from '../../data-access/statistics.models';
+} from '../../types/statistics.types';
 
-const EMPTY_NUTRIENTS: NutrientValues = {
-  calories_kcal: 0,
-  protein_g: 0,
-  fat_g: 0,
-  carbohydrates_g: 0,
-  fiber_g: 0,
-};
+const EMPTY_NUTRIENTS = emptyNutrientValues();
 
 @Component({
   selector: 'app-statistics-page',
@@ -46,6 +45,7 @@ const EMPTY_NUTRIENTS: NutrientValues = {
     MatSelectModule,
     MatSlideToggleModule,
     RouterLink,
+    UIPageComponent,
   ],
   templateUrl: './statistics.page.html',
   styleUrl: './statistics.page.scss',
@@ -58,42 +58,38 @@ export class StatisticsPage implements OnInit {
   private dailyRequestId = 0;
   private periodRequestId = 0;
 
-  protected readonly today = this.todayIsoDate();
-  protected readonly users = signal<StatisticsUser[]>([]);
-  protected readonly selectedUserId = signal<number | null>(null);
-  protected readonly selectedDay = signal(this.today);
-  protected readonly dateFrom = signal(this.shiftIsoDate(this.today, -29));
-  protected readonly dateTo = signal(this.today);
-  protected readonly granularity = signal<TimelineGranularity>('day');
-  protected readonly includeEmptyDays = signal(false);
-  protected readonly selectedMetric = signal<StatisticsMetric>('calories_kcal');
-  protected readonly dailyReports = signal<DailyGoalReport[]>([]);
-  protected readonly averageReports = signal<AverageReport[]>([]);
-  protected readonly timelineReports = signal<TimelineReport[]>([]);
-  protected readonly loadingInitial = signal(true);
-  protected readonly loadingDaily = signal(false);
-  protected readonly loadingPeriod = signal(false);
-  protected readonly initialError = signal<string | null>(null);
-  protected readonly dailyError = signal<string | null>(null);
-  protected readonly periodError = signal<string | null>(null);
+  readonly today = format(new Date(), 'yyyy-MM-dd');
+  readonly users = signal<UserIdentity[]>([]);
+  readonly selectedUserId = signal<number | null>(null);
+  readonly selectedDay = signal(this.today);
+  readonly dateFrom = signal(format(addDays(parseISO(this.today), -29), 'yyyy-MM-dd'));
+  readonly dateTo = signal(this.today);
+  readonly granularity = signal<TimelineGranularity>('day');
+  readonly includeEmptyDays = signal(false);
+  readonly selectedMetric = signal<StatisticsMetric>('calories_kcal');
+  readonly dailyReports = signal<DailyGoalReport[]>([]);
+  readonly averageReports = signal<AverageReport[]>([]);
+  readonly timelineReports = signal<TimelineReport[]>([]);
+  readonly loadingInitial = signal(true);
+  readonly loadingDaily = signal(false);
+  readonly loadingPeriod = signal(false);
+  readonly initialError = signal<string | null>(null);
+  readonly dailyError = signal<string | null>(null);
+  readonly periodError = signal<string | null>(null);
 
-  protected readonly filteredUsers = computed(() => {
+  readonly filteredUsers = computed(() => {
     const selectedId = this.selectedUserId();
-    return selectedId === null
-      ? this.users()
-      : this.users().filter((user) => user.id === selectedId);
+    return selectedId === null ? this.users() : this.users().filter(user => user.id === selectedId);
   });
 
-  protected readonly selectedUserName = computed(
-    () => this.filteredUsers()[0]?.name ?? 'Вся семья',
-  );
+  readonly selectedUserName = computed(() => this.filteredUsers()[0]?.name ?? 'Вся семья');
 
-  protected readonly metricOptions: ReadonlyArray<{
+  readonly metricOptions: readonly {
     value: StatisticsMetric;
     label: string;
     shortLabel: string;
     unit: string;
-  }> = [
+  }[] = [
     { value: 'calories_kcal', label: 'Калории', shortLabel: 'ккал', unit: 'ккал' },
     { value: 'protein_g', label: 'Белки', shortLabel: 'Б', unit: 'г' },
     { value: 'fat_g', label: 'Жиры', shortLabel: 'Ж', unit: 'г' },
@@ -105,24 +101,24 @@ export class StatisticsPage implements OnInit {
     this.loadInitialData();
   }
 
-  protected selectUser(userId: number | null): void {
+  selectUser(userId: number | null): void {
     this.selectedUserId.set(userId);
     if (userId !== null) this.accountContext.selectUser(userId);
     this.loadDailyReports();
     this.loadPeriodReports();
   }
 
-  protected setDay(date: string): void {
+  setDay(date: string): void {
     if (!date) return;
     this.selectedDay.set(date > this.today ? this.today : date);
     this.loadDailyReports();
   }
 
-  protected shiftDay(offset: number): void {
-    this.setDay(this.shiftIsoDate(this.selectedDay(), offset));
+  shiftDay(offset: number): void {
+    this.setDay(format(addDays(parseISO(this.selectedDay()), offset), 'yyyy-MM-dd'));
   }
 
-  protected applyPeriod(): void {
+  applyPeriod(): void {
     if (!this.dateFrom() || !this.dateTo()) {
       this.periodError.set('Укажите начало и конец периода.');
       return;
@@ -134,17 +130,17 @@ export class StatisticsPage implements OnInit {
     this.loadPeriodReports();
   }
 
-  protected percent(value: number, target: number): number {
+  percent(value: number, target: number): number {
     return target > 0 ? Math.min((value / target) * 100, 100) : 0;
   }
 
-  protected goalState(value: number, target: number): 'pending' | 'achieved' | 'exceeded' {
+  goalState(value: number, target: number): 'pending' | 'achieved' | 'exceeded' {
     const ratio = target > 0 ? value / target : 0;
     if (ratio < 0.95) return 'pending';
     return ratio <= 1.05 ? 'achieved' : 'exceeded';
   }
 
-  protected goalStatus(value: number, target: number): string {
+  goalStatus(value: number, target: number): string {
     if (target <= 0) return 'Цель не задана';
     const state = this.goalState(value, target);
     if (state === 'achieved') return 'Достигнута';
@@ -152,9 +148,9 @@ export class StatisticsPage implements OnInit {
     return `Выполнено ${Math.round((value / target) * 100)}%`;
   }
 
-  protected completedGoals(report: DailyGoalReport): number {
+  completedGoals(report: DailyGoalReport): number {
     if (!report.goal) return 0;
-    const pairs: Array<[number, number]> = [
+    const pairs: [number, number][] = [
       [report.totals.calories_kcal, report.goal.daily_calories_kcal],
       [report.totals.protein_g, report.goal.daily_protein_g],
       [report.totals.fiber_g, report.goal.daily_fiber_g],
@@ -162,55 +158,42 @@ export class StatisticsPage implements OnInit {
     return pairs.filter(([value, target]) => target > 0 && value >= target * 0.95).length;
   }
 
-  protected activeGoals(report: DailyGoalReport): number {
+  activeGoals(report: DailyGoalReport): number {
     if (!report.goal) return 0;
-    return [
-      report.goal.daily_calories_kcal,
-      report.goal.daily_protein_g,
-      report.goal.daily_fiber_g,
-    ].filter((target) => target > 0).length;
+    return [report.goal.daily_calories_kcal, report.goal.daily_protein_g, report.goal.daily_fiber_g].filter(target => target > 0).length;
   }
 
-  protected reportState(report: DailyGoalReport): string {
+  reportState(report: DailyGoalReport): string {
     if (!report.goal) return 'without-goal';
     const completed = this.completedGoals(report);
-    return completed === this.activeGoals(report)
-      ? 'complete'
-      : completed > 0
-        ? 'partial'
-        : 'pending';
+    return completed === this.activeGoals(report) ? 'complete' : completed > 0 ? 'partial' : 'pending';
   }
 
-  protected metricLabel(): string {
-    return this.metricOptions.find((option) => option.value === this.selectedMetric())?.label ?? '';
+  metricLabel(): string {
+    return this.metricOptions.find(option => option.value === this.selectedMetric())?.label ?? '';
   }
 
-  protected metricUnit(): string {
-    return this.metricOptions.find((option) => option.value === this.selectedMetric())?.unit ?? '';
+  metricUnit(): string {
+    return this.metricOptions.find(option => option.value === this.selectedMetric())?.unit ?? '';
   }
 
-  protected metricValue(point: NutritionTimelinePoint): number {
+  metricValue(point: NutritionTimelinePoint): number {
     return point[this.selectedMetric()];
   }
 
-  protected barHeight(point: NutritionTimelinePoint, points: NutritionTimelinePoint[]): number {
-    const maximum = Math.max(...points.map((item) => this.metricValue(item)), 0);
+  barHeight(point: NutritionTimelinePoint, points: NutritionTimelinePoint[]): number {
+    const maximum = Math.max(...points.map(item => this.metricValue(item)), 0);
     if (maximum <= 0) return 0;
     const value = this.metricValue(point);
     return value > 0 ? Math.max((value / maximum) * 100, 3) : 0;
   }
 
-  protected isSingleDay(point: NutritionTimelinePoint): boolean {
+  isSingleDay(point: NutritionTimelinePoint): boolean {
     return point.period_start === point.period_end;
   }
 
-  protected initials(name: string): string {
-    return name
-      .split(/\s+/)
-      .slice(0, 2)
-      .map((part) => part[0])
-      .join('')
-      .toLocaleUpperCase('ru');
+  initials(name: string): string {
+    return initials(name);
   }
 
   private loadInitialData(): void {
@@ -219,14 +202,14 @@ export class StatisticsPage implements OnInit {
     this.accountBootstrap
       .ensureAccount()
       .pipe(
-        switchMap((account) => {
+        switchMap(account => {
           this.accountId = account.id;
           return this.api.listUsers(account.id);
         }),
         finalize(() => this.loadingInitial.set(false)),
       )
       .subscribe({
-        next: (users) => {
+        next: users => {
           this.users.set(users);
           this.accountContext.setMembers(users);
           this.loadDailyReports();
@@ -249,20 +232,17 @@ export class StatisticsPage implements OnInit {
     this.loadingDaily.set(true);
     this.dailyError.set(null);
     const selectedDay = this.selectedDay();
-    const goalRequests = users.map((user) =>
+    const goalRequests = users.map(user =>
       this.api.getGoalForDate(this.accountId!, user.id, selectedDay).pipe(
-        switchMap((timeline) => {
+        switchMap(timeline => {
           const activeGoal = timeline.periods[0];
           if (activeGoal) return of({ goal: activeGoal, goalIsFallback: false });
 
           return this.api.listGoals(this.accountId!, user.id).pipe(
-            map((goals) => {
+            map(goals => {
               const nextGoal = [...goals]
-                .filter((goal) => goal.effective_from > selectedDay)
-                .sort(
-                  (left, right) =>
-                    left.effective_from.localeCompare(right.effective_from) || left.id - right.id,
-                )[0];
+                .filter(goal => goal.effective_from > selectedDay)
+                .sort((left, right) => left.effective_from.localeCompare(right.effective_from) || left.id - right.id)[0];
               const goal: GoalTarget | null = nextGoal
                 ? {
                     goal_id: nextGoal.id,
@@ -292,7 +272,7 @@ export class StatisticsPage implements OnInit {
       .subscribe({
         next: ({ totals, goals }) => {
           if (requestId !== this.dailyRequestId) return;
-          const totalsByUser = new Map(totals.users.map((total) => [total.user_id, total]));
+          const totalsByUser = new Map(totals.users.map(total => [total.user_id, total]));
           this.dailyReports.set(
             users.map((user, index) => ({
               user,
@@ -323,23 +303,10 @@ export class StatisticsPage implements OnInit {
 
     this.loadingPeriod.set(true);
     this.periodError.set(null);
-    const requests = users.map((user) =>
+    const requests = users.map(user =>
       forkJoin({
-        average: this.api.getNutritionAverage(
-          this.accountId!,
-          user.id,
-          this.dateFrom(),
-          this.dateTo(),
-          this.includeEmptyDays(),
-        ),
-        timeline: this.api.getNutritionTimeline(
-          this.accountId!,
-          user.id,
-          this.dateFrom(),
-          this.dateTo(),
-          this.granularity(),
-          this.includeEmptyDays(),
-        ),
+        average: this.api.getNutritionAverage(this.accountId!, user.id, this.dateFrom(), this.dateTo(), this.includeEmptyDays()),
+        timeline: this.api.getNutritionTimeline(this.accountId!, user.id, this.dateFrom(), this.dateTo(), this.granularity(), this.includeEmptyDays()),
       }).pipe(map(({ average, timeline }) => ({ user, average, timeline }))),
     );
 
@@ -350,7 +317,7 @@ export class StatisticsPage implements OnInit {
         }),
       )
       .subscribe({
-        next: (reports) => {
+        next: reports => {
           if (requestId !== this.periodRequestId) return;
           this.averageReports.set(reports.map(({ user, average }) => ({ user, average })));
           this.timelineReports.set(reports.map(({ user, timeline }) => ({ user, timeline })));
@@ -365,23 +332,5 @@ export class StatisticsPage implements OnInit {
 
   private emptyUserTotals(userId: number): UserDailyTotal {
     return { user_id: userId, ...EMPTY_NUTRIENTS };
-  }
-
-  private todayIsoDate(): string {
-    const today = new Date();
-    const year = today.getFullYear();
-    const month = String(today.getMonth() + 1).padStart(2, '0');
-    const day = String(today.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`;
-  }
-
-  private shiftIsoDate(value: string, offset: number): string {
-    const [year, month, day] = value.split('-').map(Number);
-    const date = new Date(year, month - 1, day);
-    date.setDate(date.getDate() + offset);
-    const shiftedYear = date.getFullYear();
-    const shiftedMonth = String(date.getMonth() + 1).padStart(2, '0');
-    const shiftedDay = String(date.getDate()).padStart(2, '0');
-    return `${shiftedYear}-${shiftedMonth}-${shiftedDay}`;
   }
 }

@@ -1,17 +1,3 @@
-.page {
-  max-width: 1240px;
-  margin: auto;
-  padding: 46px 28px 80px;
-}
-
-.welcome {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 28px;
-  margin-bottom: 30px;
-}
-
 .eyebrow {
   color: #88938d;
   font-size: 11px;
@@ -29,7 +15,7 @@ h1 {
   letter-spacing: -1.2px;
 }
 
-.welcome p,
+.page-description,
 .section-title p {
   margin: 0;
   color: #7b8781;
@@ -495,11 +481,6 @@ h3 small {
 }
 
 @media (max-width: 1050px) {
-  .welcome {
-    align-items: flex-start;
-    flex-direction: column;
-  }
-
   .header-actions {
     width: 100%;
   }
@@ -514,10 +495,6 @@ h3 small {
 }
 
 @media (max-width: 620px) {
-  .page {
-    padding: 32px 16px 60px;
-  }
-
   .header-actions {
     align-items: stretch;
     flex-direction: column;

@@ -1,5 +1,6 @@
 import { DatePipe, DecimalPipe } from '@angular/common';
-import { Component, inject, OnInit, signal } from '@angular/core';
+import type { OnInit } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -8,30 +9,23 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { format } from 'date-fns';
 import { finalize, forkJoin, switchMap } from 'rxjs';
+
 import { AccountBootstrapService } from '../../../../core/account/account-bootstrap.service';
-import { Meal, MealPayload, MealType, MealUser } from '../../data-access/meal.models';
+import type { UserIdentity } from '../../../../shared/domain/identity.types';
+import type { MealType } from '../../../../shared/domain/meal.types';
+import { UIPageComponent } from '../../../../shared/ui/page/page';
+import { mealTypeIcon, mealTypeLabel } from '../../../../shared/utils/meal.utils';
 import { MealsApiService } from '../../data-access/meals-api.service';
-import {
-  MealDayCopyDialog,
-  MealDayCopyDialogData,
-  MealDayCopyDialogResult,
-} from '../../ui/meal-day-copy-dialog/meal-day-copy-dialog';
+import type { Meal, MealPayload } from '../../types/meal.types';
+import type { MealDayCopyDialogData, MealDayCopyDialogResult } from '../../ui/meal-day-copy-dialog/meal-day-copy-dialog';
+import { MealDayCopyDialog } from '../../ui/meal-day-copy-dialog/meal-day-copy-dialog';
 import { MealFormDialog } from '../../ui/meal-form-dialog/meal-form-dialog';
 
 @Component({
   selector: 'app-meal-list-page',
-  imports: [
-    DatePipe,
-    DecimalPipe,
-    FormsModule,
-    MatButtonModule,
-    MatCardModule,
-    MatIconModule,
-    MatProgressSpinnerModule,
-    MatSnackBarModule,
-    RouterLink,
-  ],
+  imports: [DatePipe, DecimalPipe, FormsModule, MatButtonModule, MatCardModule, MatIconModule, MatProgressSpinnerModule, MatSnackBarModule, RouterLink, UIPageComponent],
   templateUrl: './meal-list.page.html',
   styleUrl: './meal-list.page.scss',
 })
@@ -46,25 +40,25 @@ export class MealListPage implements OnInit {
   private createRequested = this.route.snapshot.queryParamMap.get('create') === 'true';
   private copyRequested = this.route.snapshot.queryParamMap.get('copy');
 
-  protected readonly todayDate = this.todayIsoDate();
-  protected readonly meals = signal<Meal[]>([]);
-  protected readonly users = signal<MealUser[]>([]);
-  protected readonly loading = signal(true);
-  protected readonly saving = signal(false);
-  protected readonly error = signal<string | null>(null);
-  protected readonly dateFilter = signal(this.todayDate);
+  readonly todayDate = format(new Date(), 'yyyy-MM-dd');
+  readonly meals = signal<Meal[]>([]);
+  readonly users = signal<UserIdentity[]>([]);
+  readonly loading = signal(true);
+  readonly saving = signal(false);
+  readonly error = signal<string | null>(null);
+  readonly dateFilter = signal(this.todayDate);
 
   ngOnInit(): void {
     this.loadMeals();
   }
 
-  protected loadMeals(): void {
+  loadMeals(): void {
     this.loading.set(true);
     this.error.set(null);
     this.accountBootstrap
       .ensureAccount()
       .pipe(
-        switchMap((account) => {
+        switchMap(account => {
           this.accountId = account.id;
           return forkJoin({
             meals: this.api.listMeals(account.id, this.dateFilter() || undefined),
@@ -102,31 +96,31 @@ export class MealListPage implements OnInit {
       });
   }
 
-  protected setDateFilter(date: string): void {
+  setDateFilter(date: string): void {
     this.dateFilter.set(date);
     this.loadMeals();
   }
 
-  protected createMeal(): void {
-    const initialDate = this.dateFilter() || this.todayIsoDate();
+  createMeal(): void {
+    const initialDate = this.dateFilter() || format(new Date(), 'yyyy-MM-dd');
     this.dialog
       .open<MealFormDialog, string, MealPayload>(MealFormDialog, { data: initialDate })
       .afterClosed()
-      .subscribe((payload) => {
+      .subscribe(payload => {
         if (!payload || !this.accountId) return;
         this.saving.set(true);
         this.api
           .createMeal(this.accountId, payload)
           .pipe(finalize(() => this.saving.set(false)))
           .subscribe({
-            next: (meal) => void this.router.navigate(['/meals', meal.id]),
+            next: meal => void this.router.navigate(['/meals', meal.id]),
             error: () => this.error.set('Не удалось создать приём пищи.'),
           });
       });
   }
 
-  protected copyMealDay(requestedSourceDate?: string): void {
-    const sourceDate = requestedSourceDate || this.dateFilter() || this.todayIsoDate();
+  copyMealDay(requestedSourceDate?: string): void {
+    const sourceDate = requestedSourceDate || this.dateFilter() || format(new Date(), 'yyyy-MM-dd');
     this.dialog
       .open<MealDayCopyDialog, MealDayCopyDialogData, MealDayCopyDialogResult>(MealDayCopyDialog, {
         width: '720px',
@@ -134,7 +128,7 @@ export class MealListPage implements OnInit {
         data: { sourceDate },
       })
       .afterClosed()
-      .subscribe((result) => {
+      .subscribe(result => {
         if (!result || !this.accountId) return;
 
         this.saving.set(true);
@@ -146,46 +140,30 @@ export class MealListPage implements OnInit {
           })
           .pipe(finalize(() => this.saving.set(false)))
           .subscribe({
-            next: (mealDay) => {
+            next: mealDay => {
               this.dateFilter.set(mealDay.meal_date);
               this.meals.set(mealDay.meals);
               this.snackBar.open('Рацион успешно скопирован.', 'Закрыть', {
                 duration: 4000,
               });
             },
-            error: () =>
-              this.error.set(
-                'Не удалось скопировать рацион. Если целевой день уже заполнен, включите замену существующих приёмов.',
-              ),
+            error: () => this.error.set('Не удалось скопировать рацион. Если целевой день уже заполнен, включите замену существующих приёмов.'),
           });
       });
   }
 
-  protected typeLabel(type: MealType): string {
-    return { breakfast: 'Завтрак', lunch: 'Обед', dinner: 'Ужин', other: 'Другое' }[type];
+  typeLabel(type: MealType): string {
+    return mealTypeLabel(type);
   }
 
-  protected typeIcon(type: MealType): string {
-    return {
-      breakfast: 'bakery_dining',
-      lunch: 'lunch_dining',
-      dinner: 'dinner_dining',
-      other: 'restaurant',
-    }[type];
+  typeIcon(type: MealType): string {
+    return mealTypeIcon(type);
   }
 
-  protected userCalories(meal: Meal, userId: number): number {
+  userCalories(meal: Meal, userId: number): number {
     return meal.rows.reduce((mealTotal, row) => {
-      const grams = row.portions.find((portion) => portion.user_id === userId)?.amount_g ?? 0;
+      const grams = row.portions.find(portion => portion.user_id === userId)?.amount_g ?? 0;
       return mealTotal + (row.calories_kcal * grams) / 100;
     }, 0);
-  }
-
-  private todayIsoDate(): string {
-    const today = new Date();
-    const year = today.getFullYear();
-    const month = String(today.getMonth() + 1).padStart(2, '0');
-    const day = String(today.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`;
   }
 }

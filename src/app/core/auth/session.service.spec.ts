@@ -1,6 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { AuthService } from '@auth0/auth0-angular';
 import { BehaviorSubject } from 'rxjs';
+
 import { SessionService } from './session.service';
 
 describe('SessionService', () => {

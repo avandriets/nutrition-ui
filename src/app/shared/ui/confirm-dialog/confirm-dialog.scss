@@ -1,0 +1,35 @@
+:host {
+  display: block;
+  padding-top: 24px;
+  text-align: center;
+}
+
+.ui-confirm-dialog__icon {
+  display: grid;
+  place-items: center;
+  width: 54px;
+  height: 54px;
+  margin: auto;
+  border-radius: 17px;
+  background: #eef6f1;
+  color: #397b5b;
+}
+
+.ui-confirm-dialog__icon--danger {
+  background: #fff0ed;
+  color: #c65c4d;
+}
+
+h2 {
+  padding-bottom: 6px !important;
+}
+
+mat-dialog-content {
+  color: #76827b;
+  line-height: 1.5;
+}
+
+.danger {
+  background: #ba4f43 !important;
+  color: white !important;
+}

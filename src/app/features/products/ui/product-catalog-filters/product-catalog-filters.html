@@ -1,0 +1,8 @@
+<mat-card class="filters">
+  <app-product-search />
+  <app-product-category-filter [categories]="categories()"
+                               [category]="category()"
+                               (categoryChange)="setCategory($event)" />
+  <app-product-view-toggle [viewMode]="viewMode()"
+                           (viewModeChange)="setViewMode($event)" />
+</mat-card>

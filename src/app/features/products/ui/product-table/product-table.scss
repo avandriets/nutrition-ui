@@ -1,0 +1,117 @@
+:host {
+  display: block;
+  min-width: 0;
+}
+
+.table-shell {
+  overflow-x: auto;
+  border: 1px solid #e5ebe7;
+  border-radius: 18px;
+  box-shadow: 0 7px 24px rgba(29, 59, 43, 0.045);
+}
+
+.product-table {
+  width: 100%;
+  min-width: 850px;
+  border-collapse: collapse;
+  background: white;
+}
+
+.product-table th {
+  padding: 13px 16px;
+  border-bottom: 1px solid #e7ece9;
+  background: #f7f9f7;
+  color: #87928c;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.8px;
+  text-align: left;
+  text-transform: uppercase;
+}
+
+.product-table td {
+  padding: 13px 16px;
+  border-bottom: 1px solid #edf0ee;
+  color: #536057;
+  font-size: 11px;
+}
+
+.product-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.product-table tbody tr:hover {
+  background: #fafcfb;
+}
+
+.product-table .number {
+  text-align: right;
+  white-space: nowrap;
+}
+
+.table-product {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  min-width: 190px;
+}
+
+.table-product div {
+  display: grid;
+  gap: 3px;
+}
+
+.table-product strong {
+  color: #26342c;
+  font-size: 12px;
+}
+
+.table-product small {
+  color: #929c96;
+  font-size: 9px;
+}
+
+.table-icon {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  flex: none;
+  border-radius: 11px;
+  background: #eaf7ef;
+  color: #388960;
+}
+
+.table-icon mat-icon {
+  width: 19px;
+  height: 19px;
+  font-size: 19px;
+}
+
+.table-category {
+  display: inline-block;
+  max-width: 130px;
+  padding: 5px 8px;
+  overflow: hidden;
+  border-radius: 7px;
+  background: #f2f5f3;
+  color: #748078;
+  font-size: 9px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.calories-cell {
+  color: #2e7d55 !important;
+  font-weight: 700;
+}
+
+.product-table .actions {
+  width: 52px;
+  padding: 4px 8px;
+  text-align: center;
+}
+
+.actions button {
+  color: #87928c;
+}

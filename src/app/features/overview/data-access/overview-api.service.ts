@@ -1,14 +1,16 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
-import { OverviewGoal, OverviewMeal, OverviewUser } from './overview.models';
+import type { Observable } from 'rxjs';
+
+import type { UserIdentity } from '../../../shared/domain/identity.types';
+import type { OverviewGoal, OverviewMeal } from '../types/overview.types';
 
 @Injectable()
 export class OverviewApiService {
   private readonly http = inject(HttpClient);
 
-  listUsers(accountId: number): Observable<OverviewUser[]> {
-    return this.http.get<OverviewUser[]>(`/api/accounts/${accountId}/users`);
+  listUsers(accountId: number): Observable<UserIdentity[]> {
+    return this.http.get<UserIdentity[]>(`/api/accounts/${accountId}/users`);
   }
 
   listMeals(accountId: number, mealDate: string): Observable<OverviewMeal[]> {
