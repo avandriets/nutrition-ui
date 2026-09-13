@@ -1,0 +1,10 @@
+@if (user(); as currentUser) {
+  <div class="user-heading">
+    <div class="avatar">{{ initials(currentUser.name) }}</div>
+    <div>
+      <span class="eyebrow">ПЕРСОНАЛЬНЫЙ ДНЕВНИК</span>
+      <h1>{{ currentUser.name }}</h1>
+      <p>Индивидуальные порции и дневной баланс питания.</p>
+    </div>
+  </div>
+}

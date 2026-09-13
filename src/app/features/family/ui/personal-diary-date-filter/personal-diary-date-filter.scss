@@ -1,0 +1,28 @@
+:host {
+  display: block;
+}
+
+input {
+  height: 43px;
+  padding: 0 12px;
+  border: 1px solid #dce5df;
+  border-radius: 12px;
+  outline: 0;
+  color: #35423a;
+  background: white;
+  font: inherit;
+  font-size: 11px;
+}
+
+input:focus {
+  border-color: #4b986d;
+  box-shadow: 0 0 0 3px #4b986d1c;
+}
+
+@media (max-width: 620px) {
+  :host,
+  input {
+    width: 100%;
+    box-sizing: border-box;
+  }
+}

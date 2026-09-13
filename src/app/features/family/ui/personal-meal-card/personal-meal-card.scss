@@ -1,0 +1,161 @@
+.personal-meal-card {
+  overflow: hidden;
+  margin-bottom: 12px;
+  border: 1px solid #e5ebe7;
+  border-radius: 18px;
+  box-shadow: 0 7px 24px rgba(29, 59, 43, 0.045);
+}
+
+.meal-card-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 15px 17px;
+  border-bottom: 1px solid #e8eeea;
+}
+
+.meal-title {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  flex: 1;
+}
+
+.meal-icon {
+  display: grid;
+  place-items: center;
+  width: 43px;
+  height: 43px;
+  flex: none;
+  border-radius: 13px;
+}
+
+.meal-icon.breakfast {
+  color: #c97832;
+  background: #fff1e4;
+}
+
+.meal-icon.lunch {
+  color: #398c60;
+  background: #eaf7ef;
+}
+
+.meal-icon.dinner {
+  color: #7658c7;
+  background: #f0ebff;
+}
+
+.meal-icon.other {
+  color: #4c8ba1;
+  background: #e7f5f8;
+}
+
+.meal-title span {
+  color: #3d9165;
+  font-size: 8px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.meal-title h3 {
+  margin: 2px 0;
+  color: #2b3931;
+  font-size: 15px;
+}
+
+.meal-title small {
+  color: #8b9690;
+  font-size: 9px;
+}
+
+.meal-total {
+  display: grid;
+  justify-items: end;
+}
+
+.meal-total strong {
+  color: #2f7d56;
+  font-size: 18px;
+}
+
+.meal-total span {
+  color: #929c96;
+  font-size: 8px;
+}
+
+.meal-card-header > a {
+  color: #397d59;
+}
+
+.meal-table-scroll {
+  overflow-x: auto;
+}
+
+.meal-table {
+  width: 100%;
+  min-width: 790px;
+  border-spacing: 0;
+  border-collapse: collapse;
+}
+
+.meal-table th,
+.meal-table td {
+  padding: 10px 13px;
+  border-bottom: 1px solid #edf1ee;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.meal-table tr:last-child th,
+.meal-table tr:last-child td {
+  border-bottom: 0;
+}
+
+.meal-table thead th {
+  color: #849089;
+  background: #f8faf9;
+  font-size: 8px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.meal-table th:first-child {
+  min-width: 220px;
+  text-align: left;
+}
+
+.meal-table tbody th {
+  display: grid;
+  gap: 2px;
+}
+
+.meal-table tbody th strong {
+  color: #35433b;
+  font-size: 11px;
+}
+
+.meal-table tbody th small,
+.meal-table tbody td {
+  color: #87928c;
+  font-size: 9px;
+}
+
+.meal-table tbody td strong {
+  color: #334139;
+  font-size: 11px;
+}
+
+@media (max-width: 620px) {
+  .meal-card-header {
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .meal-title {
+    min-width: calc(100% - 82px);
+  }
+
+  .meal-card-header > a {
+    width: 100%;
+  }
+}

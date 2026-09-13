@@ -1,0 +1,58 @@
+<mat-card class="personal-meal-card">
+  <div class="meal-card-header">
+    <div class="meal-title">
+      <div class="meal-icon"
+           [class]="view().meal.meal_type">
+        <mat-icon>{{ typeIcon(view().meal.meal_type) }}</mat-icon>
+      </div>
+      <div>
+        <span>{{ typeLabel(view().meal.meal_type) }}</span>
+        <h3>{{ view().meal.name || typeLabel(view().meal.meal_type) }}</h3>
+        <small>{{ view().rows.length }} продуктов</small>
+      </div>
+    </div>
+    <div class="meal-total">
+      <strong>{{ view().totals.calories_kcal | number: '1.0-0' }}</strong>
+      <span>ккал</span>
+    </div>
+    <a mat-stroked-button
+       [routerLink]="['/meals', view().meal.id]">
+      Открыть
+      <mat-icon>arrow_forward</mat-icon>
+    </a>
+  </div>
+  <div class="meal-table-scroll">
+    <table class="meal-table">
+      <thead>
+        <tr>
+          <th scope="col">Продукт</th>
+          <th scope="col">Порция</th>
+          <th scope="col">Ккал</th>
+          <th scope="col">Белки</th>
+          <th scope="col">Жиры</th>
+          <th scope="col">Углеводы</th>
+          <th scope="col">Клетчатка</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (row of view().rows; track row.id) {
+          <tr>
+            <th scope="row">
+              <strong>{{ row.product_name }}</strong>
+              <small>{{ row.product_brand || 'Без бренда' }}</small>
+            </th>
+            <td>
+              <strong>{{ row.portion_g | number: '1.0-1' }}</strong>
+              г
+            </td>
+            <td>{{ row.calories_kcal | number: '1.0-0' }}</td>
+            <td>{{ row.protein_g | number: '1.0-1' }} г</td>
+            <td>{{ row.fat_g | number: '1.0-1' }} г</td>
+            <td>{{ row.carbohydrates_g | number: '1.0-1' }} г</td>
+            <td>{{ row.fiber_g | number: '1.0-1' }} г</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</mat-card>

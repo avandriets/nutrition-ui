@@ -1,0 +1,27 @@
+<div class="section-heading">
+  <div>
+    <h2>Приёмы пищи</h2>
+    <p>Только индивидуальные порции {{ userName() }}</p>
+  </div>
+</div>
+
+<app-ui-state-container height="300px"
+                        [state]="state()"
+                        [resolved]="resolved"
+                        [empty]="empty">
+  <ng-template #resolved>
+    @for (view of mealViews(); track view.meal.id) {
+      <app-personal-meal-card [view]="view" />
+    }
+  </ng-template>
+</app-ui-state-container>
+
+<ng-template #empty>
+  <mat-card class="empty-meals">
+    <div class="empty-icon"><mat-icon>restaurant_menu</mat-icon></div>
+    <h3>На эту дату порций нет</h3>
+    <p>Добавьте порцию пользователя в общий семейный приём пищи.</p>
+    <a mat-stroked-button
+       routerLink="/meals">Перейти к приёмам пищи</a>
+  </mat-card>
+</ng-template>

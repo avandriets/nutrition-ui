@@ -1,0 +1,37 @@
+.user-heading {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.avatar {
+  display: grid;
+  place-items: center;
+  width: 64px;
+  height: 64px;
+  flex: none;
+  border-radius: 19px;
+  color: #76542d;
+  background: linear-gradient(145deg, #f5d7a8, #efc482);
+  font-size: 18px;
+  font-weight: 800;
+}
+
+.eyebrow {
+  color: #3d9165;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 1.2px;
+}
+
+h1 {
+  margin: 4px 0;
+  color: #17241d;
+  font-size: clamp(29px, 3vw, 37px);
+}
+
+p {
+  margin: 0;
+  color: #7b8781;
+  font-size: 12px;
+}

@@ -1,0 +1,40 @@
+<div class="section-heading">
+  <div>
+    <h2>Итоги за день</h2>
+    <p>{{ date() | date: 'd MMMM y' : '' : 'ru' }}</p>
+  </div>
+  <span>{{ mealsCountLabel() }}</span>
+</div>
+
+<div class="nutrient-grid">
+  <mat-card class="nutrient-card calories">
+    <mat-icon>local_fire_department</mat-icon>
+    <span>КАЛОРИИ</span>
+    <strong>{{ totals().calories_kcal | number: '1.0-0' }}</strong>
+    <small>ккал</small>
+  </mat-card>
+  <mat-card class="nutrient-card protein">
+    <mat-icon>fitness_center</mat-icon>
+    <span>БЕЛКИ</span>
+    <strong>{{ totals().protein_g | number: '1.0-1' }}</strong>
+    <small>г</small>
+  </mat-card>
+  <mat-card class="nutrient-card fat">
+    <mat-icon>water_drop</mat-icon>
+    <span>ЖИРЫ</span>
+    <strong>{{ totals().fat_g | number: '1.0-1' }}</strong>
+    <small>г</small>
+  </mat-card>
+  <mat-card class="nutrient-card carbs">
+    <mat-icon>grain</mat-icon>
+    <span>УГЛЕВОДЫ</span>
+    <strong>{{ totals().carbohydrates_g | number: '1.0-1' }}</strong>
+    <small>г</small>
+  </mat-card>
+  <mat-card class="nutrient-card fiber">
+    <mat-icon>eco</mat-icon>
+    <span>КЛЕТЧАТКА</span>
+    <strong>{{ totals().fiber_g | number: '1.0-1' }}</strong>
+    <small>г</small>
+  </mat-card>
+</div>

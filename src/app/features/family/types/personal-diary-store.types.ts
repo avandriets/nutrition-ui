@@ -14,8 +14,13 @@ export interface PersonalDiaryData {
   dayTotals: NutrientValues;
 }
 
+export type PersonalDiaryMealRowView = Omit<DiaryMealRow, keyof NutrientValues | 'portions'> &
+  NutrientValues & {
+    portion_g: number;
+  };
+
 export interface PersonalDiaryMealView {
   meal: DiaryMeal;
-  rows: DiaryMealRow[];
+  rows: PersonalDiaryMealRowView[];
   totals: NutrientValues;
 }

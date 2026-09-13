@@ -93,7 +93,14 @@ describe('PersonalDiaryStore', () => {
     expect(store.user()).toEqual(user);
     expect(store.goal()).toEqual(goal);
     expect(store.dayTotals()).toEqual(totals.users[0]);
+    expect(store.mealViews()[0].rows[0]).toMatchObject({
+      portion_g: 150,
+      calories_kcal: 150,
+      protein_g: 15,
+    });
     expect(store.mealViews()[0].totals.calories_kcal).toBe(150);
+    expect(store.goalState().empty).toBe(false);
+    expect(store.mealsState().empty).toBe(false);
     expect(store.pageState().resolved).toBe(true);
   });
 
@@ -126,6 +133,10 @@ describe('PersonalDiaryStore', () => {
     expect(store.meals()).toEqual([meal]);
     expect(store.refreshError()).toBe('Не удалось загрузить персональный дневник.');
     expect(store.pageState().resolved).toBe(true);
+
+    store.dismissRefreshError();
+
+    expect(store.refreshError()).toBeNull();
   });
 
   it('rejects an invalid route identifier without making requests', () => {
