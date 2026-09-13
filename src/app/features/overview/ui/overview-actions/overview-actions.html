@@ -1,0 +1,21 @@
+<div class="user-filter">
+  <mat-icon>person</mat-icon>
+  <div>
+    <span>ЧЛЕН СЕМЬИ</span>
+    <mat-select aria-label="Фильтр по члену семьи"
+                [value]="selectedUserId()"
+                [disabled]="!users().length"
+                (selectionChange)="selectUser($event.value)">
+      @for (user of users(); track user.id) {
+        <mat-option [value]="user.id">{{ user.name }}</mat-option>
+      }
+    </mat-select>
+  </div>
+</div>
+<a mat-flat-button
+   class="add-button"
+   routerLink="/meals"
+   [queryParams]="{ create: true }">
+  <mat-icon>add</mat-icon>
+  Добавить приём пищи
+</a>

@@ -1,0 +1,107 @@
+mat-card {
+  overflow: hidden;
+  border: 1px solid #e8ede9;
+  border-radius: 20px;
+  box-shadow: 0 7px 24px rgba(29, 59, 43, 0.045);
+}
+.table-scroll {
+  overflow-x: auto;
+}
+table {
+  width: 100%;
+  min-width: 950px;
+  border-spacing: 0;
+  border-collapse: separate;
+}
+th,
+td {
+  padding: 15px 17px;
+  border-bottom: 1px solid #e9eeeb;
+  text-align: left;
+}
+thead th {
+  color: #7c8982;
+  background: #f7faf8;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.7px;
+  text-transform: uppercase;
+}
+tbody tr:last-child th,
+tbody tr:last-child td {
+  border-bottom: 0;
+}
+tbody th {
+  display: flex;
+  align-items: center;
+  min-width: 310px;
+  gap: 12px;
+  font-weight: 400;
+}
+.meal-icon {
+  display: grid;
+  place-items: center;
+  width: 43px;
+  height: 43px;
+  flex: none;
+  border-radius: 13px;
+}
+.meal-icon.orange {
+  color: #d17d35;
+  background: #fff1e4;
+}
+.meal-icon.green {
+  color: #398c60;
+  background: #eaf7ef;
+}
+.meal-icon.purple {
+  color: #7658c7;
+  background: #f0ebff;
+}
+.meal-icon.blue {
+  color: #4f86af;
+  background: #eaf4fb;
+}
+.meal-main {
+  display: grid;
+  min-width: 0;
+  gap: 4px;
+}
+.meal-main strong {
+  color: #2d3a32;
+  font-size: 13px;
+}
+.meal-main small {
+  overflow: hidden;
+  max-width: 250px;
+  color: #88938d;
+  font-size: 10px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+td {
+  white-space: nowrap;
+}
+td strong {
+  color: #354239;
+  font-size: 13px;
+}
+td.calories strong {
+  color: #2f835a;
+}
+td span {
+  margin-left: 4px;
+  color: #969f9a;
+  font-size: 9px;
+}
+td a {
+  color: #428863;
+}
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}

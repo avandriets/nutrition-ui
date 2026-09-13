@@ -1,0 +1,70 @@
+:host {
+  display: flex;
+  align-items: center;
+  flex: none;
+  gap: 12px;
+}
+.user-filter {
+  display: flex;
+  align-items: center;
+  min-width: 195px;
+  height: 48px;
+  gap: 10px;
+  padding: 0 13px;
+  border: 1px solid #dde5e0;
+  border-radius: 14px;
+  background: white;
+}
+.user-filter > mat-icon {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 9px;
+  color: #6b56ae;
+  background: #f0ebff;
+  font-size: 18px;
+}
+.user-filter > div {
+  display: grid;
+  flex: 1;
+  gap: 1px;
+}
+.user-filter span {
+  color: #929c96;
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: 0.8px;
+}
+.user-filter mat-select {
+  color: #344139;
+  font-size: 12px;
+  font-weight: 700;
+}
+.add-button {
+  height: 48px;
+  padding: 0 20px;
+  border-radius: 14px;
+  color: white !important;
+  background: #31875d !important;
+  box-shadow: 0 9px 22px #31875d35;
+}
+@media (max-width: 1050px) {
+  :host {
+    width: 100%;
+  }
+  .user-filter {
+    flex: 1;
+  }
+}
+@media (max-width: 620px) {
+  :host {
+    align-items: stretch;
+    flex-direction: column;
+  }
+  .user-filter,
+  .add-button {
+    width: 100%;
+    box-sizing: border-box;
+  }
+}

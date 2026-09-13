@@ -1,0 +1,12 @@
+<app-ui-state-container height="180px"
+                        [state]="state()"
+                        [resolved]="resolved">
+  <ng-template #resolved>
+    <app-overview-calorie-summary [totals]="totals()"
+                                  [target]="calorieTarget()"
+                                  [percent]="caloriePercent()"
+                                  [remaining]="calorieRemaining()" />
+    <app-overview-nutrient-balance [userName]="userName()"
+                                   [nutrients]="nutrients()" />
+  </ng-template>
+</app-ui-state-container>

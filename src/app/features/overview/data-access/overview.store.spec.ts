@@ -104,6 +104,16 @@ describe('OverviewStore', () => {
     expect(getCurrentGoal).toHaveBeenLastCalledWith(account.id, users[1].id);
   });
 
+  it('uses the user requested by the route during initialization', () => {
+    const store = TestBed.inject(OverviewStore);
+
+    store.initialize(users[1].id);
+
+    expect(store.selectedUser()).toEqual(users[1]);
+    expect(store.dayTotals().calories_kcal).toBe(50);
+    expect(getCurrentGoal).toHaveBeenCalledWith(account.id, users[1].id);
+  });
+
   it('ignores a stale goal response after the user changes again', () => {
     const firstResponse = new Subject<OverviewGoal>();
     const secondResponse = new Subject<OverviewGoal>();
@@ -131,5 +141,15 @@ describe('OverviewStore', () => {
     expect(store.selectedUser()).toBeUndefined();
     expect(store.pageState().empty).toBe(true);
     expect(getCurrentGoal).not.toHaveBeenCalled();
+  });
+
+  it('exposes a dedicated empty state when there are no meals', () => {
+    api.listMeals.mockReturnValue(of([]));
+    const store = TestBed.inject(OverviewStore);
+
+    store.initialize();
+
+    expect(store.mealsState().empty).toBe(true);
+    expect(store.goalState().resolved).toBe(true);
   });
 });

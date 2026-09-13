@@ -24,6 +24,7 @@ export class OverviewStore {
   readonly meals = computed(() => this.dataStore.data()?.meals ?? []);
   readonly goal = computed(() => this.goalStore.data());
   readonly pageState = this.dataStore.requestState;
+  readonly goalState = this.goalStore.requestState;
   readonly selectedUser = computed(() => this.users().find(user => user.id === this.selectedUserIdState()));
 
   readonly mealSummaries = computed<OverviewMealSummary[]>(() => {
@@ -92,14 +93,19 @@ export class OverviewStore {
       },
     ];
   });
+  readonly mealsState = computed(() => {
+    const state = this.pageState();
+    return { ...state, pending: false, empty: state.resolved && !this.mealSummaries().length };
+  });
 
-  initialize(): void {
+  initialize(preferredUserId: number | null = null): void {
     this.dataStore
       .load({ mealDate: format(this.today, 'yyyy-MM-dd') })
       .pipe(
         tap(data => {
           this.accountContext.setMembers(data.users);
-          const selectedUserId = this.accountContext.activeUserId() ?? data.users[0]?.id ?? null;
+          const selectedUserId =
+            data.users.find(user => user.id === preferredUserId)?.id ?? data.users.find(user => user.id === this.accountContext.activeUserId())?.id ?? data.users[0]?.id ?? null;
           this.selectedUserIdState.set(selectedUserId);
 
           if (selectedUserId === null) {
@@ -113,15 +119,17 @@ export class OverviewStore {
       .subscribe();
   }
 
-  selectUser(userId: number): void {
-    if (!this.users().some(user => user.id === userId)) return;
+  selectUser(userId: number | null): void {
+    const selectedUserId = userId ?? this.users()[0]?.id ?? null;
+    if (selectedUserId === null) return;
+    if (!this.users().some(user => user.id === selectedUserId)) return;
 
     const accountId = this.dataStore.data()?.accountId;
     if (accountId === undefined) return;
 
-    this.selectedUserIdState.set(userId);
-    this.accountContext.selectUser(userId);
-    this.loadGoal(accountId, userId);
+    this.selectedUserIdState.set(selectedUserId);
+    this.accountContext.selectUser(selectedUserId);
+    this.loadGoal(accountId, selectedUserId);
   }
 
   private loadGoal(accountId: number, userId: number): void {

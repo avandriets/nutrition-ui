@@ -1,0 +1,33 @@
+<div class="section-title">
+  <div>
+    <h2>Сегодняшние приёмы пищи</h2>
+    <p>{{ userName() }} · добавлено: {{ summaries().length }}</p>
+  </div>
+  <a mat-button
+     routerLink="/meals">
+    Все приёмы
+    <mat-icon>arrow_forward</mat-icon>
+  </a>
+</div>
+
+<app-ui-state-container height="150px"
+                        [state]="state()"
+                        [resolved]="resolved"
+                        [empty]="empty">
+  <ng-template #resolved>
+    <app-overview-meals-table [summaries]="summaries()" />
+  </ng-template>
+</app-ui-state-container>
+
+<ng-template #empty>
+  <mat-card class="empty-meals">
+    <mat-icon>restaurant</mat-icon>
+    <div>
+      <h3>На сегодня нет приёмов пищи</h3>
+      <p>Создайте первый приём и укажите порцию.</p>
+    </div>
+    <a mat-stroked-button
+       routerLink="/meals"
+       [queryParams]="{ create: true }">Добавить</a>
+  </mat-card>
+</ng-template>

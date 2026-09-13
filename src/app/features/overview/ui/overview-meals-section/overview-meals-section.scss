@@ -1,0 +1,70 @@
+:host {
+  display: block;
+  margin-top: 40px;
+}
+.section-title {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 16px;
+}
+.section-title h2 {
+  margin: 0 0 6px;
+  color: #1b2821;
+  font-size: 20px;
+  letter-spacing: -0.5px;
+}
+.section-title p {
+  margin: 0;
+  color: #7b8781;
+  font-size: 14px;
+}
+.section-title a,
+.empty-meals a {
+  color: #3f8a64;
+}
+.section-title mat-icon {
+  font-size: 18px;
+}
+.empty-meals {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 22px;
+  border: 1px solid #e8ede9;
+  border-radius: 20px;
+  box-shadow: 0 7px 24px rgba(29, 59, 43, 0.045);
+}
+.empty-meals > mat-icon {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  flex: none;
+  border-radius: 14px;
+  color: #3f8a64;
+  background: #eaf7ef;
+}
+.empty-meals div {
+  flex: 1;
+}
+.empty-meals h3 {
+  margin: 0 0 5px;
+  color: #29362f;
+  font-size: 15px;
+}
+.empty-meals p {
+  margin: 0;
+  color: #87918c;
+  font-size: 11px;
+}
+@media (max-width: 620px) {
+  .section-title p {
+    display: none;
+  }
+  .empty-meals {
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+}

@@ -1,0 +1,93 @@
+mat-card {
+  padding: 25px 27px;
+  border: 1px solid #e8ede9;
+  border-radius: 20px;
+  box-shadow: 0 7px 24px rgba(29, 59, 43, 0.045);
+}
+.card-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+.card-heading > div:first-child > span {
+  color: #88938d;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 1.1px;
+}
+h2 {
+  margin: 8px 0 21px;
+  color: #1b2821;
+  font-size: 30px;
+  letter-spacing: -0.5px;
+}
+h2 small {
+  color: #929c97;
+  font-size: 13px;
+  font-weight: 500;
+}
+.trend,
+.goal-link {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 7px 10px;
+  border-radius: 10px;
+  color: #36815c;
+  background: #ecf7f0;
+  font-size: 11px;
+  font-weight: 700;
+}
+.trend.exceeded {
+  color: #c06440;
+  background: #fff0e9;
+}
+.trend mat-icon,
+.goal-link mat-icon {
+  width: 17px;
+  height: 17px;
+  font-size: 17px;
+}
+.goal-link {
+  text-decoration: none;
+}
+mat-progress-bar {
+  --mat-progress-bar-active-indicator-color: #4ea474;
+  --mat-progress-bar-track-color: #edf0ed;
+  height: 9px;
+  border-radius: 8px;
+}
+.calorie-legend {
+  display: flex;
+  gap: 30px;
+  margin-top: 18px;
+  color: #78847e;
+  font-size: 12px;
+}
+.calorie-legend span {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+.calorie-legend b {
+  color: #3e4a44;
+}
+.calorie-legend i {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+.consumed {
+  background: #4ea474;
+}
+.remaining {
+  background: #dfe5e1;
+}
+@media (max-width: 620px) {
+  mat-card {
+    padding: 21px;
+  }
+  h2 {
+    font-size: 26px;
+  }
+}
