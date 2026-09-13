@@ -17,8 +17,7 @@ import { UIStateContainerComponent } from '../../../../shared/ui/state-container
 import { mealTypeLabel } from '../../../../shared/utils/meal.utils';
 import { MealDetailStore } from '../../data-access/meal-detail.store';
 import type { MealEntryPayload, MealRow } from '../../types/meal.types';
-import type { EntryDialogData, MealEntryDialogResult } from '../../ui/meal-entry-dialog/meal-entry-dialog';
-import { MealEntryDialog } from '../../ui/meal-entry-dialog/meal-entry-dialog';
+import { type EntryDialogData, MealEntryDialog, type MealEntryDialogResult } from '../../ui';
 
 @Component({
   selector: 'app-meal-detail-page',

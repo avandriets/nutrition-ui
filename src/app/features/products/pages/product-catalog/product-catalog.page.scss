@@ -23,19 +23,6 @@ h1 {
   color: white !important;
   box-shadow: 0 9px 22px #31875d35;
 }
-.action-error {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 18px;
-  padding: 10px 12px 10px 16px;
-  border-radius: 13px;
-  background: #fff0ed;
-  color: #9c4439;
-}
-.action-error span {
-  flex: 1;
-}
 mat-card {
   border: 1px solid #e5ebe7;
   box-shadow: 0 7px 24px rgba(29, 59, 43, 0.045);

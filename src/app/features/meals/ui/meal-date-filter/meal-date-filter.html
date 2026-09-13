@@ -1,0 +1,8 @@
+<label>
+  <span>Дата</span>
+  <input #dateInput
+         type="date"
+         aria-label="Дата приёмов пищи"
+         [value]="date()"
+         (change)="setDate(dateInput.value)" />
+</label>

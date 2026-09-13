@@ -3,7 +3,7 @@ import { signalStore, withMethods } from '@ngrx/signals';
 import type { Observable } from 'rxjs';
 import { defaultIfEmpty, finalize, map, of, shareReplay } from 'rxjs';
 
-import type { Product, ProductListParams, ProductPayload, EntityDataAdapter } from '../../types';
+import type { EntityDataAdapter, Product, ProductListParams, ProductPayload } from '../../types';
 import { withEntityData } from '../entity-data/with-entity-data';
 import { productsEvents } from './products.events';
 import { productsProcessors } from './products.processors';

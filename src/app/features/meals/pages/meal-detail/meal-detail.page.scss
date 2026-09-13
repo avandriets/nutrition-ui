@@ -76,21 +76,6 @@ mat-card {
   box-shadow: 0 7px 24px rgba(29, 59, 43, 0.045);
 }
 
-.error-banner {
-  display: flex;
-  align-items: center;
-  gap: 9px;
-  margin-bottom: 15px;
-  padding: 11px 14px;
-  border-radius: 13px;
-  background: #fff0ed;
-  color: #9c4439;
-}
-
-.error-banner span {
-  flex: 1;
-}
-
 .matrix-section,
 .summary-section {
   margin-top: 34px;

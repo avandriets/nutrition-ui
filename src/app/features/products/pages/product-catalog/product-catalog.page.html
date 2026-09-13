@@ -15,26 +15,16 @@
   </button>
 
   <ng-container body>
-    @if (actionError(); as message) {
-      <div class="action-error">
-        <mat-icon>error_outline</mat-icon>
-        <span>{{ message }}</span>
-        <button mat-icon-button
-                aria-label="Закрыть"
-                (click)="dismissActionError()">
-          <mat-icon>close</mat-icon>
-        </button>
-      </div>
-    }
-
     <app-product-catalog-filters [categories]="categories()"
                                  [category]="category()"
                                  [viewMode]="viewMode()" />
 
     <app-ui-state-container [height]="'380px'"
                             [state]="catalogState()"
+                            [actionError]="actionError()"
                             [empty]="empty"
-                            [resolved]="resolved">
+                            [resolved]="resolved"
+                            (actionErrorDismissed)="dismissActionError()">
       <ng-template #resolved>
         <div class="catalog-heading">
           <p>

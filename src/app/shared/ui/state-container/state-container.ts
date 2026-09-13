@@ -1,6 +1,8 @@
 import { NgTemplateOutlet } from '@angular/common';
 import type { TemplateRef } from '@angular/core';
-import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
@@ -15,7 +17,7 @@ const DEFAULT_STATUS: UIStateStatus = {
 
 @Component({
   selector: 'app-ui-state-container',
-  imports: [MatProgressBarModule, MatProgressSpinnerModule, NgTemplateOutlet],
+  imports: [MatButtonModule, MatIconModule, MatProgressBarModule, MatProgressSpinnerModule, NgTemplateOutlet],
   templateUrl: './state-container.html',
   styleUrl: './state-container.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -32,6 +34,8 @@ export class UIStateContainerComponent {
   readonly rejected = input<TemplateRef<unknown>>();
   readonly pending = input<TemplateRef<unknown>>();
   readonly updating = input<TemplateRef<unknown>>();
+  readonly actionError = input<string | Error | null>();
+  readonly actionErrorDismissed = output<void>();
 
   private readonly statuses = computed<readonly UIStateStatus[]>(() => {
     const state = this.state();
@@ -57,5 +61,10 @@ export class UIStateContainerComponent {
     if (typeof error === 'string' && error) return error;
 
     return 'Не удалось загрузить данные.';
+  });
+  readonly actionErrorMessage = computed(() => {
+    const error = this.actionError();
+
+    return error instanceof Error ? error.message : error;
   });
 }

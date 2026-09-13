@@ -1,0 +1,142 @@
+:host {
+  display: block;
+}
+
+.meal-link {
+  color: inherit;
+  text-decoration: none;
+}
+
+.meal-card {
+  display: grid;
+  grid-template-columns: auto 1fr auto auto;
+  align-items: center;
+  gap: 17px;
+  padding: 18px;
+  border: 1px solid #e5ebe7;
+  border-radius: 18px;
+  box-shadow: 0 7px 24px rgba(29, 59, 43, 0.045);
+  transition:
+    transform 0.2s,
+    box-shadow 0.2s;
+}
+
+.meal-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px #233b2e12;
+}
+
+.meal-icon {
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  border-radius: 16px;
+}
+
+.meal-icon.breakfast {
+  color: #d17d35;
+  background: #fff1e4;
+}
+
+.meal-icon.lunch {
+  color: #398c60;
+  background: #eaf7ef;
+}
+
+.meal-icon.dinner {
+  color: #7658c7;
+  background: #f0ebff;
+}
+
+.meal-icon.other {
+  color: #4c8ba1;
+  background: #e7f5f8;
+}
+
+.meal-copy > span {
+  color: #8d9791;
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+}
+
+.meal-copy h2 {
+  margin: 4px 0;
+  color: #202d25;
+  font-size: 16px;
+}
+
+.meal-copy p {
+  margin: 0;
+  color: #87928c;
+  font-size: 11px;
+}
+
+.meal-calories {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 7px;
+}
+
+.user-calories {
+  display: grid;
+  min-width: 88px;
+  gap: 2px;
+  padding: 7px 10px;
+  border: 1px solid #e2eae5;
+  border-radius: 11px;
+  background: #f8fbf9;
+  text-align: right;
+}
+
+.member-name {
+  overflow: hidden;
+  max-width: 120px;
+  color: #78857e;
+  font-size: 9px;
+  font-weight: 700;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.member-value {
+  color: #929c96;
+  font-size: 8px;
+  white-space: nowrap;
+}
+
+.member-value strong {
+  color: #2f7d56;
+  font-size: 15px;
+}
+
+.arrow {
+  margin-left: 4px;
+  color: #8f9993;
+}
+
+@media (max-width: 620px) {
+  .meal-card {
+    grid-template-columns: auto 1fr;
+  }
+
+  .arrow {
+    display: none;
+  }
+
+  .meal-calories {
+    grid-column: 1 / -1;
+    justify-content: flex-start;
+    width: 100%;
+    padding-top: 12px;
+    border-top: 1px solid #edf1ee;
+  }
+
+  .user-calories {
+    flex: 1;
+    min-width: 96px;
+    text-align: left;
+  }
+}

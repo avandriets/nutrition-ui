@@ -43,22 +43,12 @@
   <ng-container body>
     <app-ui-state-container height="430px"
                             [state]="pageState()"
-                            [resolved]="resolved" />
+                            [actionError]="actionError()"
+                            [resolved]="resolved"
+                            (actionErrorDismissed)="dismissActionError()" />
 
     <ng-template #resolved>
       @if (meal(); as currentMeal) {
-        @if (actionError(); as message) {
-          <div class="error-banner">
-            <mat-icon>error_outline</mat-icon>
-            <span>{{ message }}</span>
-            <button mat-icon-button
-                    aria-label="Закрыть"
-                    (click)="dismissActionError()">
-              <mat-icon>close</mat-icon>
-            </button>
-          </div>
-        }
-
         <section class="matrix-section">
           <div class="section-heading">
             <div>

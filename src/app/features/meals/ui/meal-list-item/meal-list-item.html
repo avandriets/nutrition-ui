@@ -1,0 +1,26 @@
+<a class="meal-link"
+   [routerLink]="['/meals', meal().id]">
+  <mat-card class="meal-card">
+    <div class="meal-icon"
+         [class]="meal().meal_type">
+      <mat-icon>{{ typeIcon(meal().meal_type) }}</mat-icon>
+    </div>
+    <div class="meal-copy">
+      <span>{{ meal().meal_date | date: 'd MMMM y' }}</span>
+      <h2>{{ meal().name || typeLabel(meal().meal_type) }}</h2>
+      <p>{{ typeLabel(meal().meal_type) }} · {{ meal().rows.length }} продуктов</p>
+    </div>
+    <div class="meal-calories">
+      @for (user of users(); track user.id) {
+        <div class="user-calories">
+          <span class="member-name">{{ user.name }}</span>
+          <span class="member-value">
+            <strong>{{ userCalories(user.id) | number: '1.0-0' }}</strong>
+            ккал
+          </span>
+        </div>
+      }
+    </div>
+    <mat-icon class="arrow">arrow_forward</mat-icon>
+  </mat-card>
+</a>

@@ -7,7 +7,17 @@ import { UIStateContainerComponent } from './state-container';
 @Component({
   imports: [UIStateContainerComponent],
   template: `
-    <app-ui-state-container [height]="'380px'" [state]="state" [resolved]="resolved" [empty]="empty" [rejected]="rejected" [pending]="pending" [updating]="updating">
+    <app-ui-state-container
+      [height]="'380px'"
+      [state]="state"
+      [resolved]="resolved"
+      [empty]="empty"
+      [rejected]="rejected"
+      [pending]="pending"
+      [updating]="updating"
+      [actionError]="actionError"
+      (actionErrorDismissed)="actionError = null"
+    >
       <ng-template #resolved>resolved</ng-template>
       <ng-template #empty>empty</ng-template>
       <ng-template #rejected>rejected</ng-template>
@@ -18,6 +28,7 @@ import { UIStateContainerComponent } from './state-container';
 })
 class TestHost {
   state?: UIState;
+  actionError: string | null = null;
 }
 
 @Component({
@@ -81,6 +92,23 @@ describe('UIStateContainerComponent', () => {
 
     expect(fixture.nativeElement.querySelector('.ui-state-container__resolved')?.textContent).toContain('resolved');
     expect(fixture.nativeElement.querySelector('.ui-state-container__updating')?.textContent).toContain('updating');
+  });
+
+  it('shows and dismisses an action error without replacing resolved content', () => {
+    const fixture = TestBed.createComponent(TestHost);
+    fixture.componentInstance.state = { resolved: true, rejected: false, pending: false, err: null };
+    fixture.componentInstance.actionError = 'Не удалось сохранить изменения';
+    fixture.detectChanges();
+
+    const actionError = fixture.nativeElement.querySelector('.ui-state-container__action-error') as HTMLElement;
+    expect(actionError.textContent).toContain('Не удалось сохранить изменения');
+    expect(fixture.nativeElement.querySelector('.ui-state-container__resolved')).not.toBeNull();
+
+    (actionError.querySelector('button') as HTMLButtonElement).click();
+    fixture.detectChanges();
+
+    expect(fixture.componentInstance.actionError).toBeNull();
+    expect(fixture.nativeElement.querySelector('.ui-state-container__action-error')).toBeNull();
   });
 
   it('shows the default pending state', () => {
