@@ -115,4 +115,38 @@ describe('StatisticsStore', () => {
     expect(api.getNutritionAverage).toHaveBeenCalledTimes(requestCount);
     expect(store.periodError()).toBe('Начало периода не может быть позже окончания.');
   });
+
+  it('reloads only the report group affected by route filters', () => {
+    const store = TestBed.inject(StatisticsStore);
+    store.initialize();
+    const dailyRequests = api.getDayTotals.mock.calls.length;
+    const periodRequests = api.getNutritionAverage.mock.calls.length;
+
+    store.applyFilters({
+      userId: null,
+      day: '2026-09-12',
+      dateFrom: store.dateFrom(),
+      dateTo: store.dateTo(),
+      granularity: store.granularity(),
+      includeEmptyDays: store.includeEmptyDays(),
+      metric: 'protein_g',
+    });
+
+    expect(api.getDayTotals).toHaveBeenCalledTimes(dailyRequests + 1);
+    expect(api.getNutritionAverage).toHaveBeenCalledTimes(periodRequests);
+    expect(store.selectedMetric()).toBe('protein_g');
+
+    store.applyFilters({
+      userId: null,
+      day: '2026-09-12',
+      dateFrom: '2026-08-01',
+      dateTo: store.dateTo(),
+      granularity: 'week',
+      includeEmptyDays: true,
+      metric: 'protein_g',
+    });
+
+    expect(api.getDayTotals).toHaveBeenCalledTimes(dailyRequests + 1);
+    expect(api.getNutritionAverage).toHaveBeenCalledTimes(periodRequests + users.length);
+  });
 });

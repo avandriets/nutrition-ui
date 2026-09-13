@@ -1,0 +1,109 @@
+.average-card {
+  min-width: 0;
+  padding: 18px;
+  border: 1px solid #e5ebe7;
+  border-radius: 18px;
+  box-shadow: 0 7px 24px rgba(29, 59, 43, 0.045);
+}
+.average-card-header,
+.average-calories {
+  display: flex;
+  align-items: center;
+}
+.average-card-header {
+  gap: 10px;
+}
+.avatar {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  flex: none;
+  border-radius: 13px;
+  color: #654da5;
+  background: #f0ebff;
+  font-size: 12px;
+  font-weight: 800;
+}
+h4 {
+  margin: 0;
+  color: #28362e;
+  font-size: 14px;
+}
+.average-card-header div > span {
+  color: #8a958f;
+  font-size: 9px;
+}
+.average-card-header b {
+  color: #46544b;
+}
+.average-calories {
+  gap: 10px;
+  margin-top: 17px;
+  padding: 12px;
+  border-radius: 13px;
+  background: #fff8f1;
+}
+.average-calories mat-icon {
+  color: #d27b34;
+}
+.average-calories span {
+  display: flex;
+  align-items: baseline;
+  flex: 1;
+  gap: 8px;
+  color: #8a7765;
+  font-size: 9px;
+}
+.average-calories strong {
+  color: #554437;
+  font-size: 21px;
+}
+.average-calories small {
+  color: #9b8979;
+  font-size: 9px;
+}
+.average-nutrients {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 7px;
+  margin-top: 10px;
+}
+.average-nutrients > span {
+  display: grid;
+  padding: 9px;
+  border-radius: 11px;
+}
+.average-nutrients small {
+  font-size: 7px;
+  font-weight: 800;
+}
+.average-nutrients strong {
+  margin-top: 5px;
+  font-size: 15px;
+}
+.average-nutrients b {
+  font-size: 8px;
+  font-weight: 600;
+}
+.protein {
+  color: #674eae;
+  background: #f0ebff;
+}
+.fat {
+  color: #a7682f;
+  background: #fff1e4;
+}
+.carbs {
+  color: #297c54;
+  background: #eaf7ef;
+}
+.fiber {
+  color: #3879a7;
+  background: #eaf4fb;
+}
+@media (max-width: 650px) {
+  .average-nutrients {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

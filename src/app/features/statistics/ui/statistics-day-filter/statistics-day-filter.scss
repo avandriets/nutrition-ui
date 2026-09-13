@@ -1,0 +1,51 @@
+:host {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  padding: 4px;
+  border: 1px solid #dfe7e2;
+  border-radius: 14px;
+  background: white;
+}
+
+label {
+  display: grid;
+  min-width: 142px;
+  gap: 2px;
+}
+
+label > span {
+  color: #909a94;
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: 0.7px;
+  text-transform: uppercase;
+}
+
+input {
+  border: 0;
+  outline: 0;
+  color: #354239;
+  background: transparent;
+  font:
+    700 12px Roboto,
+    sans-serif;
+}
+
+button {
+  width: 38px;
+  height: 38px;
+  color: #627168;
+}
+
+@media (max-width: 650px) {
+  :host {
+    justify-content: space-between;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  label {
+    flex: 1;
+  }
+}

@@ -1,0 +1,27 @@
+<div class="section-heading">
+  <div>
+    <span class="section-icon"><mat-icon>flag</mat-icon></span>
+    <div>
+      <h2>Достижение целей за день</h2>
+      <p>{{ selectedUserName() }}</p>
+    </div>
+  </div>
+  <app-statistics-day-filter [day]="selectedDay()"
+                             [today]="today()" />
+</div>
+
+<app-ui-state-container height="130px"
+                        [state]="state()"
+                        [actionError]="actionError()"
+                        [resolved]="resolved"
+                        (actionErrorDismissed)="actionErrorDismissed.emit()">
+  <ng-template #resolved>
+    <div class="daily-grid"
+         [class.single]="reports().length === 1">
+      @for (report of reports(); track report.user.id) {
+        <app-daily-goal-report-card [report]="report"
+                                    [day]="selectedDay()" />
+      }
+    </div>
+  </ng-template>
+</app-ui-state-container>

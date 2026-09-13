@@ -1,0 +1,47 @@
+:host {
+  display: flex;
+  align-items: center;
+  min-width: 210px;
+  gap: 10px;
+  padding: 9px 13px;
+  border: 1px solid #dfe7e2;
+  border-radius: 14px;
+  background: white;
+}
+
+mat-icon {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  color: #36865d;
+  background: #eaf7ef;
+  font-size: 18px;
+}
+
+span {
+  display: grid;
+  flex: 1;
+  gap: 1px;
+}
+
+small {
+  color: #929c96;
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: 0.8px;
+}
+
+mat-select {
+  color: #344139;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+@media (max-width: 650px) {
+  :host {
+    width: 100%;
+    box-sizing: border-box;
+  }
+}

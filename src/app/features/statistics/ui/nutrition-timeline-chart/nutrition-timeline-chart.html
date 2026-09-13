@@ -1,0 +1,59 @@
+<div class="subsection-heading">
+  <div>
+    <h3>Динамика питания</h3>
+    <p>{{ metricLabel() }} · {{ includeEmptyDays() ? 'все дни' : 'только дни с данными' }}</p>
+  </div>
+  <mat-select class="metric-select"
+              aria-label="Показатель графика"
+              [value]="metric()"
+              (selectionChange)="selectMetric($event.value)">
+    @for (option of metricOptions; track option.value) {
+      <mat-option [value]="option.value">{{ option.label }}</mat-option>
+    }
+  </mat-select>
+</div>
+
+<div class="timeline-list">
+  @for (report of reports(); track report.user.id) {
+    <mat-card class="timeline-card">
+      <div class="timeline-card-header">
+        <div>
+          <span class="avatar">{{ initials(report.user.name) }}</span>
+          <div>
+            <h4>{{ report.user.name }}</h4>
+            <small>{{ report.timeline.points.length }} периодов</small>
+          </div>
+        </div>
+        <span class="metric-badge">{{ metricLabel() }}</span>
+      </div>
+      @if (report.timeline.points.length) {
+        <div class="chart-scroll">
+          <div class="bar-chart">
+            @for (point of report.timeline.points; track point.period_start) {
+              <div class="bar-column"
+                   [attr.title]="metricLabel() + ': ' + (metricValue(point) | number: '1.0-1') + ' ' + metricUnit()">
+                <strong>{{ metricValue(point) | number: '1.0-1' }} <small>{{ metricUnit() }}</small></strong>
+                <div class="bar-track">
+                  <i [class.empty]="point.active_days === 0"
+                     [style.height.%]="barHeight(point, report.timeline.points)"></i>
+                </div>
+                <span>
+                  {{ point.period_start | date: 'd MMM' : '' : 'ru' }}
+                  @if (!isSingleDay(point)) {
+                    <small>— {{ point.period_end | date: 'd MMM' : '' : 'ru' }}</small>
+                  }
+                </span>
+                <em>{{ point.active_days }}/{{ point.calendar_days }} дн.</em>
+              </div>
+            }
+          </div>
+        </div>
+      } @else {
+        <div class="empty-chart">
+          <mat-icon>query_stats</mat-icon>
+          <span>За выбранный период данных нет</span>
+        </div>
+      }
+    </mat-card>
+  }
+</div>

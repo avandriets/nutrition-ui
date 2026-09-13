@@ -1,42 +1,43 @@
-import { DatePipe, DecimalPipe } from '@angular/common';
 import type { OnInit } from '@angular/core';
-import { Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
-import { MatProgressBarModule } from '@angular/material/progress-bar';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatSelectModule } from '@angular/material/select';
-import { MatSlideToggleModule } from '@angular/material/slide-toggle';
-import { RouterLink } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
+import { distinctUntilChanged, map, tap } from 'rxjs';
 
 import { UIPageComponent } from '../../../../shared/ui/page/page';
 import { UIStateContainerComponent } from '../../../../shared/ui/state-container/state-container';
-import { initials } from '../../../../shared/utils/name.utils';
 import { StatisticsStore } from '../../data-access/statistics.store';
-import type { DailyGoalReport, NutritionTimelinePoint, StatisticsMetric } from '../../types/statistics.types';
+import type { StatisticsFilters, StatisticsMetric, TimelineGranularity } from '../../types/statistics.types';
+import { DailyStatisticsSectionComponent, PeriodStatisticsSectionComponent, StatisticsUserFilterComponent } from '../../ui';
+
+const GRANULARITIES: readonly TimelineGranularity[] = ['day', 'week', 'month'];
+const METRICS: readonly StatisticsMetric[] = ['calories_kcal', 'protein_g', 'fat_g', 'carbohydrates_g', 'fiber_g'];
 
 @Component({
   selector: 'app-statistics-page',
   imports: [
-    DatePipe,
-    DecimalPipe,
+    DailyStatisticsSectionComponent,
     MatButtonModule,
     MatCardModule,
     MatIconModule,
-    MatProgressBarModule,
-    MatProgressSpinnerModule,
-    MatSelectModule,
-    MatSlideToggleModule,
+    PeriodStatisticsSectionComponent,
     RouterLink,
+    StatisticsUserFilterComponent,
     UIPageComponent,
     UIStateContainerComponent,
   ],
   templateUrl: './statistics.page.html',
   styleUrl: './statistics.page.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class StatisticsPage implements OnInit {
+  private readonly destroyRef = inject(DestroyRef);
+  private readonly route = inject(ActivatedRoute);
   private readonly store = inject(StatisticsStore);
+  private initialized = false;
 
   readonly today = this.store.today;
   readonly users = this.store.users;
@@ -51,129 +52,61 @@ export class StatisticsPage implements OnInit {
   readonly dailyReports = this.store.dailyReports;
   readonly averageReports = this.store.averageReports;
   readonly timelineReports = this.store.timelineReports;
-  readonly loadingInitial = this.store.loadingInitial;
-  readonly loadingDaily = this.store.loadingDaily;
-  readonly loadingPeriod = this.store.loadingPeriod;
+  readonly initialState = this.store.initialState;
+  readonly dailyState = this.store.dailyState;
+  readonly periodState = this.store.periodState;
   readonly dailyError = this.store.dailyError;
   readonly periodError = this.store.periodError;
-  readonly initialState = this.store.initialState;
-
-  readonly metricOptions: readonly {
-    value: StatisticsMetric;
-    label: string;
-    shortLabel: string;
-    unit: string;
-  }[] = [
-    { value: 'calories_kcal', label: 'Калории', shortLabel: 'ккал', unit: 'ккал' },
-    { value: 'protein_g', label: 'Белки', shortLabel: 'Б', unit: 'г' },
-    { value: 'fat_g', label: 'Жиры', shortLabel: 'Ж', unit: 'г' },
-    { value: 'carbohydrates_g', label: 'Углеводы', shortLabel: 'У', unit: 'г' },
-    { value: 'fiber_g', label: 'Клетчатка', shortLabel: 'F', unit: 'г' },
-  ];
 
   ngOnInit(): void {
-    this.store.initialize();
+    this.route.queryParamMap
+      .pipe(
+        map(params => {
+          const userId = Number(params.get('user'));
+          const granularity = params.get('granularity');
+          const metric = params.get('metric');
+
+          return {
+            userId: Number.isInteger(userId) && userId > 0 ? userId : null,
+            day: params.get('day') ?? this.today,
+            dateFrom: params.get('from') ?? this.store.defaultDateFrom,
+            dateTo: params.get('to') ?? this.today,
+            granularity: GRANULARITIES.includes(granularity as TimelineGranularity) ? (granularity as TimelineGranularity) : 'day',
+            includeEmptyDays: params.get('empty') === 'true',
+            metric: METRICS.includes(metric as StatisticsMetric) ? (metric as StatisticsMetric) : 'calories_kcal',
+          } satisfies StatisticsFilters;
+        }),
+        distinctUntilChanged((previous, current) => this.sameFilters(previous, current)),
+        tap(filters => {
+          if (this.initialized) {
+            this.store.applyFilters(filters);
+          } else {
+            this.initialized = true;
+            this.store.initialize(filters);
+          }
+        }),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe();
   }
 
-  selectUser(userId: number | null): void {
-    this.store.selectUser(userId);
+  dismissDailyError(): void {
+    this.store.dismissDailyError();
   }
 
-  setDay(date: string): void {
-    this.store.setDay(date);
+  dismissPeriodError(): void {
+    this.store.dismissPeriodError();
   }
 
-  shiftDay(offset: number): void {
-    this.store.shiftDay(offset);
-  }
-
-  setDateFrom(date: string): void {
-    this.store.setDateFrom(date);
-  }
-
-  setDateTo(date: string): void {
-    this.store.setDateTo(date);
-  }
-
-  setGranularity(value: string): void {
-    if (value === 'day' || value === 'week' || value === 'month') this.store.setGranularity(value);
-  }
-
-  setIncludeEmptyDays(include: boolean): void {
-    this.store.setIncludeEmptyDays(include);
-  }
-
-  setSelectedMetric(metric: StatisticsMetric): void {
-    this.store.setSelectedMetric(metric);
-  }
-
-  applyPeriod(): void {
-    this.store.applyPeriod();
-  }
-
-  percent(value: number, target: number): number {
-    return target > 0 ? Math.min((value / target) * 100, 100) : 0;
-  }
-
-  goalState(value: number, target: number): 'pending' | 'achieved' | 'exceeded' {
-    const ratio = target > 0 ? value / target : 0;
-    if (ratio < 0.95) return 'pending';
-    return ratio <= 1.05 ? 'achieved' : 'exceeded';
-  }
-
-  goalStatus(value: number, target: number): string {
-    if (target <= 0) return 'Цель не задана';
-    const state = this.goalState(value, target);
-    if (state === 'achieved') return 'Достигнута';
-    if (state === 'exceeded') return `Перевыполнена на ${Math.round((value / target - 1) * 100)}%`;
-    return `Выполнено ${Math.round((value / target) * 100)}%`;
-  }
-
-  completedGoals(report: DailyGoalReport): number {
-    if (!report.goal) return 0;
-    const pairs: [number, number][] = [
-      [report.totals.calories_kcal, report.goal.daily_calories_kcal],
-      [report.totals.protein_g, report.goal.daily_protein_g],
-      [report.totals.fiber_g, report.goal.daily_fiber_g],
-    ];
-    return pairs.filter(([value, target]) => target > 0 && value >= target * 0.95).length;
-  }
-
-  activeGoals(report: DailyGoalReport): number {
-    if (!report.goal) return 0;
-    return [report.goal.daily_calories_kcal, report.goal.daily_protein_g, report.goal.daily_fiber_g].filter(target => target > 0).length;
-  }
-
-  reportState(report: DailyGoalReport): string {
-    if (!report.goal) return 'without-goal';
-    const completed = this.completedGoals(report);
-    return completed === this.activeGoals(report) ? 'complete' : completed > 0 ? 'partial' : 'pending';
-  }
-
-  metricLabel(): string {
-    return this.metricOptions.find(option => option.value === this.selectedMetric())?.label ?? '';
-  }
-
-  metricUnit(): string {
-    return this.metricOptions.find(option => option.value === this.selectedMetric())?.unit ?? '';
-  }
-
-  metricValue(point: NutritionTimelinePoint): number {
-    return point[this.selectedMetric()];
-  }
-
-  barHeight(point: NutritionTimelinePoint, points: NutritionTimelinePoint[]): number {
-    const maximum = Math.max(...points.map(item => this.metricValue(item)), 0);
-    if (maximum <= 0) return 0;
-    const value = this.metricValue(point);
-    return value > 0 ? Math.max((value / maximum) * 100, 3) : 0;
-  }
-
-  isSingleDay(point: NutritionTimelinePoint): boolean {
-    return point.period_start === point.period_end;
-  }
-
-  initials(name: string): string {
-    return initials(name);
+  private sameFilters(previous: StatisticsFilters, current: StatisticsFilters): boolean {
+    return (
+      previous.userId === current.userId &&
+      previous.day === current.day &&
+      previous.dateFrom === current.dateFrom &&
+      previous.dateTo === current.dateTo &&
+      previous.granularity === current.granularity &&
+      previous.includeEmptyDays === current.includeEmptyDays &&
+      previous.metric === current.metric
+    );
   }
 }

@@ -1,0 +1,12 @@
+<mat-icon>group</mat-icon>
+<span>
+  <small>ПОКАЗАТЬ</small>
+  <mat-select aria-label="Фильтр статистики по члену семьи"
+              [value]="selectedUserId()"
+              (selectionChange)="selectUser($event.value)">
+    <mat-option [value]="null">Вся семья</mat-option>
+    @for (user of users(); track user.id) {
+      <mat-option [value]="user.id">{{ user.name }}</mat-option>
+    }
+  </mat-select>
+</span>

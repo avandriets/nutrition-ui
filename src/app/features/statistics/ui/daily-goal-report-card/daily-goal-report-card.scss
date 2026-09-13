@@ -1,0 +1,206 @@
+.daily-card {
+  min-width: 0;
+  overflow: hidden;
+  padding: 20px;
+  border: 1px solid #e5ebe7;
+  border-top: 3px solid #d9e1dc;
+  border-radius: 19px;
+  box-shadow: 0 7px 24px rgba(29, 59, 43, 0.045);
+}
+
+.daily-card.complete {
+  border-top-color: #46a16e;
+}
+.daily-card.partial {
+  border-top-color: #d59a49;
+}
+.daily-card-header,
+.user-heading,
+.goal-copy {
+  display: flex;
+  align-items: center;
+}
+.daily-card-header,
+.goal-copy {
+  justify-content: space-between;
+}
+.user-heading {
+  gap: 10px;
+}
+.avatar {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  flex: none;
+  border-radius: 13px;
+  color: #76542d;
+  background: linear-gradient(145deg, #f5d7a8, #efc482);
+  font-size: 12px;
+  font-weight: 800;
+}
+.user-heading h3 {
+  margin: 0;
+  color: #28362e;
+  font-size: 15px;
+}
+.user-heading small {
+  color: #8a958f;
+  font-size: 10px;
+}
+.completion-badge,
+.no-goal {
+  padding: 6px 9px;
+  border-radius: 9px;
+  font-size: 9px;
+  font-weight: 700;
+}
+.completion-badge {
+  color: #347d59;
+  background: #eaf7ef;
+}
+.daily-card.partial .completion-badge {
+  color: #9a6b2d;
+  background: #fff5e7;
+}
+.no-goal {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: #8a6b38;
+  background: #fff6e8;
+  text-decoration: none;
+}
+.no-goal mat-icon {
+  width: 14px;
+  height: 14px;
+  font-size: 14px;
+}
+.calorie-summary {
+  margin-top: 20px;
+}
+.calorie-summary > span {
+  display: block;
+  color: #8e9892;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.8px;
+}
+.calorie-summary > strong {
+  display: inline-block;
+  margin-top: 5px;
+  color: #26342c;
+  font-size: 29px;
+}
+.calorie-summary > small {
+  margin-left: 5px;
+  color: #89948e;
+  font-size: 11px;
+}
+.calorie-summary mat-progress-bar {
+  --mat-progress-bar-active-indicator-color: #4b9b6d;
+  --mat-progress-bar-track-color: #edf1ee;
+  height: 7px;
+  margin-top: 10px;
+  border-radius: 8px;
+}
+.macro-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin-top: 14px;
+}
+.macro-strip span {
+  padding: 5px 7px;
+  border-radius: 7px;
+  font-size: 9px;
+}
+.macro-strip b {
+  font-weight: 800;
+}
+.protein {
+  color: #674eae;
+  background: #f0ebff;
+}
+.fat {
+  color: #a7682f;
+  background: #fff1e4;
+}
+.carbs {
+  color: #297c54;
+  background: #eaf7ef;
+}
+.fiber {
+  color: #3879a7;
+  background: #eaf4fb;
+}
+.fallback-note {
+  display: flex;
+  align-items: flex-start;
+  gap: 7px;
+  margin-top: 14px;
+  padding: 9px 10px;
+  border-radius: 10px;
+  color: #846638;
+  background: #fff6e8;
+  font-size: 9px;
+  line-height: 1.45;
+}
+.fallback-note mat-icon {
+  width: 16px;
+  height: 16px;
+  flex: none;
+  color: #b17b35;
+  font-size: 16px;
+}
+.fallback-note strong {
+  color: #6f542e;
+}
+.goal-list {
+  display: grid;
+  gap: 11px;
+  margin-top: 18px;
+  padding-top: 15px;
+  border-top: 1px solid #ebefec;
+}
+.goal-copy {
+  gap: 8px;
+  color: #65736b;
+  font-size: 9px;
+}
+.goal-copy strong {
+  color: #69766f;
+  font-size: 9px;
+}
+.goal-row.achieved .goal-copy strong {
+  color: #308158;
+}
+.goal-row.exceeded .goal-copy strong {
+  color: #be6640;
+}
+.goal-track {
+  height: 6px;
+  margin-top: 5px;
+  overflow: hidden;
+  border-radius: 6px;
+  background: #edf1ee;
+}
+.goal-track i {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: #c1c9c4;
+}
+.goal-row.achieved .goal-track i {
+  background: #4b9b6d;
+}
+.goal-row.exceeded .goal-track i {
+  background: #df825a;
+}
+
+@media (max-width: 650px) {
+  .daily-card-header {
+    align-items: flex-start;
+    gap: 10px;
+  }
+}

@@ -1,0 +1,37 @@
+<div class="section-heading">
+  <span class="section-icon"><mat-icon>date_range</mat-icon></span>
+  <div>
+    <h2>Отчёт за период</h2>
+    <p>Средние значения и динамика питания</p>
+  </div>
+</div>
+
+<app-statistics-period-filters [dateFrom]="dateFrom()"
+                               [dateTo]="dateTo()"
+                               [today]="today()"
+                               [granularity]="granularity()"
+                               [includeEmptyDays]="includeEmptyDays()" />
+
+<app-ui-state-container height="180px"
+                        [state]="state()"
+                        [actionError]="actionError()"
+                        [resolved]="resolved"
+                        (actionErrorDismissed)="actionErrorDismissed.emit()">
+  <ng-template #resolved>
+    <div class="subsection-heading">
+      <h3>Средние значения в день</h3>
+      <p>{{ dateFrom() | date: 'd MMM y' : '' : 'ru' }} — {{ dateTo() | date: 'd MMM y' : '' : 'ru' }}</p>
+    </div>
+
+    <div class="average-grid"
+         [class.single]="averageReports().length === 1">
+      @for (report of averageReports(); track report.user.id) {
+        <app-average-nutrition-card [report]="report" />
+      }
+    </div>
+
+    <app-nutrition-timeline-chart [reports]="timelineReports()"
+                                  [metric]="metric()"
+                                  [includeEmptyDays]="includeEmptyDays()" />
+  </ng-template>
+</app-ui-state-container>

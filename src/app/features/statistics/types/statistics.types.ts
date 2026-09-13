@@ -3,6 +3,22 @@ import type { DailyNutritionTarget, NutrientKey, NutrientValues, UserIdentity } 
 export type TimelineGranularity = 'day' | 'week' | 'month';
 export type StatisticsMetric = NutrientKey;
 
+export interface StatisticsFilters {
+  userId: number | null;
+  day: string;
+  dateFrom: string;
+  dateTo: string;
+  granularity: TimelineGranularity;
+  includeEmptyDays: boolean;
+  metric: StatisticsMetric;
+}
+
+export interface StatisticsMetricOption {
+  value: StatisticsMetric;
+  label: string;
+  unit: string;
+}
+
 export interface UserDailyTotal extends NutrientValues {
   user_id: number;
 }

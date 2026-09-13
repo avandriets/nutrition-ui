@@ -1,0 +1,20 @@
+<mat-card class="average-card">
+  <div class="average-card-header">
+    <span class="avatar">{{ initials(report().user.name) }}</span>
+    <div>
+      <h4>{{ report().user.name }}</h4>
+      <span>Дней с рационом: <b>{{ report().average.active_days }}</b> из {{ report().average.calendar_days }}</span>
+    </div>
+  </div>
+  <div class="average-calories">
+    <mat-icon>local_fire_department</mat-icon>
+    <span>Калории <strong>{{ report().average.calories_kcal | number: '1.0-0' }}</strong></span>
+    <small>ккал/день</small>
+  </div>
+  <div class="average-nutrients">
+    <span class="protein"><small>БЕЛКИ</small><strong>{{ report().average.protein_g | number: '1.0-1' }}</strong><b>г</b></span>
+    <span class="fat"><small>ЖИРЫ</small><strong>{{ report().average.fat_g | number: '1.0-1' }}</strong><b>г</b></span>
+    <span class="carbs"><small>УГЛЕВОДЫ</small><strong>{{ report().average.carbohydrates_g | number: '1.0-1' }}</strong><b>г</b></span>
+    <span class="fiber"><small>КЛЕТЧАТКА</small><strong>{{ report().average.fiber_g | number: '1.0-1' }}</strong><b>г</b></span>
+  </div>
+</mat-card>

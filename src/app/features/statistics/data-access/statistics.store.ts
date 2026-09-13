@@ -4,7 +4,7 @@ import type { Observable } from 'rxjs';
 import { EMPTY, forkJoin, tap } from 'rxjs';
 
 import { AccountContextStore } from '../../../core/account/account-context.store';
-import type { StatisticsMetric, TimelineGranularity } from '../types/statistics.types';
+import type { StatisticsFilters, StatisticsMetric, TimelineGranularity } from '../types/statistics.types';
 import type { DailyStatisticsData, PeriodStatisticsData } from '../types/statistics-store.types';
 import { StatisticsDailyStore } from './statistics-daily.store';
 import { StatisticsInitialStore } from './statistics-initial.store';
@@ -18,9 +18,10 @@ export class StatisticsStore {
   private readonly periodStore = inject(StatisticsPeriodStore);
 
   readonly today = format(new Date(), 'yyyy-MM-dd');
+  readonly defaultDateFrom = format(addDays(parseISO(this.today), -29), 'yyyy-MM-dd');
   readonly selectedUserId = signal<number | null>(null);
   readonly selectedDay = signal(this.today);
-  readonly dateFrom = signal(format(addDays(parseISO(this.today), -29), 'yyyy-MM-dd'));
+  readonly dateFrom = signal(this.defaultDateFrom);
   readonly dateTo = signal(this.today);
   readonly granularity = signal<TimelineGranularity>('day');
   readonly includeEmptyDays = signal(false);
@@ -38,11 +39,34 @@ export class StatisticsStore {
   readonly loadingDaily = this.dailyStore.loading;
   readonly loadingPeriod = this.periodStore.loading;
   readonly initialError = this.initialStore.error;
-  readonly dailyError = this.dailyStore.error;
-  readonly periodError = this.periodStore.error;
   readonly initialState = this.initialStore.requestState;
+  readonly dailyError = computed(() => (this.dailyStore.data() ? this.dailyStore.error() : null));
+  readonly periodError = computed(() => (this.periodStore.data() ? this.periodStore.error() : null));
+  readonly dailyState = computed(() => {
+    if (!this.dailyStore.data()) return this.dailyStore.requestState();
 
-  initialize(): void {
+    return {
+      resolved: true,
+      rejected: false,
+      pending: this.dailyStore.loading(),
+      err: null,
+      empty: !this.dailyReports().length,
+    };
+  });
+  readonly periodState = computed(() => {
+    if (!this.periodStore.data()) return this.periodStore.requestState();
+
+    return {
+      resolved: true,
+      rejected: false,
+      pending: this.periodStore.loading(),
+      err: null,
+      empty: !this.averageReports().length && !this.timelineReports().length,
+    };
+  });
+
+  initialize(filters: StatisticsFilters = this.filters()): void {
+    this.setFilters(filters);
     this.initialStore
       .load(undefined)
       .pipe(
@@ -52,6 +76,30 @@ export class StatisticsStore {
         }),
       )
       .subscribe();
+  }
+
+  applyFilters(filters: StatisticsFilters): void {
+    const previous = this.filters();
+    this.setFilters(filters);
+
+    if (!this.initialStore.data()) return;
+
+    if (previous.userId !== filters.userId) {
+      if (filters.userId !== null) this.accountContext.selectUser(filters.userId);
+      this.loadReports();
+      return;
+    }
+
+    if (previous.day !== filters.day) this.loadDailyReports().subscribe();
+
+    if (
+      previous.dateFrom !== filters.dateFrom ||
+      previous.dateTo !== filters.dateTo ||
+      previous.granularity !== filters.granularity ||
+      previous.includeEmptyDays !== filters.includeEmptyDays
+    ) {
+      this.applyPeriod();
+    }
   }
 
   selectUser(userId: number | null): void {
@@ -99,7 +147,37 @@ export class StatisticsStore {
       this.periodStore.setError('Начало периода не может быть позже окончания.');
       return;
     }
-    this.loadPeriodReports();
+    this.loadPeriodReports().subscribe();
+  }
+
+  dismissDailyError(): void {
+    this.dailyStore.dismissError();
+  }
+
+  dismissPeriodError(): void {
+    this.periodStore.dismissError();
+  }
+
+  private filters(): StatisticsFilters {
+    return {
+      userId: this.selectedUserId(),
+      day: this.selectedDay(),
+      dateFrom: this.dateFrom(),
+      dateTo: this.dateTo(),
+      granularity: this.granularity(),
+      includeEmptyDays: this.includeEmptyDays(),
+      metric: this.selectedMetric(),
+    };
+  }
+
+  private setFilters(filters: StatisticsFilters): void {
+    this.selectedUserId.set(filters.userId);
+    this.selectedDay.set(filters.day > this.today ? this.today : filters.day);
+    this.dateFrom.set(filters.dateFrom);
+    this.dateTo.set(filters.dateTo > this.today ? this.today : filters.dateTo);
+    this.granularity.set(filters.granularity);
+    this.includeEmptyDays.set(filters.includeEmptyDays);
+    this.selectedMetric.set(filters.metric);
   }
 
   private loadReports(): void {

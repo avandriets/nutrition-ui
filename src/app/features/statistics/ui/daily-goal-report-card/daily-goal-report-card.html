@@ -1,0 +1,71 @@
+<mat-card class="daily-card"
+          [class]="reportState()">
+  <div class="daily-card-header">
+    <div class="user-heading">
+      <span class="avatar">{{ initials(report().user.name) }}</span>
+      <div>
+        <h3>{{ report().user.name }}</h3>
+        <small>{{ day() | date: 'd MMMM y' : '' : 'ru' }}</small>
+      </div>
+    </div>
+    @if (report().goal) {
+      <span class="completion-badge">{{ completedGoals() }} из {{ activeGoals() }} выполнено</span>
+    } @else {
+      <a class="no-goal"
+         routerLink="/family"
+         [queryParams]="{ editGoal: true }">
+        <mat-icon>flag</mat-icon>
+        Нет цели
+      </a>
+    }
+  </div>
+
+  <div class="calorie-summary">
+    <span>КАЛОРИИ</span>
+    <strong>{{ report().totals.calories_kcal | number: '1.0-0' }}</strong>
+    @if (report().goal; as goal) {
+      <small>из {{ goal.daily_calories_kcal | number: '1.0-0' }} ккал</small>
+      <mat-progress-bar mode="determinate"
+                        [value]="percent(report().totals.calories_kcal, goal.daily_calories_kcal)" />
+    } @else {
+      <small>ккал за день</small>
+    }
+  </div>
+
+  <div class="macro-strip">
+    <span class="protein"><b>Б {{ report().totals.protein_g | number: '1.0-1' }}</b> г</span>
+    <span class="fat"><b>Ж {{ report().totals.fat_g | number: '1.0-1' }}</b> г</span>
+    <span class="carbs"><b>У {{ report().totals.carbohydrates_g | number: '1.0-1' }}</b> г</span>
+    <span class="fiber"><b>F {{ report().totals.fiber_g | number: '1.0-1' }}</b> г</span>
+  </div>
+
+  @if (report().goalIsFallback && report().goal; as fallbackGoal) {
+    <div class="fallback-note">
+      <mat-icon>history</mat-icon>
+      <span>
+        На эту дату цели ещё не было. Использована ближайшая цель с
+        <strong>{{ fallbackGoal.effective_from | date: 'd MMMM y' : '' : 'ru' }}</strong>.
+      </span>
+    </div>
+  }
+
+  @if (report().goal; as goal) {
+    <div class="goal-list">
+      <div class="goal-row"
+           [class]="goalState(report().totals.calories_kcal, goal.daily_calories_kcal)">
+        <div class="goal-copy"><span>Калории</span><strong>{{ goalStatus(report().totals.calories_kcal, goal.daily_calories_kcal) }}</strong></div>
+        <div class="goal-track"><i [style.width.%]="percent(report().totals.calories_kcal, goal.daily_calories_kcal)"></i></div>
+      </div>
+      <div class="goal-row"
+           [class]="goalState(report().totals.protein_g, goal.daily_protein_g)">
+        <div class="goal-copy"><span>Белок</span><strong>{{ goalStatus(report().totals.protein_g, goal.daily_protein_g) }}</strong></div>
+        <div class="goal-track"><i [style.width.%]="percent(report().totals.protein_g, goal.daily_protein_g)"></i></div>
+      </div>
+      <div class="goal-row"
+           [class]="goalState(report().totals.fiber_g, goal.daily_fiber_g)">
+        <div class="goal-copy"><span>Клетчатка</span><strong>{{ goalStatus(report().totals.fiber_g, goal.daily_fiber_g) }}</strong></div>
+        <div class="goal-track"><i [style.width.%]="percent(report().totals.fiber_g, goal.daily_fiber_g)"></i></div>
+      </div>
+    </div>
+  }
+</mat-card>
