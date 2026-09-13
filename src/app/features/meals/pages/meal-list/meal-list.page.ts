@@ -1,23 +1,20 @@
 import { DatePipe, DecimalPipe } from '@angular/common';
 import type { OnInit } from '@angular/core';
-import { Component, inject, signal } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { Component, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { format } from 'date-fns';
-import { finalize, forkJoin, switchMap } from 'rxjs';
+import { filter, switchMap, tap } from 'rxjs';
 
-import { AccountBootstrapService } from '../../../../core/account/account-bootstrap.service';
-import type { UserIdentity } from '../../../../shared/domain/identity.types';
 import type { MealType } from '../../../../shared/domain/meal.types';
 import { UIPageComponent } from '../../../../shared/ui/page/page';
+import { UIStateContainerComponent } from '../../../../shared/ui/state-container/state-container';
 import { mealTypeIcon, mealTypeLabel } from '../../../../shared/utils/meal.utils';
-import { MealsApiService } from '../../data-access/meals-api.service';
+import { MealListStore } from '../../data-access/meal-list.store';
 import type { Meal, MealPayload } from '../../types/meal.types';
 import type { MealDayCopyDialogData, MealDayCopyDialogResult } from '../../ui/meal-day-copy-dialog/meal-day-copy-dialog';
 import { MealDayCopyDialog } from '../../ui/meal-day-copy-dialog/meal-day-copy-dialog';
@@ -25,80 +22,41 @@ import { MealFormDialog } from '../../ui/meal-form-dialog/meal-form-dialog';
 
 @Component({
   selector: 'app-meal-list-page',
-  imports: [DatePipe, DecimalPipe, FormsModule, MatButtonModule, MatCardModule, MatIconModule, MatProgressSpinnerModule, MatSnackBarModule, RouterLink, UIPageComponent],
+  imports: [DatePipe, DecimalPipe, MatButtonModule, MatCardModule, MatIconModule, RouterLink, UIPageComponent, UIStateContainerComponent],
   templateUrl: './meal-list.page.html',
   styleUrl: './meal-list.page.scss',
 })
 export class MealListPage implements OnInit {
-  private readonly accountBootstrap = inject(AccountBootstrapService);
-  private readonly api = inject(MealsApiService);
+  private readonly store = inject(MealListStore);
   private readonly dialog = inject(MatDialog);
   private readonly snackBar = inject(MatSnackBar);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
-  private accountId: number | null = null;
   private createRequested = this.route.snapshot.queryParamMap.get('create') === 'true';
   private copyRequested = this.route.snapshot.queryParamMap.get('copy');
 
-  readonly todayDate = format(new Date(), 'yyyy-MM-dd');
-  readonly meals = signal<Meal[]>([]);
-  readonly users = signal<UserIdentity[]>([]);
-  readonly loading = signal(true);
-  readonly saving = signal(false);
-  readonly error = signal<string | null>(null);
-  readonly dateFilter = signal(this.todayDate);
+  readonly todayDate = this.store.todayDate;
+  readonly meals = this.store.meals;
+  readonly users = this.store.users;
+  readonly loading = this.store.loading;
+  readonly saving = this.store.saving;
+  readonly actionError = this.store.actionError;
+  readonly pageState = this.store.state;
+  readonly dateFilter = this.store.dateFilter;
 
   ngOnInit(): void {
     this.loadMeals();
   }
 
   loadMeals(): void {
-    this.loading.set(true);
-    this.error.set(null);
-    this.accountBootstrap
-      .ensureAccount()
-      .pipe(
-        switchMap(account => {
-          this.accountId = account.id;
-          return forkJoin({
-            meals: this.api.listMeals(account.id, this.dateFilter() || undefined),
-            users: this.api.listUsers(account.id),
-          });
-        }),
-        finalize(() => this.loading.set(false)),
-      )
-      .subscribe({
-        next: ({ meals, users }) => {
-          this.meals.set(meals);
-          this.users.set(users);
-          if (this.createRequested) {
-            this.createRequested = false;
-            void this.router.navigate([], {
-              relativeTo: this.route,
-              queryParams: { create: null },
-              queryParamsHandling: 'merge',
-              replaceUrl: true,
-            });
-            this.createMeal();
-          } else if (this.copyRequested) {
-            const sourceDate = this.copyRequested;
-            this.copyRequested = null;
-            void this.router.navigate([], {
-              relativeTo: this.route,
-              queryParams: { copy: null },
-              queryParamsHandling: 'merge',
-              replaceUrl: true,
-            });
-            this.copyMealDay(sourceDate);
-          }
-        },
-        error: () => this.error.set('Не удалось загрузить приёмы пищи.'),
-      });
+    this.store
+      .load()
+      .pipe(tap(() => this.handleRequestedAction()))
+      .subscribe();
   }
 
   setDateFilter(date: string): void {
-    this.dateFilter.set(date);
-    this.loadMeals();
+    this.store.setDateFilter(date).subscribe();
   }
 
   createMeal(): void {
@@ -106,17 +64,12 @@ export class MealListPage implements OnInit {
     this.dialog
       .open<MealFormDialog, string, MealPayload>(MealFormDialog, { data: initialDate })
       .afterClosed()
-      .subscribe(payload => {
-        if (!payload || !this.accountId) return;
-        this.saving.set(true);
-        this.api
-          .createMeal(this.accountId, payload)
-          .pipe(finalize(() => this.saving.set(false)))
-          .subscribe({
-            next: meal => void this.router.navigate(['/meals', meal.id]),
-            error: () => this.error.set('Не удалось создать приём пищи.'),
-          });
-      });
+      .pipe(
+        filter(Boolean),
+        switchMap(payload => this.store.create(payload)),
+        tap(meal => void this.router.navigate(['/meals', meal.id])),
+      )
+      .subscribe();
   }
 
   copyMealDay(requestedSourceDate?: string): void {
@@ -128,28 +81,24 @@ export class MealListPage implements OnInit {
         data: { sourceDate },
       })
       .afterClosed()
-      .subscribe(result => {
-        if (!result || !this.accountId) return;
-
-        this.saving.set(true);
-        this.error.set(null);
-        this.api
-          .copyMealDay(this.accountId, result.target_date, {
-            source_date: result.source_date,
-            replace_existing: result.replace_existing,
-          })
-          .pipe(finalize(() => this.saving.set(false)))
-          .subscribe({
-            next: mealDay => {
-              this.dateFilter.set(mealDay.meal_date);
-              this.meals.set(mealDay.meals);
-              this.snackBar.open('Рацион успешно скопирован.', 'Закрыть', {
-                duration: 4000,
-              });
+      .pipe(
+        filter(Boolean),
+        switchMap(result =>
+          this.store.copyDay({
+            targetDate: result.target_date,
+            payload: {
+              source_date: result.source_date,
+              replace_existing: result.replace_existing,
             },
-            error: () => this.error.set('Не удалось скопировать рацион. Если целевой день уже заполнен, включите замену существующих приёмов.'),
-          });
-      });
+          }),
+        ),
+        tap(() => this.snackBar.open('Рацион успешно скопирован.', 'Закрыть', { duration: 4000 })),
+      )
+      .subscribe();
+  }
+
+  dismissActionError(): void {
+    this.store.dismissActionError();
   }
 
   typeLabel(type: MealType): string {
@@ -165,5 +114,30 @@ export class MealListPage implements OnInit {
       const grams = row.portions.find(portion => portion.user_id === userId)?.amount_g ?? 0;
       return mealTotal + (row.calories_kcal * grams) / 100;
     }, 0);
+  }
+
+  private handleRequestedAction(): void {
+    if (this.createRequested) {
+      this.createRequested = false;
+      this.clearRequestedAction('create');
+      this.createMeal();
+      return;
+    }
+
+    if (this.copyRequested) {
+      const sourceDate = this.copyRequested;
+      this.copyRequested = null;
+      this.clearRequestedAction('copy');
+      this.copyMealDay(sourceDate);
+    }
+  }
+
+  private clearRequestedAction(queryParam: 'copy' | 'create'): void {
+    void this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { [queryParam]: null },
+      queryParamsHandling: 'merge',
+      replaceUrl: true,
+    });
   }
 }

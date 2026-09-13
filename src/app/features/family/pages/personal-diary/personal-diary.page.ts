@@ -1,73 +1,56 @@
 import { DatePipe, DecimalPipe } from '@angular/common';
 import type { OnInit } from '@angular/core';
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import { format } from 'date-fns';
-import { catchError, finalize, forkJoin, of, switchMap } from 'rxjs';
 
-import { AccountBootstrapService } from '../../../../core/account/account-bootstrap.service';
-import type { GoalTimelineItem } from '../../../../shared/domain/goal.types';
 import type { MealType } from '../../../../shared/domain/meal.types';
 import type { NutrientValues } from '../../../../shared/domain/nutrition.types';
 import { UIPageComponent } from '../../../../shared/ui/page/page';
+import { UIStateContainerComponent } from '../../../../shared/ui/state-container/state-container';
 import { mealTypeIcon, mealTypeLabel } from '../../../../shared/utils/meal.utils';
 import { initials } from '../../../../shared/utils/name.utils';
-import { emptyNutrientValues } from '../../../../shared/utils/nutrition.utils';
-import { FamilyDiaryApiService } from '../../data-access/family-diary-api.service';
-import type { FamilyUser } from '../../types/family.types';
-import type { DiaryMeal, DiaryMealRow } from '../../types/family-diary.types';
-
-const EMPTY_NUTRIENTS = emptyNutrientValues();
+import { PersonalDiaryStore } from '../../data-access/personal-diary.store';
+import type { DiaryMealRow } from '../../types/family-diary.types';
 
 @Component({
   selector: 'app-personal-diary-page',
-  imports: [DatePipe, DecimalPipe, MatButtonModule, MatCardModule, MatIconModule, MatProgressSpinnerModule, RouterLink, UIPageComponent],
+  imports: [DatePipe, DecimalPipe, MatButtonModule, MatCardModule, MatIconModule, RouterLink, UIPageComponent, UIStateContainerComponent],
   templateUrl: './personal-diary.page.html',
   styleUrl: './personal-diary.page.scss',
 })
 export class PersonalDiaryPage implements OnInit {
-  private readonly accountBootstrap = inject(AccountBootstrapService);
-  private readonly api = inject(FamilyDiaryApiService);
   private readonly route = inject(ActivatedRoute);
-  private readonly userId = Number(this.route.snapshot.paramMap.get('userId'));
+  private readonly store = inject(PersonalDiaryStore);
 
-  readonly user = signal<FamilyUser | null>(null);
-  readonly meals = signal<DiaryMeal[]>([]);
-  readonly goal = signal<GoalTimelineItem | null>(null);
-  readonly dayTotals = signal<NutrientValues>(EMPTY_NUTRIENTS);
-  readonly dateFilter = signal(format(new Date(), 'yyyy-MM-dd'));
-  readonly loading = signal(true);
-  readonly error = signal<string | null>(null);
-
-  readonly mealViews = computed(() =>
-    this.meals()
-      .map(meal => {
-        const rows = meal.rows.filter(row => this.portionFor(row) > 0);
-        return { meal, rows, totals: this.calculateTotals(rows) };
-      })
-      .filter(view => view.rows.length > 0),
-  );
+  readonly user = this.store.user;
+  readonly goal = this.store.goal;
+  readonly dayTotals = this.store.dayTotals;
+  readonly dateFilter = this.store.dateFilter;
+  readonly refreshError = this.store.refreshError;
+  readonly pageState = this.store.pageState;
+  readonly mealViews = this.store.mealViews;
 
   ngOnInit(): void {
-    this.loadDiary();
+    this.store.initialize(Number(this.route.snapshot.paramMap.get('userId')));
   }
 
   setDate(date: string): void {
-    if (!date) return;
-    this.dateFilter.set(date);
-    this.loadDiary();
+    this.store.setDate(date);
+  }
+
+  reload(): void {
+    this.store.reload();
   }
 
   portionFor(row: DiaryMealRow): number {
-    return row.portions.find(portion => portion.user_id === this.userId)?.amount_g ?? 0;
+    return this.store.portionFor(row);
   }
 
   nutrientFor(row: DiaryMealRow, nutrient: keyof NutrientValues): number {
-    return (row[nutrient] * this.portionFor(row)) / 100;
+    return this.store.nutrientFor(row, nutrient);
   }
 
   typeLabel(type: MealType): string {
@@ -106,55 +89,6 @@ export class PersonalDiaryPage implements OnInit {
 
   initials(name: string): string {
     return initials(name);
-  }
-
-  loadDiary(): void {
-    if (!Number.isInteger(this.userId) || this.userId <= 0) {
-      this.loading.set(false);
-      this.error.set('Некорректный идентификатор пользователя.');
-      return;
-    }
-
-    this.loading.set(true);
-    this.error.set(null);
-    this.accountBootstrap
-      .ensureAccount()
-      .pipe(
-        switchMap(account =>
-          forkJoin({
-            user: this.api.getUser(account.id, this.userId),
-            meals: this.api.listMeals(account.id, this.dateFilter()),
-            totals: this.api.getDayTotals(account.id, this.dateFilter()),
-            goalTimeline: this.api.getGoalForDate(account.id, this.userId, this.dateFilter()).pipe(catchError(() => of(null))),
-          }),
-        ),
-        finalize(() => this.loading.set(false)),
-      )
-      .subscribe({
-        next: ({ user, meals, totals, goalTimeline }) => {
-          this.user.set(user);
-          this.meals.set(meals);
-          this.goal.set(goalTimeline?.periods[0] ?? null);
-          this.dayTotals.set(totals.users.find(total => total.user_id === this.userId) ?? EMPTY_NUTRIENTS);
-        },
-        error: () => this.error.set('Не удалось загрузить персональный дневник.'),
-      });
-  }
-
-  private calculateTotals(rows: DiaryMealRow[]): NutrientValues {
-    return rows.reduce<NutrientValues>(
-      (totals, row) => {
-        const factor = this.portionFor(row) / 100;
-        return {
-          calories_kcal: totals.calories_kcal + row.calories_kcal * factor,
-          protein_g: totals.protein_g + row.protein_g * factor,
-          fat_g: totals.fat_g + row.fat_g * factor,
-          carbohydrates_g: totals.carbohydrates_g + row.carbohydrates_g * factor,
-          fiber_g: totals.fiber_g + row.fiber_g * factor,
-        };
-      },
-      { ...EMPTY_NUTRIENTS },
-    );
   }
 
   private formatNumber(value: number): string {

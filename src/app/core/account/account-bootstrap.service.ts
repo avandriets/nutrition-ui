@@ -4,14 +4,14 @@ import type { Observable } from 'rxjs';
 import { of, shareReplay, switchMap, tap } from 'rxjs';
 
 import type { AccountIdentity } from './account.types';
-import { AccountContextService } from './account-context.service';
+import { AccountContextStore } from './account-context.store';
 
 const DEFAULT_ACCOUNT_NAME = 'Наша семья';
 
 @Injectable({ providedIn: 'root' })
 export class AccountBootstrapService {
   private readonly http = inject(HttpClient);
-  private readonly context = inject(AccountContextService);
+  private readonly context = inject(AccountContextStore);
   private readonly account$ = this.loadOrCreateAccount().pipe(
     tap(account => this.context.setAccount(account)),
     shareReplay({ bufferSize: 1, refCount: false }),

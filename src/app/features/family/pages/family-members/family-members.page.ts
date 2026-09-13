@@ -14,7 +14,7 @@ import type { UIConfirmDialogData } from '../../../../shared/types/confirm-dialo
 import { UIConfirmDialogComponent } from '../../../../shared/ui/confirm-dialog/confirm-dialog';
 import { UIPageComponent } from '../../../../shared/ui/page/page';
 import { initials } from '../../../../shared/utils/name.utils';
-import { FamilyStore } from '../../state/family.store';
+import { FamilyStore } from '../../data-access/family.store';
 import type { FamilyUser, GoalPayload, MeasurementPayload, UserGoal, UserMeasurement, UserPayload } from '../../types/family.types';
 import type { GoalFormDialogData } from '../../ui/goal-form-dialog/goal-form-dialog';
 import { GoalFormDialog } from '../../ui/goal-form-dialog/goal-form-dialog';

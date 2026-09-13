@@ -83,25 +83,8 @@ mat-card {
   box-shadow: 0 7px 24px rgba(29, 59, 43, 0.045);
 }
 
-.page-state {
-  min-height: 450px;
-  display: grid;
-  place-content: center;
-  justify-items: center;
-  color: #78847e;
-  text-align: center;
-}
-
-.page-state mat-spinner,
 .section-loading mat-spinner {
   --mat-progress-spinner-active-indicator-color: #388960;
-}
-
-.error-state > mat-icon {
-  width: 40px;
-  height: 40px;
-  color: #b45f50;
-  font-size: 40px;
 }
 
 .empty-family {

@@ -85,6 +85,21 @@ describe('withEntityData', () => {
     });
   });
 
+  it('invalidates pending operations when the store is reset', () => {
+    const response = new Subject<EntityDataPage<TestEntity>>();
+    load.mockReturnValueOnce(response);
+    const store = TestBed.inject(TestEntityStore);
+
+    store.load({ page: 1 }).subscribe();
+    store.reset();
+    response.next({ entities: [firstEntity] });
+    response.complete();
+
+    expect(store.entities()).toEqual([]);
+    expect(store.loading()).toBe(false);
+    expect(store.loaded()).toBe(false);
+  });
+
   it('supports exhaust and parallel load concurrency', () => {
     const firstResponse = new Subject<EntityDataPage<TestEntity>>();
     const secondResponse = new Subject<EntityDataPage<TestEntity>>();
@@ -127,6 +142,17 @@ describe('withEntityData', () => {
     store.load({ page: 1 }, { merge: 'upsert' }).subscribe();
 
     expect(store.entities()).toEqual([thirdEntity, fourthEntity, { ...firstEntity, name: 'Updated' }, secondEntity]);
+    expect(store.pagination()).toEqual({});
+  });
+
+  it('replaces the complete collection without a remote load', () => {
+    const store = TestBed.inject(TestEntityStore);
+
+    store.upsertMany([firstEntity, secondEntity]);
+    store.replaceAll([secondEntity]);
+
+    expect(store.entities()).toEqual([secondEntity]);
+    expect(store.loaded()).toBe(true);
     expect(store.pagination()).toEqual({});
   });
 

@@ -1,6 +1,6 @@
 import { DatePipe, DecimalPipe } from '@angular/common';
 import type { OnInit } from '@angular/core';
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
@@ -9,28 +9,12 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { RouterLink } from '@angular/router';
-import { addDays, format, parseISO } from 'date-fns';
-import { catchError, finalize, forkJoin, map, of, switchMap } from 'rxjs';
 
-import { AccountBootstrapService } from '../../../../core/account/account-bootstrap.service';
-import { AccountContextService } from '../../../../core/account/account-context.service';
-import type { UserIdentity } from '../../../../shared/domain/identity.types';
 import { UIPageComponent } from '../../../../shared/ui/page/page';
+import { UIStateContainerComponent } from '../../../../shared/ui/state-container/state-container';
 import { initials } from '../../../../shared/utils/name.utils';
-import { emptyNutrientValues } from '../../../../shared/utils/nutrition.utils';
-import { StatisticsApiService } from '../../data-access/statistics-api.service';
-import type {
-  AverageReport,
-  DailyGoalReport,
-  GoalTarget,
-  NutritionTimelinePoint,
-  StatisticsMetric,
-  TimelineGranularity,
-  TimelineReport,
-  UserDailyTotal,
-} from '../../types/statistics.types';
-
-const EMPTY_NUTRIENTS = emptyNutrientValues();
+import { StatisticsStore } from '../../data-access/statistics.store';
+import type { DailyGoalReport, NutritionTimelinePoint, StatisticsMetric } from '../../types/statistics.types';
 
 @Component({
   selector: 'app-statistics-page',
@@ -46,43 +30,33 @@ const EMPTY_NUTRIENTS = emptyNutrientValues();
     MatSlideToggleModule,
     RouterLink,
     UIPageComponent,
+    UIStateContainerComponent,
   ],
   templateUrl: './statistics.page.html',
   styleUrl: './statistics.page.scss',
 })
 export class StatisticsPage implements OnInit {
-  private readonly accountBootstrap = inject(AccountBootstrapService);
-  private readonly accountContext = inject(AccountContextService);
-  private readonly api = inject(StatisticsApiService);
-  private accountId: number | null = null;
-  private dailyRequestId = 0;
-  private periodRequestId = 0;
+  private readonly store = inject(StatisticsStore);
 
-  readonly today = format(new Date(), 'yyyy-MM-dd');
-  readonly users = signal<UserIdentity[]>([]);
-  readonly selectedUserId = signal<number | null>(null);
-  readonly selectedDay = signal(this.today);
-  readonly dateFrom = signal(format(addDays(parseISO(this.today), -29), 'yyyy-MM-dd'));
-  readonly dateTo = signal(this.today);
-  readonly granularity = signal<TimelineGranularity>('day');
-  readonly includeEmptyDays = signal(false);
-  readonly selectedMetric = signal<StatisticsMetric>('calories_kcal');
-  readonly dailyReports = signal<DailyGoalReport[]>([]);
-  readonly averageReports = signal<AverageReport[]>([]);
-  readonly timelineReports = signal<TimelineReport[]>([]);
-  readonly loadingInitial = signal(true);
-  readonly loadingDaily = signal(false);
-  readonly loadingPeriod = signal(false);
-  readonly initialError = signal<string | null>(null);
-  readonly dailyError = signal<string | null>(null);
-  readonly periodError = signal<string | null>(null);
-
-  readonly filteredUsers = computed(() => {
-    const selectedId = this.selectedUserId();
-    return selectedId === null ? this.users() : this.users().filter(user => user.id === selectedId);
-  });
-
-  readonly selectedUserName = computed(() => this.filteredUsers()[0]?.name ?? 'Вся семья');
+  readonly today = this.store.today;
+  readonly users = this.store.users;
+  readonly selectedUserId = this.store.selectedUserId;
+  readonly selectedDay = this.store.selectedDay;
+  readonly dateFrom = this.store.dateFrom;
+  readonly dateTo = this.store.dateTo;
+  readonly granularity = this.store.granularity;
+  readonly includeEmptyDays = this.store.includeEmptyDays;
+  readonly selectedMetric = this.store.selectedMetric;
+  readonly selectedUserName = this.store.selectedUserName;
+  readonly dailyReports = this.store.dailyReports;
+  readonly averageReports = this.store.averageReports;
+  readonly timelineReports = this.store.timelineReports;
+  readonly loadingInitial = this.store.loadingInitial;
+  readonly loadingDaily = this.store.loadingDaily;
+  readonly loadingPeriod = this.store.loadingPeriod;
+  readonly dailyError = this.store.dailyError;
+  readonly periodError = this.store.periodError;
+  readonly initialState = this.store.initialState;
 
   readonly metricOptions: readonly {
     value: StatisticsMetric;
@@ -98,36 +72,43 @@ export class StatisticsPage implements OnInit {
   ];
 
   ngOnInit(): void {
-    this.loadInitialData();
+    this.store.initialize();
   }
 
   selectUser(userId: number | null): void {
-    this.selectedUserId.set(userId);
-    if (userId !== null) this.accountContext.selectUser(userId);
-    this.loadDailyReports();
-    this.loadPeriodReports();
+    this.store.selectUser(userId);
   }
 
   setDay(date: string): void {
-    if (!date) return;
-    this.selectedDay.set(date > this.today ? this.today : date);
-    this.loadDailyReports();
+    this.store.setDay(date);
   }
 
   shiftDay(offset: number): void {
-    this.setDay(format(addDays(parseISO(this.selectedDay()), offset), 'yyyy-MM-dd'));
+    this.store.shiftDay(offset);
+  }
+
+  setDateFrom(date: string): void {
+    this.store.setDateFrom(date);
+  }
+
+  setDateTo(date: string): void {
+    this.store.setDateTo(date);
+  }
+
+  setGranularity(value: string): void {
+    if (value === 'day' || value === 'week' || value === 'month') this.store.setGranularity(value);
+  }
+
+  setIncludeEmptyDays(include: boolean): void {
+    this.store.setIncludeEmptyDays(include);
+  }
+
+  setSelectedMetric(metric: StatisticsMetric): void {
+    this.store.setSelectedMetric(metric);
   }
 
   applyPeriod(): void {
-    if (!this.dateFrom() || !this.dateTo()) {
-      this.periodError.set('Укажите начало и конец периода.');
-      return;
-    }
-    if (this.dateFrom() > this.dateTo()) {
-      this.periodError.set('Начало периода не может быть позже окончания.');
-      return;
-    }
-    this.loadPeriodReports();
+    this.store.applyPeriod();
   }
 
   percent(value: number, target: number): number {
@@ -194,143 +175,5 @@ export class StatisticsPage implements OnInit {
 
   initials(name: string): string {
     return initials(name);
-  }
-
-  private loadInitialData(): void {
-    this.loadingInitial.set(true);
-    this.initialError.set(null);
-    this.accountBootstrap
-      .ensureAccount()
-      .pipe(
-        switchMap(account => {
-          this.accountId = account.id;
-          return this.api.listUsers(account.id);
-        }),
-        finalize(() => this.loadingInitial.set(false)),
-      )
-      .subscribe({
-        next: users => {
-          this.users.set(users);
-          this.accountContext.setMembers(users);
-          this.loadDailyReports();
-          this.loadPeriodReports();
-        },
-        error: () => this.initialError.set('Не удалось загрузить семейный аккаунт.'),
-      });
-  }
-
-  private loadDailyReports(): void {
-    if (!this.accountId) return;
-    const requestId = ++this.dailyRequestId;
-    const users = this.filteredUsers();
-    if (!users.length) {
-      this.dailyReports.set([]);
-      this.loadingDaily.set(false);
-      return;
-    }
-
-    this.loadingDaily.set(true);
-    this.dailyError.set(null);
-    const selectedDay = this.selectedDay();
-    const goalRequests = users.map(user =>
-      this.api.getGoalForDate(this.accountId!, user.id, selectedDay).pipe(
-        switchMap(timeline => {
-          const activeGoal = timeline.periods[0];
-          if (activeGoal) return of({ goal: activeGoal, goalIsFallback: false });
-
-          return this.api.listGoals(this.accountId!, user.id).pipe(
-            map(goals => {
-              const nextGoal = [...goals]
-                .filter(goal => goal.effective_from > selectedDay)
-                .sort((left, right) => left.effective_from.localeCompare(right.effective_from) || left.id - right.id)[0];
-              const goal: GoalTarget | null = nextGoal
-                ? {
-                    goal_id: nextGoal.id,
-                    daily_calories_kcal: nextGoal.daily_calories_kcal,
-                    daily_protein_g: nextGoal.daily_protein_g,
-                    daily_fiber_g: nextGoal.daily_fiber_g,
-                    effective_from: nextGoal.effective_from,
-                  }
-                : null;
-              return { goal, goalIsFallback: goal !== null };
-            }),
-          );
-        }),
-        catchError(() => of({ goal: null, goalIsFallback: false })),
-      ),
-    );
-
-    forkJoin({
-      totals: this.api.getDayTotals(this.accountId, selectedDay),
-      goals: goalRequests.length ? forkJoin(goalRequests) : of([]),
-    })
-      .pipe(
-        finalize(() => {
-          if (requestId === this.dailyRequestId) this.loadingDaily.set(false);
-        }),
-      )
-      .subscribe({
-        next: ({ totals, goals }) => {
-          if (requestId !== this.dailyRequestId) return;
-          const totalsByUser = new Map(totals.users.map(total => [total.user_id, total]));
-          this.dailyReports.set(
-            users.map((user, index) => ({
-              user,
-              totals: totalsByUser.get(user.id) ?? this.emptyUserTotals(user.id),
-              goal: goals[index]?.goal ?? null,
-              goalIsFallback: goals[index]?.goalIsFallback ?? false,
-            })),
-          );
-        },
-        error: () => {
-          if (requestId === this.dailyRequestId) {
-            this.dailyError.set('Не удалось загрузить достижения за выбранный день.');
-          }
-        },
-      });
-  }
-
-  private loadPeriodReports(): void {
-    if (!this.accountId) return;
-    const requestId = ++this.periodRequestId;
-    const users = this.filteredUsers();
-    if (!users.length) {
-      this.averageReports.set([]);
-      this.timelineReports.set([]);
-      this.loadingPeriod.set(false);
-      return;
-    }
-
-    this.loadingPeriod.set(true);
-    this.periodError.set(null);
-    const requests = users.map(user =>
-      forkJoin({
-        average: this.api.getNutritionAverage(this.accountId!, user.id, this.dateFrom(), this.dateTo(), this.includeEmptyDays()),
-        timeline: this.api.getNutritionTimeline(this.accountId!, user.id, this.dateFrom(), this.dateTo(), this.granularity(), this.includeEmptyDays()),
-      }).pipe(map(({ average, timeline }) => ({ user, average, timeline }))),
-    );
-
-    forkJoin(requests)
-      .pipe(
-        finalize(() => {
-          if (requestId === this.periodRequestId) this.loadingPeriod.set(false);
-        }),
-      )
-      .subscribe({
-        next: reports => {
-          if (requestId !== this.periodRequestId) return;
-          this.averageReports.set(reports.map(({ user, average }) => ({ user, average })));
-          this.timelineReports.set(reports.map(({ user, timeline }) => ({ user, timeline })));
-        },
-        error: () => {
-          if (requestId === this.periodRequestId) {
-            this.periodError.set('Не удалось загрузить статистику за выбранный период.');
-          }
-        },
-      });
-  }
-
-  private emptyUserTotals(userId: number): UserDailyTotal {
-    return { user_id: userId, ...EMPTY_NUTRIENTS };
   }
 }

@@ -5,9 +5,9 @@ import type { Observable } from 'rxjs';
 export interface EntityDataAdapter<TEntity, TCreate, TLoadParams = void, TUpdate = TCreate> {
   load(params: TLoadParams): Observable<EntityDataPage<TEntity>>;
   getById?(id: EntityId): Observable<TEntity>;
-  create(payload: TCreate): Observable<TEntity>;
-  update(id: EntityId, payload: TUpdate): Observable<TEntity>;
-  remove(id: EntityId): Observable<void>;
+  create?(payload: TCreate): Observable<TEntity>;
+  update?(id: EntityId, payload: TUpdate): Observable<TEntity>;
+  remove?(id: EntityId): Observable<void>;
 }
 
 export interface EntityDataErrors {

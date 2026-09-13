@@ -69,8 +69,11 @@ interface EntityDataFeatureResult<TEntity, TCreate, TUpdate, TLoadParams> {
     isEntityPending(id: EntityId): boolean;
     upsert(entity: TEntity): void;
     upsertMany(entities: TEntity[]): void;
+    replaceAll(entities: TEntity[]): void;
     removeMany(ids: EntityId[]): void;
     clear(): void;
+    reset(): void;
+    dismissError(): void;
     dismissActionError(): void;
   };
 }
@@ -295,7 +298,7 @@ export const withEntityData = <TEntity extends { id: EntityId }, TCreate, TLoadP
                 [correlationId]: createOperation('create', correlationId),
               },
             }));
-            return adapter.create(processedPayload);
+            return adapter.create ? adapter.create(processedPayload) : throwError(() => new Error('create adapter is not configured'));
           }).pipe(
             processResponse(config.processors?.afterCreate),
             tapResponse({
@@ -324,7 +327,7 @@ export const withEntityData = <TEntity extends { id: EntityId }, TCreate, TLoadP
               actionError: null,
               entityOperations: { ...state.entityOperations, [id]: createOperation('update', correlationId) },
             }));
-            return adapter.update(id, payload);
+            return adapter.update ? adapter.update(id, payload) : throwError(() => new Error('update adapter is not configured'));
           }).pipe(
             processResponse(config.processors?.afterUpdate),
             tapResponse({
@@ -353,7 +356,7 @@ export const withEntityData = <TEntity extends { id: EntityId }, TCreate, TLoadP
               actionError: null,
               entityOperations: { ...state.entityOperations, [processedId]: createOperation('remove', correlationId) },
             }));
-            return adapter.remove(processedId).pipe(map(() => processedId));
+            return adapter.remove ? adapter.remove(processedId).pipe(map(() => processedId)) : throwError(() => new Error('remove adapter is not configured'));
           }).pipe(
             tapResponse({
               next: removedId => {
@@ -394,12 +397,24 @@ export const withEntityData = <TEntity extends { id: EntityId }, TCreate, TLoadP
           patchState(store, upsertEntities(entities));
         },
 
+        replaceAll(entities: TEntity[]): void {
+          patchState(store, setAllEntities(entities), { loaded: true, error: null, pagination: {} });
+        },
+
         removeMany(ids: EntityId[]): void {
           patchState(store, removeEntities(ids));
         },
 
         clear(): void {
           patchState(store, removeAllEntities(), { pagination: {} });
+        },
+
+        reset(): void {
+          patchState(store, removeAllEntities(), initialState);
+        },
+
+        dismissError(): void {
+          patchState(store, { error: null, actionError: null });
         },
 
         dismissActionError(): void {

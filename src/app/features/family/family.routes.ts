@@ -1,13 +1,18 @@
 import type { Routes } from '@angular/router';
 
+import { FamilyStore } from './data-access/family.store';
 import { FamilyApiService } from './data-access/family-api.service';
 import { FamilyDiaryApiService } from './data-access/family-diary-api.service';
-import { FamilyStore } from './state/family.store';
+import { FamilyUsersStore } from './data-access/family-users.store';
+import { PersonalDiaryStore } from './data-access/personal-diary.store';
+import { PersonalDiaryDataStore } from './data-access/personal-diary-data.store';
+import { UserGoalsStore } from './data-access/user-goals.store';
+import { UserMeasurementsStore } from './data-access/user-measurements.store';
 
 export const FAMILY_ROUTES: Routes = [
   {
     path: '',
-    providers: [FamilyApiService, FamilyStore],
+    providers: [FamilyApiService, FamilyUsersStore, UserGoalsStore, UserMeasurementsStore, FamilyStore],
     children: [
       {
         path: '',
@@ -17,7 +22,7 @@ export const FAMILY_ROUTES: Routes = [
       },
       {
         path: 'users/:userId/diary',
-        providers: [FamilyDiaryApiService],
+        providers: [FamilyDiaryApiService, PersonalDiaryDataStore, PersonalDiaryStore],
         title: 'Персональный дневник — NutriFlow',
         loadComponent: () => import('./pages/personal-diary/personal-diary.page').then(page => page.PersonalDiaryPage),
       },

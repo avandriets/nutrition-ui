@@ -86,8 +86,7 @@ mat-card {
   box-shadow: 0 7px 24px rgba(29, 59, 43, 0.045);
 }
 
-.error-banner,
-.refreshing {
+.error-banner {
   display: flex;
   align-items: center;
   gap: 9px;
@@ -103,17 +102,6 @@ mat-card {
 
 .error-banner span {
   flex: 1;
-}
-
-.refreshing {
-  color: #527261;
-  background: #edf7f1;
-  font-size: 10px;
-}
-
-.refreshing mat-spinner,
-.state mat-spinner {
-  --mat-progress-spinner-active-indicator-color: #388960;
 }
 
 .section-heading {
@@ -459,8 +447,7 @@ mat-card {
   font-size: 11px;
 }
 
-.empty-meals,
-.state {
+.empty-meals {
   min-height: 300px;
   display: flex;
   flex-direction: column;
@@ -492,13 +479,8 @@ mat-card {
   font-size: 11px;
 }
 
-.empty-meals a,
-.error-state a {
+.empty-meals a {
   color: #37865e;
-}
-
-.error-state > mat-icon {
-  color: #b75c4e;
 }
 
 @media (max-width: 850px) {

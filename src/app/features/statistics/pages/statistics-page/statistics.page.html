@@ -26,19 +26,12 @@
   }
 
   <ng-container body>
-    @if (loadingInitial()) {
-      <div class="page-state">
-        <mat-spinner diameter="42"></mat-spinner>
-        <p>Загружаем статистику…</p>
-      </div>
-    } @else if (initialError(); as error) {
-      <mat-card class="page-state error-state">
-        <mat-icon>error_outline</mat-icon>
-        <h2>{{ error }}</h2>
-        <button mat-stroked-button
-                (click)="ngOnInit()">Повторить</button>
-      </mat-card>
-    } @else if (!users().length) {
+    <app-ui-state-container height="450px"
+                            [state]="initialState()"
+                            [resolved]="resolved"
+                            [empty]="empty" />
+
+    <ng-template #empty>
       <mat-card class="empty-family">
         <div class="empty-icon"><mat-icon>group_add</mat-icon></div>
         <div>
@@ -48,7 +41,9 @@
         <a mat-stroked-button
            routerLink="/family">Управление семьёй</a>
       </mat-card>
-    } @else {
+    </ng-template>
+
+    <ng-template #resolved>
       <section class="report-section daily-section">
         <div class="section-heading">
           <div>
@@ -224,7 +219,7 @@
                    type="date"
                    aria-label="Начало периода статистики"
                    [value]="dateFrom()"
-                   (change)="dateFrom.set(fromInput.value)" />
+                   (change)="setDateFrom(fromInput.value)" />
           </label>
           <label>
             <span>По</span>
@@ -233,20 +228,20 @@
                    aria-label="Конец периода статистики"
                    [max]="today"
                    [value]="dateTo()"
-                   (change)="dateTo.set(toInput.value)" />
+                   (change)="setDateTo(toInput.value)" />
           </label>
           <div class="granularity-filter">
             <span>Группировка</span>
             <mat-select aria-label="Группировка статистики"
                         [value]="granularity()"
-                        (selectionChange)="granularity.set($event.value)">
+                        (selectionChange)="setGranularity($event.value)">
               <mat-option value="day">По дням</mat-option>
               <mat-option value="week">По неделям</mat-option>
               <mat-option value="month">По месяцам</mat-option>
             </mat-select>
           </div>
           <mat-slide-toggle [checked]="includeEmptyDays()"
-                            (change)="includeEmptyDays.set($event.checked)">Учитывать дни без записей</mat-slide-toggle>
+                            (change)="setIncludeEmptyDays($event.checked)">Учитывать дни без записей</mat-slide-toggle>
           <button mat-flat-button
                   class="apply-button"
                   (click)="applyPeriod()">
@@ -337,7 +332,7 @@
             <mat-select class="metric-select"
                         aria-label="Показатель графика"
                         [value]="selectedMetric()"
-                        (selectionChange)="selectedMetric.set($event.value)">
+                        (selectionChange)="setSelectedMetric($event.value)">
               @for (option of metricOptions; track option.value) {
                 <mat-option [value]="option.value">{{ option.label }}</mat-option>
               }
@@ -393,6 +388,6 @@
           </div>
         }
       </section>
-    }
+    </ng-template>
   </ng-container>
 </app-ui-page>
