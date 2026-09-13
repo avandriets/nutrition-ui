@@ -10,8 +10,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { map, startWith } from 'rxjs';
 
-import type { UserIdentity } from '../../../../shared/domain/identity.types';
-import type { MealProduct } from '../../types/meal.types';
+import type { Product, UserIdentity } from '../../../../shared/types';
 
 function selectedProduct(control: AbstractControl): ValidationErrors | null {
   const value = control.value;
@@ -19,7 +18,7 @@ function selectedProduct(control: AbstractControl): ValidationErrors | null {
 }
 
 export interface EntryDialogData {
-  products: MealProduct[];
+  products: Product[];
   users: UserIdentity[];
 }
 
@@ -40,7 +39,7 @@ export class MealEntryDialog {
   private readonly formBuilder = inject(FormBuilder);
 
   readonly form = this.formBuilder.nonNullable.group({
-    product: this.formBuilder.nonNullable.control<string | MealProduct>('', [Validators.required, selectedProduct]),
+    product: this.formBuilder.nonNullable.control<string | Product>('', [Validators.required, selectedProduct]),
     portions: this.formBuilder.array(this.data.users.map(() => this.formBuilder.nonNullable.control(0, [Validators.min(0)]))),
   });
 
@@ -52,7 +51,7 @@ export class MealEntryDialog {
     { initialValue: this.data.products },
   );
 
-  readonly displayProduct = (product: string | MealProduct | null): string => (typeof product === 'string' ? product : (product?.name ?? ''));
+  readonly displayProduct = (product: string | Product | null): string => (typeof product === 'string' ? product : (product?.name ?? ''));
 
   hasPositivePortion(): boolean {
     return this.form.controls.portions.getRawValue().some(amount => amount > 0);
@@ -70,7 +69,7 @@ export class MealEntryDialog {
     });
   }
 
-  private filterProducts(value: string | MealProduct): MealProduct[] {
+  private filterProducts(value: string | Product): Product[] {
     const query = (typeof value === 'string' ? value : value.name).trim().toLocaleLowerCase('ru');
     if (!query) return this.data.products;
 

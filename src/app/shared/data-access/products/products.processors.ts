@@ -1,5 +1,5 @@
-import type { EntityDataProcessors } from '../../../shared/types/entity-data.types';
-import type { Product, ProductListParams, ProductPayload } from '../types/product.types';
+import type { EntityDataProcessors } from '../../types/entity-data.types';
+import type { Product, ProductListParams, ProductPayload } from '../../types/product.types';
 
 function optionalText(value: string | null): string | null {
   return value?.trim() || null;
@@ -23,7 +23,7 @@ function normalizeProduct(product: Product): Product {
   };
 }
 
-export const productCatalogProcessors: EntityDataProcessors<Product, ProductPayload, ProductListParams> = {
+export const productsProcessors: EntityDataProcessors<Product, ProductPayload, ProductListParams> = {
   beforeLoad: params => ({
     skip: Math.max(0, params.skip ?? 0),
     limit: Math.min(Math.max(1, params.limit ?? 500), 500),

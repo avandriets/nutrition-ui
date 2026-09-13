@@ -4,7 +4,7 @@ import { vi } from 'vitest';
 
 import { AccountBootstrapService } from '../../../core/account/account-bootstrap.service';
 import { AccountContextStore } from '../../../core/account/account-context.store';
-import type { UserIdentity } from '../../../shared/domain/identity.types';
+import type { UserIdentity } from '../../../shared/types';
 import { emptyNutrientValues } from '../../../shared/utils/nutrition.utils';
 import type { MealDayTotals, NutritionAverage, NutritionTimelineResponse } from '../types/statistics.types';
 import { StatisticsStore } from './statistics.store';

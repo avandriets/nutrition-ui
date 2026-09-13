@@ -5,7 +5,7 @@ import { vi } from 'vitest';
 
 import { AccountBootstrapService } from '../../../core/account/account-bootstrap.service';
 import { AccountContextStore } from '../../../core/account/account-context.store';
-import type { UserIdentity } from '../../../shared/domain/identity.types';
+import type { UserIdentity } from '../../../shared/types';
 import type { OverviewGoal, OverviewMeal } from '../types/overview.types';
 import { OverviewStore } from './overview.store';
 import { OverviewApiService } from './overview-api.service';

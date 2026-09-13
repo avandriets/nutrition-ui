@@ -2,8 +2,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import type { Observable } from 'rxjs';
 
-import type { GoalTimelineResponse } from '../../../shared/domain/goal.types';
-import type { UserIdentity } from '../../../shared/domain/identity.types';
+import type { GoalTimelineResponse, UserIdentity } from '../../../shared/types';
 import type { GoalRecord, MealDayTotals, NutritionAverage, NutritionTimelineResponse, TimelineGranularity } from '../types/statistics.types';
 
 @Injectable()

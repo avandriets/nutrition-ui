@@ -10,10 +10,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { filter, map, switchMap } from 'rxjs';
 
-import type { GoalTimelineItem } from '../../../../shared/domain/goal.types';
-import type { MealType } from '../../../../shared/domain/meal.types';
-import type { NutrientValues } from '../../../../shared/domain/nutrition.types';
-import type { UIConfirmDialogData } from '../../../../shared/types/confirm-dialog.types';
+import type { GoalTimelineItem, MealType, NutrientValues, UIConfirmDialogData } from '../../../../shared/types';
 import { UIConfirmDialogComponent } from '../../../../shared/ui/confirm-dialog/confirm-dialog';
 import { UIPageComponent } from '../../../../shared/ui/page/page';
 import { UIStateContainerComponent } from '../../../../shared/ui/state-container/state-container';

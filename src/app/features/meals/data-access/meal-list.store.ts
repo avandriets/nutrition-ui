@@ -6,7 +6,7 @@ import { catchError, defer, EMPTY, finalize, forkJoin, map, switchMap, tap } fro
 
 import { AccountBootstrapService } from '../../../core/account/account-bootstrap.service';
 import { AccountContextStore } from '../../../core/account/account-context.store';
-import type { UIStateStatus } from '../../../shared/types/state-container.types';
+import type { UIStateStatus } from '../../../shared/types';
 import type { Meal, MealDay, MealPayload } from '../types/meal.types';
 import type { MealDayCopyRequest } from '../types/meal-list.types';
 import { MealsApiService } from './meals-api.service';

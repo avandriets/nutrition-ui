@@ -3,7 +3,7 @@ import { signalStore } from '@ngrx/signals';
 import { catchError, forkJoin, map, of, switchMap } from 'rxjs';
 
 import { withRequestData } from '../../../shared/data-access/request-data/with-request-data';
-import type { RequestDataAdapter } from '../../../shared/types/request-data.types';
+import type { RequestDataAdapter } from '../../../shared/types';
 import { emptyNutrientValues } from '../../../shared/utils/nutrition.utils';
 import type { GoalTarget } from '../types/statistics.types';
 import type { DailyStatisticsData, DailyStatisticsParams } from '../types/statistics-store.types';

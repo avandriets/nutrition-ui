@@ -1,5 +1,4 @@
-import type { DailyNutritionTarget } from '../../../shared/domain/goal.types';
-import type { UserIdentity } from '../../../shared/domain/identity.types';
+import type { DailyNutritionTarget, UserIdentity } from '../../../shared/types';
 
 export interface Account {
   id: number;

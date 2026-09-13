@@ -6,8 +6,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 
-import type { MealType } from '../../../../shared/domain/meal.types';
-import type { NutrientValues } from '../../../../shared/domain/nutrition.types';
+import type { MealType, NutrientValues } from '../../../../shared/types';
 import { UIPageComponent } from '../../../../shared/ui/page/page';
 import { UIStateContainerComponent } from '../../../../shared/ui/state-container/state-container';
 import { mealTypeIcon, mealTypeLabel } from '../../../../shared/utils/meal.utils';

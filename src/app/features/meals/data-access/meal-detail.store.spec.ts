@@ -4,9 +4,9 @@ import { vi } from 'vitest';
 
 import { AccountBootstrapService } from '../../../core/account/account-bootstrap.service';
 import { AccountContextStore } from '../../../core/account/account-context.store';
-import type { GoalTimelineResponse } from '../../../shared/domain/goal.types';
-import type { UserIdentity } from '../../../shared/domain/identity.types';
-import type { Meal, MealDayTotals, MealProduct, MealRow } from '../types/meal.types';
+import { ProductsApiService, ProductsStore } from '../../../shared/data-access/products';
+import type { GoalTimelineResponse, Product, UserIdentity } from '../../../shared/types';
+import type { Meal, MealDayTotals, MealRow } from '../types/meal.types';
 import { MealDetailStore } from './meal-detail.store';
 import { MealsApiService } from './meals-api.service';
 
@@ -45,7 +45,23 @@ describe('MealDetailStore', () => {
     created_at: '2026-09-12T00:00:00Z',
     updated_at: '2026-09-12T00:00:00Z',
   };
-  const products: MealProduct[] = [{ id: 30, name: 'Яблоко', brand: null, category: 'Фрукты' }];
+  const products: Product[] = [
+    {
+      id: 30,
+      name: 'Яблоко',
+      brand: null,
+      category: 'Фрукты',
+      barcode: null,
+      description: null,
+      calories_kcal: 52,
+      protein_g: 0.3,
+      fat_g: 0.2,
+      carbohydrates_g: 14,
+      fiber_g: 2.4,
+      created_at: '2026-09-12T00:00:00Z',
+      updated_at: '2026-09-12T00:00:00Z',
+    },
+  ];
   const totals: MealDayTotals = {
     account_id: account.id,
     meal_date: meal.meal_date,
@@ -82,19 +98,21 @@ describe('MealDetailStore', () => {
   const api = {
     getMeal: vi.fn(() => of(meal)),
     listUsers: vi.fn(() => of([user])),
-    listProducts: vi.fn(() => of(products)),
     getDayTotals: vi.fn(() => of(totals)),
     getGoalForDate: vi.fn(() => of(goalTimeline)),
     upsertEntry: vi.fn(() => of({})),
     upsertEntries: vi.fn(() => of({})),
     deleteEntry: vi.fn(() => of(undefined)),
   };
+  const productsApi = {
+    list: vi.fn(() => of(products)),
+  };
 
   beforeEach(() => {
     vi.clearAllMocks();
     api.getMeal.mockReturnValue(of(meal));
     api.listUsers.mockReturnValue(of([user]));
-    api.listProducts.mockReturnValue(of(products));
+    productsApi.list.mockReturnValue(of(products));
     api.getDayTotals.mockReturnValue(of(totals));
     api.getGoalForDate.mockReturnValue(of(goalTimeline));
     api.upsertEntry.mockReturnValue(of({}));
@@ -102,7 +120,14 @@ describe('MealDetailStore', () => {
     api.deleteEntry.mockReturnValue(of(undefined));
 
     TestBed.configureTestingModule({
-      providers: [AccountContextStore, MealDetailStore, { provide: AccountBootstrapService, useValue: accountBootstrap }, { provide: MealsApiService, useValue: api }],
+      providers: [
+        AccountContextStore,
+        MealDetailStore,
+        ProductsStore,
+        { provide: AccountBootstrapService, useValue: accountBootstrap },
+        { provide: MealsApiService, useValue: api },
+        { provide: ProductsApiService, useValue: productsApi },
+      ],
     });
   });
 
@@ -113,7 +138,7 @@ describe('MealDetailStore', () => {
 
     expect(api.getMeal).toHaveBeenCalledWith(account.id, meal.id);
     expect(api.listUsers).toHaveBeenCalledWith(account.id);
-    expect(api.listProducts).toHaveBeenCalled();
+    expect(productsApi.list).toHaveBeenCalledTimes(1);
     expect(api.getDayTotals).toHaveBeenCalledWith(account.id, meal.meal_date);
     expect(api.getGoalForDate).toHaveBeenCalledWith(account.id, user.id, meal.meal_date);
     expect(store.meal()).toEqual(meal);
@@ -126,6 +151,16 @@ describe('MealDetailStore', () => {
       pending: false,
       err: null,
     });
+  });
+
+  it('reuses products when the meal is loaded again', () => {
+    const store = TestBed.inject(MealDetailStore);
+
+    store.load(meal.id).subscribe();
+    store.load(meal.id).subscribe();
+
+    expect(productsApi.list).toHaveBeenCalledTimes(1);
+    expect(store.products()).toEqual(products);
   });
 
   it('tracks a portion mutation by its row and user key', () => {

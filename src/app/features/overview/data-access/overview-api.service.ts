@@ -2,7 +2,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import type { Observable } from 'rxjs';
 
-import type { UserIdentity } from '../../../shared/domain/identity.types';
+import type { UserIdentity } from '../../../shared/types';
 import type { OverviewGoal, OverviewMeal } from '../types/overview.types';
 
 @Injectable()

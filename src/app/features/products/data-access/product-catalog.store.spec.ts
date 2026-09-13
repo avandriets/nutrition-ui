@@ -4,10 +4,9 @@ import { Events } from '@ngrx/signals/events';
 import { of, throwError } from 'rxjs';
 import { vi } from 'vitest';
 
+import { ProductsApiService, productsEvents, ProductsStore } from '../../../shared/data-access/products';
 import type { Product, ProductPayload } from '../types/product.types';
-import { productCatalogEvents } from './product-catalog.events';
 import { ProductCatalogStore } from './product-catalog.store';
-import { ProductsApiService } from './products-api.service';
 
 describe('ProductCatalogStore', () => {
   const product: Product = {
@@ -57,7 +56,7 @@ describe('ProductCatalogStore', () => {
     productsApi.delete.mockReturnValue(of(undefined));
 
     TestBed.configureTestingModule({
-      providers: [ProductCatalogStore, { provide: MatSnackBar, useValue: snackBar }, { provide: ProductsApiService, useValue: productsApi }],
+      providers: [ProductCatalogStore, ProductsStore, { provide: MatSnackBar, useValue: snackBar }, { provide: ProductsApiService, useValue: productsApi }],
     });
   });
 
@@ -77,19 +76,29 @@ describe('ProductCatalogStore', () => {
     });
   });
 
+  it('reuses an already loaded product collection', () => {
+    const store = TestBed.inject(ProductCatalogStore);
+
+    store.ensureLoaded().subscribe();
+    store.ensureLoaded().subscribe();
+
+    expect(productsApi.list).toHaveBeenCalledTimes(1);
+    expect(store.entities()).toEqual([product]);
+  });
+
   it('post-processes loaded entities before storing and publishing them', () => {
     productsApi.list.mockReturnValue(of([{ ...product, name: '  Яблоко  ', category: '  Фрукты  ' }]));
     const events = TestBed.inject(Events);
     const store = TestBed.inject(ProductCatalogStore);
     const loaded = vi.fn();
-    const subscription = events.on(productCatalogEvents.loaded).subscribe(loaded);
+    const subscription = events.on(productsEvents.loaded).subscribe(loaded);
 
     store.load({ limit: 1_000, skip: -5 }, { correlationId: 'load-normalized' }).subscribe();
 
     expect(productsApi.list).toHaveBeenCalledWith({ limit: 500, skip: 0 });
     expect(store.entities()[0]).toEqual(product);
     expect(loaded).toHaveBeenCalledWith({
-      type: productCatalogEvents.loaded.type,
+      type: productsEvents.loaded.type,
       payload: {
         correlationId: 'load-normalized',
         data: { entities: [product] },
@@ -150,12 +159,12 @@ describe('ProductCatalogStore', () => {
     const events = TestBed.inject(Events);
     const store = TestBed.inject(ProductCatalogStore);
     const createFailed = vi.fn();
-    const subscription = events.on(productCatalogEvents.createFailed).subscribe(createFailed);
+    const subscription = events.on(productsEvents.createFailed).subscribe(createFailed);
 
     store.create(payload, { correlationId: 'create-failed' }).subscribe();
 
     expect(createFailed).toHaveBeenCalledWith({
-      type: productCatalogEvents.createFailed.type,
+      type: productsEvents.createFailed.type,
       payload: {
         error: expect.any(Error),
         message: 'Не удалось добавить продукт.',

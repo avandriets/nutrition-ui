@@ -1,4 +1,4 @@
-import type { MealType } from '../domain/meal.types';
+import type { MealType } from '../types/meal.types';
 
 interface MealTypeMetadata {
   label: string;

@@ -3,7 +3,7 @@ import { of, Subject, throwError } from 'rxjs';
 import { vi } from 'vitest';
 
 import { AccountBootstrapService } from '../../../core/account/account-bootstrap.service';
-import type { GoalTimelineItem } from '../../../shared/domain/goal.types';
+import type { GoalTimelineItem } from '../../../shared/types';
 import type { FamilyUser } from '../types/family.types';
 import type { DiaryDayTotals, DiaryMeal } from '../types/family-diary.types';
 import { FamilyDiaryApiService } from './family-diary-api.service';

@@ -3,7 +3,7 @@ import { signalStore } from '@ngrx/signals';
 import { catchError, of } from 'rxjs';
 
 import { withRequestData } from '../../../shared/data-access/request-data/with-request-data';
-import type { RequestDataAdapter } from '../../../shared/types/request-data.types';
+import type { RequestDataAdapter } from '../../../shared/types';
 import type { OverviewGoal } from '../types/overview.types';
 import type { OverviewGoalParams } from '../types/overview-store.types';
 import { OverviewApiService } from './overview-api.service';

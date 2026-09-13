@@ -1,5 +1,4 @@
-import type { GoalTimelineItem } from '../../../shared/domain/goal.types';
-import type { NutrientValues } from '../../../shared/domain/nutrition.types';
+import type { GoalTimelineItem, NutrientValues } from '../../../shared/types';
 import type { FamilyUser } from './family.types';
 import type { DiaryMeal, DiaryMealRow } from './family-diary.types';
 

@@ -3,7 +3,7 @@ import { format } from 'date-fns';
 import { tap } from 'rxjs';
 
 import { AccountContextStore } from '../../../core/account/account-context.store';
-import type { NutrientValues } from '../../../shared/domain/nutrition.types';
+import type { NutrientValues } from '../../../shared/types';
 import { emptyNutrientValues } from '../../../shared/utils/nutrition.utils';
 import type { OverviewMeal, OverviewMealSummary, OverviewNutrient } from '../types/overview.types';
 import { OverviewDataStore } from './overview-data.store';

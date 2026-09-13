@@ -1,5 +1,4 @@
-import type { MealType } from '../../../shared/domain/meal.types';
-import type { NutrientValues } from '../../../shared/domain/nutrition.types';
+import type { MealType, NutrientValues } from '../../../shared/types';
 
 export interface DiaryPortion {
   user_id: number;

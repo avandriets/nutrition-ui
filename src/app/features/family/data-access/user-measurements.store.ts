@@ -4,7 +4,7 @@ import { map } from 'rxjs';
 
 import { AccountContextStore } from '../../../core/account/account-context.store';
 import { withEntityData } from '../../../shared/data-access/entity-data/with-entity-data';
-import type { EntityDataAdapter, EntityDataProcessors } from '../../../shared/types/entity-data.types';
+import type { EntityDataAdapter, EntityDataProcessors } from '../../../shared/types';
 import type { MeasurementPayload, UserMeasurement } from '../types/family.types';
 import type { UserScopedLoadParams } from '../types/family-data.types';
 import { FamilyApiService } from './family-api.service';

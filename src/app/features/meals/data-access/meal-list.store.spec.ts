@@ -4,7 +4,7 @@ import { vi } from 'vitest';
 
 import { AccountBootstrapService } from '../../../core/account/account-bootstrap.service';
 import { AccountContextStore } from '../../../core/account/account-context.store';
-import type { UserIdentity } from '../../../shared/domain/identity.types';
+import type { UserIdentity } from '../../../shared/types';
 import type { Meal, MealDay, MealPayload } from '../types/meal.types';
 import { MealListStore } from './meal-list.store';
 import { MealsApiService } from './meals-api.service';

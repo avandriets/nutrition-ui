@@ -1,12 +1,10 @@
-import type { GoalTimelineItem } from '../../../shared/domain/goal.types';
-import type { UserIdentity } from '../../../shared/domain/identity.types';
-import type { EntityDataOperationState } from '../../../shared/types/entity-data.types';
-import type { Meal, MealDayTotals, MealProduct, MealRow } from './meal.types';
+import type { EntityDataOperationState, GoalTimelineItem, Product, UserIdentity } from '../../../shared/types';
+import type { Meal, MealDayTotals, MealRow } from './meal.types';
 
 export interface MealDetailLoadResult {
   meal: Meal;
   users: UserIdentity[];
-  products: MealProduct[];
+  products: Product[];
 }
 
 export interface MealDetailProgress {
@@ -18,7 +16,6 @@ export interface MealDetailState {
   accountId: number | null;
   meal: Meal | null;
   users: UserIdentity[];
-  products: MealProduct[];
   dayTotals: MealDayTotals | null;
   goals: ReadonlyMap<number, GoalTimelineItem | null>;
   loading: boolean;

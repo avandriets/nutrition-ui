@@ -1,6 +1,4 @@
-import type { DailyNutritionTarget } from '../../../shared/domain/goal.types';
-import type { UserIdentity } from '../../../shared/domain/identity.types';
-import type { NutrientKey, NutrientValues } from '../../../shared/domain/nutrition.types';
+import type { DailyNutritionTarget, NutrientKey, NutrientValues, UserIdentity } from '../../../shared/types';
 
 export type TimelineGranularity = 'day' | 'week' | 'month';
 export type StatisticsMetric = NutrientKey;

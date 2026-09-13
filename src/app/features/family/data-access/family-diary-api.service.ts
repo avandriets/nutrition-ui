@@ -2,7 +2,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import type { Observable } from 'rxjs';
 
-import type { GoalTimelineResponse } from '../../../shared/domain/goal.types';
+import type { GoalTimelineResponse } from '../../../shared/types';
 import type { FamilyUser } from '../types/family.types';
 import type { DiaryDayTotals, DiaryMeal } from '../types/family-diary.types';
 

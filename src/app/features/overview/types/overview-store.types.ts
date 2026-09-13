@@ -1,4 +1,4 @@
-import type { UserIdentity } from '../../../shared/domain/identity.types';
+import type { UserIdentity } from '../../../shared/types';
 import type { OverviewMeal } from './overview.types';
 
 export interface OverviewDataParams {

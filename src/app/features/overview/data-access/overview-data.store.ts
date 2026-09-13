@@ -4,7 +4,7 @@ import { forkJoin, map, switchMap } from 'rxjs';
 
 import { AccountBootstrapService } from '../../../core/account/account-bootstrap.service';
 import { withRequestData } from '../../../shared/data-access/request-data/with-request-data';
-import type { RequestDataAdapter } from '../../../shared/types/request-data.types';
+import type { RequestDataAdapter } from '../../../shared/types';
 import type { OverviewData, OverviewDataParams } from '../types/overview-store.types';
 import { OverviewApiService } from './overview-api.service';
 

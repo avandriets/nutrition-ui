@@ -8,7 +8,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 
-import type { MealType } from '../../../../shared/domain/meal.types';
+import type { MealType } from '../../../../shared/types';
 import type { MealPayload } from '../../types/meal.types';
 
 function requireOtherMealName(control: AbstractControl): ValidationErrors | null {

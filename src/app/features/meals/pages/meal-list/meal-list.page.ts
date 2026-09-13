@@ -10,7 +10,7 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { format } from 'date-fns';
 import { filter, switchMap, tap } from 'rxjs';
 
-import type { MealType } from '../../../../shared/domain/meal.types';
+import type { MealType } from '../../../../shared/types';
 import { UIPageComponent } from '../../../../shared/ui/page/page';
 import { UIStateContainerComponent } from '../../../../shared/ui/state-container/state-container';
 import { mealTypeIcon, mealTypeLabel } from '../../../../shared/utils/meal.utils';

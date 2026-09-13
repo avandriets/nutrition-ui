@@ -8,8 +8,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { ActivatedRoute } from '@angular/router';
 import { filter, tap } from 'rxjs';
 
-import type { UIConfirmDialogData } from '../../../../shared/types/confirm-dialog.types';
-import type { UIStateStatus } from '../../../../shared/types/state-container.types';
+import type { UIConfirmDialogData, UIStateStatus } from '../../../../shared/types';
 import { UIConfirmDialogComponent } from '../../../../shared/ui/confirm-dialog/confirm-dialog';
 import { UIPageComponent } from '../../../../shared/ui/page/page';
 import { UIStateContainerComponent } from '../../../../shared/ui/state-container/state-container';
@@ -154,6 +153,6 @@ export class ProductCatalogPage implements OnInit {
   }
 
   private loadProducts(): void {
-    this.productCatalogStore.load({}).subscribe();
+    this.productCatalogStore.ensureLoaded().subscribe();
   }
 }

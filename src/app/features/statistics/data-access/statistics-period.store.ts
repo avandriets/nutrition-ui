@@ -3,7 +3,7 @@ import { signalStore } from '@ngrx/signals';
 import { forkJoin, map, of } from 'rxjs';
 
 import { withRequestData } from '../../../shared/data-access/request-data/with-request-data';
-import type { RequestDataAdapter } from '../../../shared/types/request-data.types';
+import type { RequestDataAdapter } from '../../../shared/types';
 import type { PeriodStatisticsData, PeriodStatisticsParams } from '../types/statistics-store.types';
 import { StatisticsApiService } from './statistics-api.service';
 

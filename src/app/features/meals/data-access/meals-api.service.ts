@@ -2,9 +2,8 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import type { Observable } from 'rxjs';
 
-import type { GoalTimelineResponse } from '../../../shared/domain/goal.types';
-import type { UserIdentity } from '../../../shared/domain/identity.types';
-import type { Meal, MealDay, MealDayCopyPayload, MealDayTotals, MealEntryBatchPayload, MealEntryPayload, MealPayload, MealProduct } from '../types/meal.types';
+import type { GoalTimelineResponse, UserIdentity } from '../../../shared/types';
+import type { Meal, MealDay, MealDayCopyPayload, MealDayTotals, MealEntryBatchPayload, MealEntryPayload, MealPayload } from '../types/meal.types';
 
 @Injectable()
 export class MealsApiService {
@@ -37,11 +36,6 @@ export class MealsApiService {
 
   deleteEntry(accountId: number, mealId: number, entryId: number): Observable<void> {
     return this.http.delete<void>(`/api/accounts/${accountId}/meals/${mealId}/entries/${entryId}`);
-  }
-
-  listProducts(): Observable<MealProduct[]> {
-    const params = new HttpParams().set('skip', 0).set('limit', 500);
-    return this.http.get<MealProduct[]>('/api/products', { params });
   }
 
   listUsers(accountId: number): Observable<UserIdentity[]> {

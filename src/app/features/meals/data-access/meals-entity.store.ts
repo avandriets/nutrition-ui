@@ -4,7 +4,7 @@ import { map } from 'rxjs';
 
 import { AccountContextStore } from '../../../core/account/account-context.store';
 import { withEntityData } from '../../../shared/data-access/entity-data/with-entity-data';
-import type { EntityDataAdapter } from '../../../shared/types/entity-data.types';
+import type { EntityDataAdapter } from '../../../shared/types';
 import type { Meal, MealPayload } from '../types/meal.types';
 import type { MealListParams } from '../types/meal-list.types';
 import { MealsApiService } from './meals-api.service';

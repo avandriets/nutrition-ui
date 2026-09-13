@@ -1,6 +1,4 @@
-import type { DailyNutritionTarget } from '../../../shared/domain/goal.types';
-import type { MealType } from '../../../shared/domain/meal.types';
-import type { NutrientValues } from '../../../shared/domain/nutrition.types';
+import type { DailyNutritionTarget, MealType, NutrientValues } from '../../../shared/types';
 
 export interface OverviewMealPortion {
   user_id: number;

@@ -4,7 +4,7 @@ import { map, switchMap } from 'rxjs';
 
 import { AccountBootstrapService } from '../../../core/account/account-bootstrap.service';
 import { withRequestData } from '../../../shared/data-access/request-data/with-request-data';
-import type { RequestDataAdapter } from '../../../shared/types/request-data.types';
+import type { RequestDataAdapter } from '../../../shared/types';
 import type { StatisticsInitialData } from '../types/statistics-store.types';
 import { StatisticsApiService } from './statistics-api.service';
 

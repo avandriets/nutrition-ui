@@ -10,7 +10,7 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { format, parseISO } from 'date-fns';
 import { ru } from 'date-fns/locale';
 
-import type { UIConfirmDialogData } from '../../../../shared/types/confirm-dialog.types';
+import type { UIConfirmDialogData } from '../../../../shared/types';
 import { UIConfirmDialogComponent } from '../../../../shared/ui/confirm-dialog/confirm-dialog';
 import { UIPageComponent } from '../../../../shared/ui/page/page';
 import { initials } from '../../../../shared/utils/name.utils';

@@ -2,11 +2,11 @@ import { type as eventPayload } from '@ngrx/signals';
 import type { EntityId } from '@ngrx/signals/entities';
 import { eventGroup } from '@ngrx/signals/events';
 
-import type { EntityDataFailure, EntityDataPage, EntityDataSuccess } from '../../../shared/types/entity-data.types';
-import type { Product } from '../types/product.types';
+import type { EntityDataFailure, EntityDataPage, EntityDataSuccess } from '../../types/entity-data.types';
+import type { Product } from '../../types/product.types';
 
-export const productCatalogEvents = eventGroup({
-  source: 'Product Catalog API',
+export const productsEvents = eventGroup({
+  source: 'Products API',
   events: {
     loaded: eventPayload<EntityDataSuccess<EntityDataPage<Product>>>(),
     loadFailed: eventPayload<EntityDataFailure>(),

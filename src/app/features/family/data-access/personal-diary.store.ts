@@ -1,8 +1,7 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
 import { format } from 'date-fns';
 
-import type { NutrientValues } from '../../../shared/domain/nutrition.types';
-import type { UIStateStatus } from '../../../shared/types/state-container.types';
+import type { NutrientValues, UIStateStatus } from '../../../shared/types';
 import { emptyNutrientValues } from '../../../shared/utils/nutrition.utils';
 import type { DiaryMealRow } from '../types/family-diary.types';
 import type { PersonalDiaryMealView } from '../types/personal-diary-store.types';

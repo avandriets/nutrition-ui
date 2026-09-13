@@ -1,12 +1,11 @@
 import type { Routes } from '@angular/router';
 
 import { ProductCatalogStore } from './data-access/product-catalog.store';
-import { ProductsApiService } from './data-access/products-api.service';
 
 export const PRODUCTS_ROUTES: Routes = [
   {
     path: '',
-    providers: [ProductCatalogStore, ProductsApiService],
+    providers: [ProductCatalogStore],
     children: [
       {
         path: '',

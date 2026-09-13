@@ -1,4 +1,4 @@
-import type { NutrientValues } from '../domain/nutrition.types';
+import type { NutrientValues } from '../types/nutrition.types';
 
 export function emptyNutrientValues(): NutrientValues {
   return {

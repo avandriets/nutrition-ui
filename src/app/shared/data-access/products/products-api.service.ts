@@ -2,9 +2,9 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import type { Observable } from 'rxjs';
 
-import type { Product, ProductListParams, ProductPayload } from '../types/product.types';
+import type { Product, ProductListParams, ProductPayload } from '../../types/product.types';
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class ProductsApiService {
   private readonly http = inject(HttpClient);
 
