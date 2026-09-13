@@ -10,21 +10,12 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { map, startWith } from 'rxjs';
 
-import type { Product, UserIdentity } from '../../../../shared/types';
+import type { Product } from '../../../../shared/types';
+import type { EntryDialogData, MealEntryDialogResult } from '../../types/meal-detail.types';
 
 function selectedProduct(control: AbstractControl): ValidationErrors | null {
   const value = control.value;
   return typeof value === 'object' && value?.id ? null : { productNotSelected: true };
-}
-
-export interface EntryDialogData {
-  products: Product[];
-  users: UserIdentity[];
-}
-
-export interface MealEntryDialogResult {
-  product_id: number;
-  portions: { user_id: number; amount_g: number }[];
 }
 
 @Component({

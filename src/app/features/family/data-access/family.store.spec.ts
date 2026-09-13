@@ -1,5 +1,5 @@
 import { TestBed } from '@angular/core/testing';
-import { of } from 'rxjs';
+import { of, Subject } from 'rxjs';
 import { vi } from 'vitest';
 
 import { AccountBootstrapService } from '../../../core/account/account-bootstrap.service';
@@ -92,6 +92,77 @@ describe('FamilyStore', () => {
     expect(api.listGoals).toHaveBeenCalledWith(account.id, user.id);
     expect(api.listMeasurements).toHaveBeenCalledWith(account.id, user.id);
     expect(store.loading()).toBe(false);
+    expect(store.state()).toEqual({
+      resolved: true,
+      rejected: false,
+      pending: false,
+      err: null,
+      empty: false,
+    });
+  });
+
+  it('uses the container empty state when the family has no members', () => {
+    api.listUsers.mockReturnValue(of([]));
+    const store = TestBed.inject(FamilyStore);
+
+    store.initialize();
+
+    expect(store.state()).toEqual({
+      resolved: true,
+      rejected: false,
+      pending: false,
+      err: null,
+      empty: true,
+    });
+  });
+
+  it('keeps goal and measurement empty states independent from the page state', () => {
+    api.listGoals.mockReturnValue(of([]));
+    api.listMeasurements.mockReturnValue(of([]));
+    const store = TestBed.inject(FamilyStore);
+
+    store.initialize();
+
+    expect(store.state().empty).toBe(false);
+    expect(store.goalsState().empty).toBe(true);
+    expect(store.activeGoalState().empty).toBe(true);
+    expect(store.measurementsState().empty).toBe(true);
+  });
+
+  it('exposes background progress and pending ids for individual entity operations', () => {
+    const response = new Subject<UserMeasurement>();
+    api.updateMeasurement.mockReturnValueOnce(response);
+    const store = TestBed.inject(FamilyStore);
+    store.initialize();
+
+    store.updateMeasurement(measurement.id, {
+      measured_on: measurement.measured_on!,
+      weight_kg: 81,
+      neck_cm: null,
+      waist_cm: null,
+      hips_cm: null,
+    });
+
+    expect(store.measurementsState().pending).toBe(true);
+    expect(store.pendingMeasurementIds().has(measurement.id)).toBe(true);
+
+    response.next({ ...measurement, weight_kg: 81 });
+    response.complete();
+
+    expect(store.measurementsState().pending).toBe(false);
+    expect(store.pendingMeasurementIds().has(measurement.id)).toBe(false);
+  });
+
+  it('selects the user requested by the route', () => {
+    const requestedUser = { ...user, id: 4, name: 'Мария' };
+    api.listUsers.mockReturnValue(of([user, requestedUser]));
+    const store = TestBed.inject(FamilyStore);
+
+    store.initialize(requestedUser.id);
+
+    expect(store.selectedUser()).toEqual(requestedUser);
+    expect(api.listGoals).toHaveBeenCalledWith(account.id, requestedUser.id);
+    expect(api.listMeasurements).toHaveBeenCalledWith(account.id, requestedUser.id);
   });
 
   it('keeps entity mutations in the specialized stores and synchronizes the account context', () => {

@@ -1,0 +1,136 @@
+:host {
+  display: block;
+}
+
+.summary-section {
+  margin-top: 34px;
+}
+
+.section-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+  gap: 20px;
+  margin-bottom: 14px;
+}
+
+.section-heading h2 {
+  margin: 0 0 4px;
+  color: #243129;
+  font-size: 19px;
+}
+
+.section-heading p {
+  margin: 0;
+  color: #7b8781;
+}
+
+.section-heading > span {
+  color: #939c97;
+  font-size: 9px;
+  text-align: right;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+}
+
+.table-card {
+  overflow: hidden;
+  border: 1px solid #e5ebe7;
+  border-radius: 18px;
+  box-shadow: 0 7px 24px rgba(29, 59, 43, 0.045);
+}
+
+.table-scroll {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-spacing: 0;
+  border-collapse: separate;
+  color: #344139;
+}
+
+th,
+td {
+  padding: 15px 18px;
+  border-bottom: 1px solid #e8eeea;
+  text-align: left;
+}
+
+thead th {
+  height: 54px;
+  background: #f7faf8;
+  color: #7c8982;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+}
+
+tbody tr:last-child th,
+tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.member-summary {
+  min-width: 820px;
+}
+
+.member-summary th:first-child {
+  min-width: 185px;
+}
+
+.member-summary tbody th {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.member-summary tbody td {
+  white-space: nowrap;
+}
+
+.member-summary tbody td > strong {
+  color: #2c3931;
+  font-size: 15px;
+}
+
+.member-summary tbody td > span {
+  margin-left: 4px;
+  color: #919b95;
+  font-size: 9px;
+}
+
+.member-summary .calories strong {
+  color: #2f835a;
+}
+
+.summary-avatar {
+  display: inline-grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  flex: none;
+  border-radius: 9px;
+  background: #f0ebff;
+  color: #6b56ae;
+}
+
+.summary-avatar mat-icon {
+  width: 17px;
+  height: 17px;
+  font-size: 17px;
+}
+
+@media (max-width: 700px) {
+  .section-heading {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 7px;
+  }
+
+  .section-heading > span {
+    text-align: left;
+  }
+}

@@ -1,0 +1,93 @@
+:host {
+  display: block;
+}
+
+.profile-card {
+  display: flex;
+  align-items: center;
+  padding: 22px;
+  border: 1px solid #e5ebe7;
+  border-radius: 19px;
+  box-shadow: 0 7px 24px rgba(29, 59, 43, 0.045);
+}
+
+.profile-avatar {
+  display: grid;
+  place-items: center;
+  width: 64px;
+  height: 64px;
+  margin-right: 17px;
+  flex: none;
+  border-radius: 14px;
+  color: #76542d;
+  background: linear-gradient(145deg, #f5d7a8, #efc482);
+  font-size: 18px;
+  font-weight: 800;
+}
+
+.profile-copy {
+  min-width: 0;
+}
+
+.profile-copy > span {
+  color: #8e9892;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 1.1px;
+}
+
+.profile-copy h2 {
+  margin: 5px 0 4px;
+  color: #1d2a23;
+  font-size: 22px;
+}
+
+.profile-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 14px;
+  margin: 0;
+  color: #849089;
+  font-size: 12px;
+}
+
+.profile-meta span {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.profile-meta mat-icon {
+  width: 15px;
+  height: 15px;
+  color: #6c8175;
+  font-size: 15px;
+}
+
+.profile-actions {
+  display: flex;
+  margin-left: auto;
+}
+
+.profile-actions button {
+  color: #748078;
+}
+
+.profile-actions .delete {
+  color: #b96355;
+}
+
+@media (max-width: 620px) {
+  .profile-card {
+    align-items: flex-start;
+  }
+
+  .profile-avatar {
+    width: 52px;
+    height: 52px;
+  }
+
+  .profile-meta {
+    max-width: 170px;
+  }
+}

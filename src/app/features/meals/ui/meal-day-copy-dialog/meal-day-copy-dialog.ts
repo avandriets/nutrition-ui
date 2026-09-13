@@ -9,15 +9,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { addDays, format, parseISO } from 'date-fns';
 
-export interface MealDayCopyDialogData {
-  sourceDate: string;
-}
-
-export interface MealDayCopyDialogResult {
-  source_date: string;
-  target_date: string;
-  replace_existing: boolean;
-}
+import type { MealDayCopyDialogData, MealDayCopyDialogResult } from '../../types/meal-list.types';
 
 function differentDates(control: AbstractControl): ValidationErrors | null {
   return control.get('source_date')?.value === control.get('target_date')?.value ? { sameDate: true } : null;

@@ -1,0 +1,15 @@
+<a class="diary-link"
+   [routerLink]="['/family/users', user().id, 'diary']">
+  <mat-card class="diary-preview">
+    <div class="diary-icon"><mat-icon>menu_book</mat-icon></div>
+    <div>
+      <span>ПЕРСОНАЛЬНЫЙ ДНЕВНИК</span>
+      <h3>Дневник питания пользователя {{ user().name }}</h3>
+      <p>Индивидуальные порции, дневные итоги и прогресс к цели за выбранный день.</p>
+    </div>
+    <span class="open-link">
+      Открыть
+      <mat-icon>arrow_forward</mat-icon>
+    </span>
+  </mat-card>
+</a>

@@ -1,0 +1,76 @@
+<mat-card class="measurement-history-card">
+  <div class="history-heading">
+    <h3>История измерений</h3>
+    <span>{{ recordsCountLabel(measurements().length) }}</span>
+  </div>
+  <div class="measurement-table-scroll">
+    <table class="measurement-table">
+      <thead>
+        <tr>
+          <th scope="col">Дата</th>
+          <th scope="col">Вес</th>
+          <th scope="col">Шея</th>
+          <th scope="col">Талия</th>
+          <th scope="col">Бёдра</th>
+          <th scope="col"><span class="visually-hidden">Действия</span></th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (measurement of measurements(); track measurement.id) {
+          <tr>
+            <th scope="row">
+              {{ measurement.measured_on | date: 'd MMM y' : '' : 'ru' }}
+            </th>
+            <td>
+              @if (measurement.weight_kg != null) {
+                <strong>{{ measurement.weight_kg | number: '1.0-1' }}</strong>
+                кг
+              } @else {
+                —
+              }
+            </td>
+            <td>
+              @if (measurement.neck_cm != null) {
+                <strong>{{ measurement.neck_cm | number: '1.0-1' }}</strong>
+                см
+              } @else {
+                —
+              }
+            </td>
+            <td>
+              @if (measurement.waist_cm != null) {
+                <strong>{{ measurement.waist_cm | number: '1.0-1' }}</strong>
+                см
+              } @else {
+                —
+              }
+            </td>
+            <td>
+              @if (measurement.hips_cm != null) {
+                <strong>{{ measurement.hips_cm | number: '1.0-1' }}</strong>
+                см
+              } @else {
+                —
+              }
+            </td>
+            <td class="measurement-actions">
+              <button mat-icon-button
+                      [disabled]="pendingIds().has(measurement.id)"
+                      aria-label="Редактировать замер"
+                      (click)="editRequested.emit(measurement)">
+                <mat-icon>edit</mat-icon>
+              </button>
+              <button mat-icon-button
+                      class="delete-measurement"
+                      [disabled]="pendingIds().has(measurement.id)"
+                      aria-label="Удалить замер"
+                      (click)="deleteRequested.emit(measurement)">
+                <mat-icon>delete_outline</mat-icon>
+              </button>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</mat-card>

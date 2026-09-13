@@ -1,0 +1,135 @@
+:host {
+  display: block;
+}
+
+.goal-history-card {
+  overflow: hidden;
+  margin-top: 14px;
+  border: 1px solid #e5ebe7;
+  border-radius: 17px;
+  box-shadow: 0 7px 24px rgba(29, 59, 43, 0.045);
+}
+
+.history-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 17px;
+  border-bottom: 1px solid #e8eeea;
+  background: #fafcfb;
+}
+
+.history-heading h3 {
+  margin: 0;
+  color: #35433b;
+  font-size: 13px;
+}
+
+.history-heading p {
+  margin: 3px 0 0;
+  color: #89948e;
+  font-size: 10px;
+}
+
+.history-heading > span {
+  color: #89948e;
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.goal-history-scroll {
+  overflow-x: auto;
+}
+
+.goal-history-table {
+  width: 100%;
+  min-width: 640px;
+  border-spacing: 0;
+  border-collapse: collapse;
+}
+
+.goal-history-table th,
+.goal-history-table td {
+  padding: 11px 13px;
+  border-bottom: 1px solid #edf1ee;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.goal-history-table thead th {
+  color: #849089;
+  background: #f7faf8;
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+}
+
+.goal-history-table tbody tr:last-child th,
+.goal-history-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.goal-history-table tbody th {
+  color: #4c5a52;
+  font-size: 11px;
+}
+
+.goal-history-table tbody td {
+  color: #87928c;
+  font-size: 10px;
+}
+
+.goal-history-table tbody td strong {
+  color: #2e3c34;
+  font-size: 12px;
+}
+
+.goal-status {
+  display: inline-flex;
+  padding: 4px 8px;
+  border-radius: 999px;
+  font-size: 9px;
+  font-weight: 700;
+}
+
+.goal-status.current {
+  color: #28744e;
+  background: #e6f6ec;
+}
+
+.goal-status.scheduled {
+  color: #7458b4;
+  background: #f0ebff;
+}
+
+.goal-status.past {
+  color: #77827c;
+  background: #eef2ef;
+}
+
+.goal-history-actions {
+  width: 46px;
+  padding-top: 4px !important;
+  padding-bottom: 4px !important;
+  text-align: right !important;
+}
+
+.goal-history-actions button {
+  width: 34px;
+  height: 34px;
+  color: #6f7d75;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}

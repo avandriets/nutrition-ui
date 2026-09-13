@@ -143,14 +143,60 @@ describe('MealDetailStore', () => {
     expect(api.getGoalForDate).toHaveBeenCalledWith(account.id, user.id, meal.meal_date);
     expect(store.meal()).toEqual(meal);
     expect(store.dayTotals()).toEqual(totals);
-    expect(store.goalFor(user.id)).toEqual(goalTimeline.periods[0]);
+    expect(store.goals().get(user.id)).toEqual(goalTimeline.periods[0]);
     expect(store.familyMealTotals()[0].totals.calories_kcal).toBe(52);
     expect(store.state()).toEqual({
       resolved: true,
       rejected: false,
       pending: false,
       err: null,
+      empty: false,
     });
+  });
+
+  it('keeps the page pending until cascaded daily totals are loaded', () => {
+    const totalsRequest = new Subject<MealDayTotals>();
+    api.getDayTotals.mockReturnValue(totalsRequest);
+    const store = TestBed.inject(MealDetailStore);
+
+    store.load(meal.id).subscribe();
+
+    expect(store.state()).toEqual({
+      resolved: false,
+      rejected: false,
+      pending: true,
+      err: null,
+      empty: false,
+    });
+
+    totalsRequest.next(totals);
+    totalsRequest.complete();
+
+    expect(store.state()).toEqual({
+      resolved: true,
+      rejected: false,
+      pending: false,
+      err: null,
+      empty: false,
+    });
+  });
+
+  it('uses the container empty state when the meal has no family members', () => {
+    api.listUsers.mockReturnValue(of([]));
+    const store = TestBed.inject(MealDetailStore);
+
+    store.load(meal.id).subscribe();
+
+    expect(store.state().empty).toBe(true);
+  });
+
+  it('uses the container empty state when the meal has no product rows', () => {
+    api.getMeal.mockReturnValue(of({ ...meal, rows: [] }));
+    const store = TestBed.inject(MealDetailStore);
+
+    store.load(meal.id).subscribe();
+
+    expect(store.state().empty).toBe(true);
   });
 
   it('reuses products when the meal is loaded again', () => {
@@ -179,7 +225,6 @@ describe('MealDetailStore', () => {
       version: row.portions[0].version,
     });
     expect(store.meal()).toEqual(updatedMeal);
-    expect(store.isCellSaving(row.id, user.id)).toBe(false);
     expect(store.cellOperations()[`${row.id}:${user.id}`]).toEqual(expect.objectContaining({ status: 'success', type: 'update' }));
   });
 
@@ -209,6 +254,15 @@ describe('MealDetailStore', () => {
     api.getMeal.mockReturnValueOnce(of(secondMeal)).mockReturnValueOnce(of(firstMeal));
 
     store.savePortion({ row, userId: user.id, amount: 120 }).subscribe();
+
+    expect(store.state()).toEqual({
+      resolved: true,
+      rejected: false,
+      pending: true,
+      err: null,
+      empty: false,
+    });
+
     store.savePortion({ row, userId: user.id, amount: 130 }).subscribe();
     secondRequest.next({});
     secondRequest.complete();
@@ -216,6 +270,7 @@ describe('MealDetailStore', () => {
     firstRequest.complete();
 
     expect(store.meal()?.name).toBe(secondMeal.name);
+    expect(store.state().pending).toBe(false);
   });
 
   it('does not call the API when a row without portions cannot be deleted', () => {

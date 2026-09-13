@@ -1,0 +1,63 @@
+<div class="section-heading">
+  <div>
+    <h2>Дневная цель</h2>
+    <p>Нормы меняются по датам, предыдущие значения сохраняются</p>
+  </div>
+  <button mat-button
+          [disabled]="createPending()"
+          (click)="addRequested.emit()">
+    <mat-icon>add</mat-icon>
+    {{ goals().length ? 'Новая цель' : 'Настроить' }}
+  </button>
+</div>
+
+<app-ui-state-container height="140px"
+                        [state]="state()"
+                        [resolved]="resolved"
+                        [empty]="empty">
+
+  <ng-template #resolved>
+    <app-ui-state-container height="100px"
+                            [state]="activeGoalState()"
+                            [resolved]="activeGoalResolved"
+                            [empty]="activeGoalEmpty">
+
+      <ng-template #activeGoalResolved>
+        <app-goal-summary [goal]="currentGoal()!" />
+      </ng-template>
+    </app-ui-state-container>
+
+    <app-goal-history [goals]="goals()"
+                      [currentGoalId]="currentGoal()?.id ?? null"
+                      [pendingIds]="pendingIds()"
+                      (editRequested)="editRequested.emit($event)" />
+  </ng-template>
+</app-ui-state-container>
+
+<ng-template #empty>
+  <mat-card class="empty-goal">
+    <div class="empty-goal-icon">
+      <mat-icon>flag</mat-icon>
+    </div>
+    <div>
+      <h3>Цель пока не настроена</h3>
+      <p>Укажите норму калорий, белка и клетчатки для персонального дневника.</p>
+    </div>
+    <button mat-stroked-button
+            [disabled]="createPending()"
+            (click)="addRequested.emit()">Настроить
+    </button>
+  </mat-card>
+</ng-template>
+
+<ng-template #activeGoalEmpty>
+  <mat-card class="empty-goal">
+    <div class="empty-goal-icon">
+      <mat-icon>schedule</mat-icon>
+    </div>
+    <div>
+      <h3>Текущей цели пока нет</h3>
+      <p>Запланированные цели начнут действовать с указанной даты.</p>
+    </div>
+  </mat-card>
+</ng-template>

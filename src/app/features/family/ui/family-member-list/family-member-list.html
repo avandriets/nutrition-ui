@@ -1,0 +1,19 @@
+<mat-card class="members-card">
+  @for (user of users(); track user.id) {
+    <button class="member-row"
+            [class.active]="selectedUserId() === user.id"
+            (click)="selectUser(user.id)">
+      <span class="member-avatar">{{ initials(user.name) }}</span>
+      <span class="member-copy">
+        <strong>{{ user.name }}</strong>
+        <small>
+          {{ user.birth_date ? (user.birth_date | date: 'd MMMM y' : '' : 'ru') : 'Дата рождения не указана' }}
+          @if (user.height_cm != null) {
+            · {{ user.height_cm | number: '1.0-1' }} см
+          }
+        </small>
+      </span>
+      <mat-icon>chevron_right</mat-icon>
+    </button>
+  }
+</mat-card>

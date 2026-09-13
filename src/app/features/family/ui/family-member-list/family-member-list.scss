@@ -1,0 +1,77 @@
+:host {
+  display: block;
+}
+
+.members-card {
+  overflow: hidden;
+  border: 1px solid #e5ebe7;
+  border-radius: 18px;
+  box-shadow: 0 7px 24px rgba(29, 59, 43, 0.045);
+}
+
+.member-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 13px 14px;
+  border: 0;
+  border-bottom: 1px solid #edf0ee;
+  color: inherit;
+  background: white;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.18s;
+}
+
+.member-row:last-child {
+  border-bottom: 0;
+}
+
+.member-row:hover {
+  background: #f7faf8;
+}
+
+.member-row.active {
+  background: #eaf7ef;
+}
+
+.member-avatar {
+  display: grid;
+  place-items: center;
+  width: 43px;
+  height: 43px;
+  flex: none;
+  border-radius: 14px;
+  color: #76542d;
+  background: linear-gradient(145deg, #f5d7a8, #efc482);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.member-copy {
+  display: grid;
+  gap: 4px;
+  flex: 1;
+  min-width: 0;
+}
+
+.member-copy strong {
+  overflow: hidden;
+  font-size: 13px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.member-copy small {
+  color: #909a94;
+  font-size: 10px;
+}
+
+.member-row > mat-icon {
+  color: #97a19b;
+}
+
+.member-row.active > mat-icon {
+  color: #39865e;
+}

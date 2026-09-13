@@ -1,0 +1,93 @@
+:host {
+  display: block;
+}
+
+.latest-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 0 3px 10px;
+  color: #7e8a83;
+  font-size: 10px;
+}
+
+.latest-heading strong {
+  color: #4a5950;
+  font-size: 11px;
+}
+
+.measurement-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.measurement-summary {
+  min-width: 0;
+  padding: 15px;
+  border: 1px solid #e5ebe7;
+  border-radius: 16px;
+  box-shadow: 0 7px 24px rgba(29, 59, 43, 0.045);
+}
+
+.measurement-summary > span {
+  display: block;
+  color: #8e9892;
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: 0.9px;
+}
+
+.measurement-summary > strong {
+  display: block;
+  margin-top: 6px;
+  color: #25322b;
+  font-size: 21px;
+}
+
+.measurement-summary > strong small {
+  color: #89948e;
+  font-size: 9px;
+  font-weight: 600;
+}
+
+.measurement-icon {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  margin-bottom: 12px;
+  border-radius: 11px;
+}
+
+.measurement-summary.weight .measurement-icon {
+  color: #3979a8;
+  background: #eaf4fb;
+}
+
+.measurement-summary.neck .measurement-icon {
+  color: #7258c2;
+  background: #f0ebff;
+}
+
+.measurement-summary.waist .measurement-icon {
+  color: #398a60;
+  background: #eaf7ef;
+}
+
+.measurement-summary.hips .measurement-icon {
+  color: #c27832;
+  background: #fff1e4;
+}
+
+.measurement-icon mat-icon {
+  width: 19px;
+  height: 19px;
+  font-size: 19px;
+}
+
+@media (max-width: 850px) {
+  .measurement-summary-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}

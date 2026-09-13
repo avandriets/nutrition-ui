@@ -1,0 +1,88 @@
+:host {
+  display: block;
+  margin-top: 28px;
+}
+
+.diary-link {
+  color: inherit;
+  text-decoration: none;
+}
+
+.diary-preview {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 20px;
+  border: 1px solid #e5ebe7;
+  border-radius: 18px;
+  background: linear-gradient(135deg, #f1f8f4, #f8fbf9);
+  box-shadow: 0 7px 24px rgba(29, 59, 43, 0.045);
+  transition:
+    transform 160ms ease,
+    box-shadow 160ms ease;
+}
+
+.diary-link:hover .diary-preview {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 30px rgba(34, 87, 58, 0.1);
+}
+
+.diary-icon {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  flex: none;
+  border-radius: 15px;
+  color: #3f8a64;
+  background: white;
+}
+
+.diary-preview span:first-child {
+  color: #8e9892;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 1.1px;
+}
+
+.diary-preview h3 {
+  margin: 5px 0;
+  font-size: 14px;
+}
+
+.diary-preview p {
+  margin: 0;
+  color: #7f8b84;
+  font-size: 11px;
+  line-height: 1.45;
+}
+
+.open-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: auto;
+  padding: 6px 9px;
+  border-radius: 9px;
+  color: #6f7e76;
+  background: white;
+  font-size: 9px;
+  white-space: nowrap;
+}
+
+.open-link mat-icon {
+  width: 15px;
+  height: 15px;
+  font-size: 15px;
+}
+
+@media (max-width: 620px) {
+  .diary-preview {
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .open-link {
+    margin-left: 0;
+  }
+}

@@ -1,0 +1,56 @@
+<section class="summary-section">
+  <div class="section-heading">
+    <div>
+      <h2>Итоги этого приёма пищи</h2>
+      <p>Суммарные БЖУ, калории и клетчатка за этот приём пищи.</p>
+    </div>
+    <span>На весь приём</span>
+  </div>
+
+  <mat-card class="table-card summary-card">
+    <div class="table-scroll">
+      <table class="member-summary">
+        <thead>
+          <tr>
+            <th scope="col">Член семьи</th>
+            <th scope="col">Калории</th>
+            <th scope="col">Белки</th>
+            <th scope="col">Жиры</th>
+            <th scope="col">Углеводы</th>
+            <th scope="col">Клетчатка</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (summary of summaries(); track summary.user.id) {
+            <tr>
+              <th scope="row">
+                <span class="summary-avatar"><mat-icon>person</mat-icon></span>
+                <strong>{{ summary.user.name }}</strong>
+              </th>
+              <td class="calories">
+                <strong>{{ summary.totals.calories_kcal | number: '1.0-0' }}</strong>
+                <span>ккал</span>
+              </td>
+              <td>
+                <strong>{{ summary.totals.protein_g | number: '1.0-1' }}</strong>
+                <span>г</span>
+              </td>
+              <td>
+                <strong>{{ summary.totals.fat_g | number: '1.0-1' }}</strong>
+                <span>г</span>
+              </td>
+              <td>
+                <strong>{{ summary.totals.carbohydrates_g | number: '1.0-1' }}</strong>
+                <span>г</span>
+              </td>
+              <td>
+                <strong>{{ summary.totals.fiber_g | number: '1.0-1' }}</strong>
+                <span>г</span>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </mat-card>
+</section>

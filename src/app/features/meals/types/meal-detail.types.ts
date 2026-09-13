@@ -1,4 +1,4 @@
-import type { EntityDataOperationState, GoalTimelineItem, Product, UserIdentity } from '../../../shared/types';
+import type { EntityDataOperationState, GoalTimelineItem, NutrientValues, Product, UserIdentity } from '../../../shared/types';
 import type { Meal, MealDayTotals, MealRow } from './meal.types';
 
 export interface MealDetailLoadResult {
@@ -10,6 +10,21 @@ export interface MealDetailLoadResult {
 export interface MealDetailProgress {
   totals: MealDayTotals;
   goals: ReadonlyMap<number, GoalTimelineItem | null>;
+}
+
+export interface MealMemberSummary {
+  user: UserIdentity;
+  totals: NutrientValues;
+}
+
+export interface EntryDialogData {
+  products: Product[];
+  users: UserIdentity[];
+}
+
+export interface MealEntryDialogResult {
+  product_id: number;
+  portions: { user_id: number; amount_g: number }[];
 }
 
 export interface MealDetailState {
@@ -32,4 +47,10 @@ export interface MealPortionUpdate {
   row: MealRow;
   userId: number;
   amount: number;
+}
+
+export interface MealPortionInputChange {
+  row: MealRow;
+  userId: number;
+  rawValue: string;
 }

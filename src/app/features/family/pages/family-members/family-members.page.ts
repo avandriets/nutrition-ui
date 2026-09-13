@@ -1,29 +1,53 @@
-import { DatePipe, DecimalPipe } from '@angular/common';
 import type { OnInit } from '@angular/core';
 import { Component, effect, inject } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { format, parseISO } from 'date-fns';
 import { ru } from 'date-fns/locale';
+import { distinctUntilChanged, filter, map, switchMap, tap } from 'rxjs';
 
 import type { UIConfirmDialogData } from '../../../../shared/types';
 import { UIConfirmDialogComponent } from '../../../../shared/ui/confirm-dialog/confirm-dialog';
 import { UIPageComponent } from '../../../../shared/ui/page/page';
-import { initials } from '../../../../shared/utils/name.utils';
+import { UIStateContainerComponent } from '../../../../shared/ui/state-container/state-container';
 import { FamilyStore } from '../../data-access/family.store';
 import type { FamilyUser, GoalPayload, MeasurementPayload, UserGoal, UserMeasurement, UserPayload } from '../../types/family.types';
-import type { GoalFormDialogData } from '../../ui/goal-form-dialog/goal-form-dialog';
-import { GoalFormDialog } from '../../ui/goal-form-dialog/goal-form-dialog';
-import { MeasurementFormDialog } from '../../ui/measurement-form-dialog/measurement-form-dialog';
-import { MemberFormDialog } from '../../ui/member-form-dialog/member-form-dialog';
+import {
+  FamilyGoalsSectionComponent,
+  FamilyMeasurementsSectionComponent,
+  FamilyMemberListComponent,
+  FamilyMemberProfileComponent,
+  GoalFormDialog,
+  type GoalFormDialogData,
+  MeasurementFormDialog,
+  MemberFormDialog,
+  PersonalDiaryLinkComponent,
+} from '../../ui';
+
+function parseUserId(value: string | null): number | null {
+  const userId = Number(value);
+  return value !== null && Number.isInteger(userId) && userId > 0 ? userId : null;
+}
 
 @Component({
   selector: 'app-family-members-page',
-  imports: [DatePipe, DecimalPipe, MatButtonModule, MatCardModule, MatDialogModule, MatIconModule, MatProgressSpinnerModule, RouterLink, UIPageComponent],
+  imports: [
+    FamilyGoalsSectionComponent,
+    FamilyMemberListComponent,
+    FamilyMemberProfileComponent,
+    FamilyMeasurementsSectionComponent,
+    MatButtonModule,
+    MatCardModule,
+    MatDialogModule,
+    MatIconModule,
+    PersonalDiaryLinkComponent,
+    UIPageComponent,
+    UIStateContainerComponent,
+  ],
   templateUrl: './family-members.page.html',
   styleUrl: './family-members.page.scss',
 })
@@ -32,10 +56,31 @@ export class FamilyMembersPage implements OnInit {
   private readonly dialog = inject(MatDialog);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
+  private readonly requestedUserId = toSignal(
+    this.route.queryParamMap.pipe(
+      map(params => parseUserId(params.get('user'))),
+      distinctUntilChanged(),
+    ),
+    { initialValue: parseUserId(this.route.snapshot.queryParamMap.get('user')) },
+  );
+  private readonly synchronizeSelectedUser = effect(() => {
+    const requestedUserId = this.requestedUserId();
+    const users = this.store.users();
+    if (this.store.loading()) return;
+
+    if (!users.length) {
+      if (requestedUserId !== null) this.updateSelectedUserQueryParam(null);
+      return;
+    }
+
+    const selectedUserId = users.some(user => user.id === requestedUserId) ? requestedUserId : users[0].id;
+    if (this.store.selectedUserId() !== selectedUserId) this.store.selectUser(selectedUserId);
+    if (requestedUserId !== selectedUserId) this.updateSelectedUserQueryParam(selectedUserId);
+  });
   private goalDialogRequested = this.route.snapshot.queryParamMap.get('editGoal') === 'true';
   private readonly openRequestedGoalDialog = effect(() => {
     const user = this.store.selectedUser();
-    if (!this.goalDialogRequested || this.store.loading() || !user) return;
+    if (!this.goalDialogRequested || !this.store.goalsState().resolved || !user) return;
 
     this.goalDialogRequested = false;
     void this.router.navigate([], {
@@ -48,16 +93,19 @@ export class FamilyMembersPage implements OnInit {
   });
 
   ngOnInit(): void {
-    this.store.initialize();
+    this.store.initialize(this.requestedUserId());
   }
 
   addMember(): void {
     this.dialog
       .open<MemberFormDialog, null, UserPayload>(MemberFormDialog, { data: null })
       .afterClosed()
-      .subscribe(payload => {
-        if (payload) this.store.createUser(payload);
-      });
+      .pipe(
+        filter(Boolean),
+        switchMap(payload => this.store.createUser(payload)),
+        tap(user => this.updateSelectedUserQueryParam(user.id)),
+      )
+      .subscribe();
   }
 
   editMember(user: FamilyUser): void {
@@ -157,26 +205,12 @@ export class FamilyMembersPage implements OnInit {
       });
   }
 
-  initials(name: string): string {
-    return initials(name);
-  }
-
-  goalStatusLabel(goal: UserGoal): string {
-    if (this.store.currentGoal()?.id === goal.id) return 'Текущая';
-    return goal.effective_from > format(new Date(), 'yyyy-MM-dd') ? 'Запланирована' : 'Завершена';
-  }
-
-  goalStatusClass(goal: UserGoal): string {
-    if (this.store.currentGoal()?.id === goal.id) return 'current';
-    return goal.effective_from > format(new Date(), 'yyyy-MM-dd') ? 'scheduled' : 'past';
-  }
-
-  recordsCountLabel(count: number): string {
-    const lastTwo = count % 100;
-    const last = count % 10;
-    if (lastTwo >= 11 && lastTwo <= 14) return `${count} записей`;
-    if (last === 1) return `${count} запись`;
-    if (last >= 2 && last <= 4) return `${count} записи`;
-    return `${count} записей`;
+  private updateSelectedUserQueryParam(userId: number | null): void {
+    void this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { user: userId },
+      queryParamsHandling: 'merge',
+      replaceUrl: true,
+    });
   }
 }

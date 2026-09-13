@@ -8,13 +8,14 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
 import { format } from 'date-fns';
-import { distinctUntilChanged, filter, map, switchMap, tap } from 'rxjs';
+import { distinctUntilChanged, filter, map, of, switchMap, tap } from 'rxjs';
 
 import { UIPageComponent } from '../../../../shared/ui/page/page';
 import { UIStateContainerComponent } from '../../../../shared/ui/state-container/state-container';
 import { MealListStore } from '../../data-access/meal-list.store';
 import type { MealPayload } from '../../types/meal.types';
-import { MealDateFilterComponent, MealDayCopyDialog, type MealDayCopyDialogData, type MealDayCopyDialogResult, MealFormDialog, MealListItemComponent } from '../../ui';
+import type { MealDayCopyDialogData, MealDayCopyDialogResult, MealListRouteState } from '../../types/meal-list.types';
+import { MealDateFilterComponent, MealDayCopyDialog, MealFormDialog, MealListItemComponent } from '../../ui';
 
 @Component({
   selector: 'app-meal-list-page',
@@ -29,8 +30,7 @@ export class MealListPage implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
-  private createRequested = this.route.snapshot.queryParamMap.get('create') === 'true';
-  private copyRequested = this.route.snapshot.queryParamMap.get('copy');
+  private routeInitialized = false;
 
   readonly todayDate = this.store.todayDate;
   readonly meals = this.store.meals;
@@ -46,11 +46,22 @@ export class MealListPage implements OnInit {
       .pipe(
         map(params => {
           const date = params.get('date');
-          return date === 'all' ? '' : (date ?? this.todayDate);
+          return {
+            date: date === 'all' ? '' : (date ?? this.todayDate),
+            create: params.get('create') === 'true',
+            copy: params.get('copy'),
+          } satisfies MealListRouteState;
         }),
-        distinctUntilChanged(),
-        switchMap(date => this.store.setDateFilter(date)),
-        tap(() => this.handleRequestedAction()),
+        distinctUntilChanged((previous, current) => previous.date === current.date && previous.create === current.create && previous.copy === current.copy),
+        switchMap(routeState => {
+          const load$ = this.routeInitialized && routeState.date === this.dateFilter() ? of(this.meals()) : this.store.setDateFilter(routeState.date);
+          return load$.pipe(
+            tap(() => {
+              this.routeInitialized = true;
+              this.handleRequestedAction(routeState);
+            }),
+          );
+        }),
         takeUntilDestroyed(this.destroyRef),
       )
       .subscribe();
@@ -101,19 +112,16 @@ export class MealListPage implements OnInit {
     this.store.dismissActionError();
   }
 
-  private handleRequestedAction(): void {
-    if (this.createRequested) {
-      this.createRequested = false;
+  private handleRequestedAction(routeState: MealListRouteState): void {
+    if (routeState.create) {
       this.clearRequestedAction('create');
       this.createMeal();
       return;
     }
 
-    if (this.copyRequested) {
-      const sourceDate = this.copyRequested;
-      this.copyRequested = null;
+    if (routeState.copy) {
       this.clearRequestedAction('copy');
-      this.copyMealDay(sourceDate);
+      this.copyMealDay(routeState.copy);
     }
   }
 

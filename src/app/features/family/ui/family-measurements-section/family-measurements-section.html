@@ -1,0 +1,39 @@
+<div class="section-heading">
+  <div>
+    <h2>Вес и замеры</h2>
+    <p>История параметров тела пользователя</p>
+  </div>
+  <button mat-button
+          [disabled]="createPending()"
+          (click)="addRequested.emit()">
+    <mat-icon>add</mat-icon>
+    Добавить замер
+  </button>
+</div>
+
+<app-ui-state-container height="140px"
+                        [state]="state()"
+                        [resolved]="resolved"
+                        [empty]="empty">
+
+  <ng-template #resolved>
+    <app-measurement-summary [measurement]="latestMeasurement()!" />
+    <app-measurement-history [measurements]="measurements()"
+                             [pendingIds]="pendingIds()"
+                             (editRequested)="editRequested.emit($event)"
+                             (deleteRequested)="deleteRequested.emit($event)" />
+  </ng-template>
+</app-ui-state-container>
+
+<ng-template #empty>
+  <mat-card class="empty-measurements">
+    <div class="empty-measurement-icon"><mat-icon>monitor_weight</mat-icon></div>
+    <div>
+      <h3>Замеров пока нет</h3>
+      <p>Добавьте вес или окружности тела, чтобы отслеживать изменения.</p>
+    </div>
+    <button mat-stroked-button
+            [disabled]="createPending()"
+            (click)="addRequested.emit()">Добавить первый замер</button>
+  </mat-card>
+</ng-template>

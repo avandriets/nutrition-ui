@@ -50,22 +50,37 @@ function cellKey(rowId: number, userId: number): string {
   return `${rowId}:${userId}`;
 }
 
+function hasPendingOperation(
+  addOperation: EntityDataOperationState | null,
+  cellOperations: Readonly<Record<string, EntityDataOperationState>>,
+  rowOperations: Readonly<Record<number, EntityDataOperationState>>,
+): boolean {
+  return (
+    addOperation?.status === 'pending' ||
+    Object.values(cellOperations).some(operation => operation.status === 'pending') ||
+    Object.values(rowOperations).some(operation => operation.status === 'pending')
+  );
+}
+
 export const MealDetailStore = signalStore(
   withState(initialState),
   withProps(() => ({ products: inject(ProductsStore).entities })),
   withComputed(store => ({
-    state: computed<UIStateStatus<string>>(() => ({
-      resolved: !!store.meal() && !store.loadError(),
-      rejected: !!store.loadError(),
-      pending: store.loading(),
-      err: store.loadError(),
-    })),
-    saving: computed(
-      () =>
-        store.addOperation()?.status === 'pending' ||
-        Object.values(store.cellOperations()).some(operation => operation.status === 'pending') ||
-        Object.values(store.rowOperations()).some(operation => operation.status === 'pending'),
-    ),
+    state: computed<UIStateStatus<string>>(() => {
+      const meal = store.meal();
+      const error = store.loadError();
+      const progressLoaded = !!store.dayTotals();
+      const saving = hasPendingOperation(store.addOperation(), store.cellOperations(), store.rowOperations());
+
+      return {
+        resolved: !!meal && progressLoaded && !error,
+        rejected: !!error,
+        pending: store.loading() || store.loadingProgress() || saving,
+        err: error,
+        empty: !!meal && (!store.users().length || !meal.rows.length),
+      };
+    }),
+    saving: computed(() => hasPendingOperation(store.addOperation(), store.cellOperations(), store.rowOperations())),
     familyMealTotals: computed(() => {
       const meal = store.meal();
       if (!meal) return [];
@@ -138,7 +153,8 @@ export const MealDetailStore = signalStore(
             },
             error: () => {
               if (store.progressCorrelationId() !== id) return;
-              patchState(store, { actionError: 'Не удалось загрузить дневные итоги.' });
+              const error = 'Не удалось загрузить дневные итоги.';
+              patchState(store, store.dayTotals() ? { actionError: error } : { loadError: error });
             },
             finalize: () => {
               if (store.progressCorrelationId() === id) patchState(store, { loadingProgress: false });
@@ -344,20 +360,8 @@ export const MealDetailStore = signalStore(
           );
         },
 
-        portionFor(row: MealRow, userId: number): number {
-          return row.portions.find(portion => portion.user_id === userId)?.amount_g ?? 0;
-        },
-
-        isCellSaving(rowId: number, userId: number): boolean {
-          return store.cellOperations()[cellKey(rowId, userId)]?.status === 'pending';
-        },
-
         isRowDeleting(rowId: number): boolean {
           return store.rowOperations()[rowId]?.status === 'pending';
-        },
-
-        goalFor(userId: number): GoalTimelineItem | null {
-          return store.goals().get(userId) ?? null;
         },
 
         setActionError(error: string): void {
