@@ -11,11 +11,11 @@ import { PersonalDiaryStore } from './personal-diary.store';
 import { PersonalDiaryDataStore } from './personal-diary-data.store';
 
 describe('PersonalDiaryStore', () => {
-  const account = { id: 10, name: 'Семья' };
+  const account = { id: 10, name: 'Family' };
   const user: FamilyUser = {
     id: 1,
     account_id: account.id,
-    name: 'Александр',
+    name: 'Alexander',
     birth_date: null,
     height_cm: 180,
     created_at: '2026-09-13T00:00:00Z',
@@ -34,11 +34,11 @@ describe('PersonalDiaryStore', () => {
     id: 3,
     meal_date: '2026-09-13',
     meal_type: 'breakfast',
-    name: 'Завтрак',
+    name: 'Breakfast',
     rows: [
       {
         id: 4,
-        product_name: 'Овсянка',
+        product_name: 'Oatmeal',
         product_brand: null,
         calories_kcal: 100,
         protein_g: 10,
@@ -131,7 +131,7 @@ describe('PersonalDiaryStore', () => {
 
     expect(store.user()).toEqual(user);
     expect(store.meals()).toEqual([meal]);
-    expect(store.refreshError()).toBe('Не удалось загрузить персональный дневник.');
+    expect(store.refreshError()).toBe('Could not load the personal diary.');
     expect(store.pageState().resolved).toBe(true);
 
     store.dismissRefreshError();
@@ -148,7 +148,7 @@ describe('PersonalDiaryStore', () => {
       resolved: false,
       rejected: true,
       pending: false,
-      err: 'Некорректный идентификатор пользователя.',
+      err: 'Invalid user ID.',
       empty: false,
     });
     expect(api.getUser).not.toHaveBeenCalled();

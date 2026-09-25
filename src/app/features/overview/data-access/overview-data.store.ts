@@ -26,7 +26,7 @@ export const OverviewDataStore = signalStore(
           ),
       };
     },
-    error: 'Не удалось загрузить сводку.',
+    error: 'Could not load the summary.',
     isEmpty: data => !data.users.length,
   }),
 );

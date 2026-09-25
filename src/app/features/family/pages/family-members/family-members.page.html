@@ -1,8 +1,8 @@
 <app-ui-page>
   <ng-container title>
-    <span class="eyebrow">СЕМЕЙНЫЙ АККАУНТ</span>
-    <h1>{{ store.account()?.name || 'Наша семья' }}</h1>
-    <p class="page-description">Общие приёмы пищи, персональные дневники и цели.</p>
+    <span class="eyebrow">FAMILY ACCOUNT</span>
+    <h1>{{ store.account()?.name || 'Our family' }}</h1>
+    <p class="page-description">Shared meals, personal diaries, and goals.</p>
   </ng-container>
 
   <button action
@@ -10,7 +10,7 @@
           class="add-button"
           (click)="addMember()">
     <mat-icon>person_add</mat-icon>
-    Добавить человека
+    Add member
   </button>
 
   <ng-container body>
@@ -26,12 +26,12 @@
           <aside>
             <div class="aside-heading">
               <div>
-                <h2>Члены семьи</h2>
-                <p>{{ store.users().length }} профиля</p>
+                <h2>Family members</h2>
+                <p>{{ store.users().length }} profiles</p>
               </div>
               <span class="account-badge">
                 <mat-icon>home</mat-icon>
-                Общий аккаунт
+                Shared account
               </span>
             </div>
             <app-family-member-list [users]="store.users()"
@@ -39,9 +39,9 @@
             <div class="family-note">
               <mat-icon>restaurant</mat-icon>
               <p>
-                <strong>Едите вместе?</strong>
+                <strong>Eating together?</strong>
                 <br />
-                Один общий приём пищи можно будет распределить между членами семьи, сохранив персональный дневник каждого.
+                Split a shared meal into portions for family members while keeping a personal diary for each person.
               </p>
             </div>
           </aside>
@@ -85,18 +85,18 @@
     <ng-template #empty>
       <mat-card class="select-state">
         <mat-icon>group_add</mat-icon>
-        <h2>Добавьте семью</h2>
-        <p>Создайте первый профиль, чтобы настроить цели и вести дневник.</p>
+        <h2>Add your family</h2>
+        <p>Create your first profile to set goals and start a diary.</p>
         <button mat-stroked-button
-                (click)="addMember()">Добавить человека</button>
+                (click)="addMember()">Add member</button>
       </mat-card>
     </ng-template>
 
     <ng-template #selectedUserEmpty>
       <mat-card class="select-state">
         <mat-icon>family_restroom</mat-icon>
-        <h2>Выберите или добавьте профиль</h2>
-        <p>Для каждого члена семьи будут храниться собственные цели и дневник питания.</p>
+        <h2>Select or add a profile</h2>
+        <p>Each family member has their own goals and food diary.</p>
       </mat-card>
     </ng-template>
   </ng-container>

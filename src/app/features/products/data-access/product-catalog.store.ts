@@ -42,8 +42,8 @@ export const ProductCatalogStore = signalStore(
     },
   })),
   withEventHandlers((_, events = inject(Events), snackBar = inject(MatSnackBar)) => ({
-    createdNotification: events.on(productsEvents.created).pipe(tap(() => snackBar.open('Продукт добавлен в общий каталог', 'Закрыть', { duration: 3000 }))),
-    updatedNotification: events.on(productsEvents.updated).pipe(tap(() => snackBar.open('Изменения сохранены', 'Закрыть', { duration: 3000 }))),
-    removedNotification: events.on(productsEvents.removed).pipe(tap(() => snackBar.open('Продукт удалён', 'Закрыть', { duration: 3000 }))),
+    createdNotification: events.on(productsEvents.created).pipe(tap(() => snackBar.open('Product added to the shared catalog', 'Close', { duration: 3000 }))),
+    updatedNotification: events.on(productsEvents.updated).pipe(tap(() => snackBar.open('Changes saved', 'Close', { duration: 3000 }))),
+    removedNotification: events.on(productsEvents.removed).pipe(tap(() => snackBar.open('Product deleted', 'Close', { duration: 3000 }))),
   })),
 );

@@ -36,10 +36,10 @@ export const UserGoalsStore = signalStore(
       };
     },
     errors: {
-      load: 'Не удалось загрузить историю целей пользователя.',
-      create: 'Не удалось сохранить цель.',
-      update: 'Не удалось обновить цель.',
-      remove: 'Не удалось удалить цель.',
+      load: 'Could not load the user’s goal history.',
+      create: 'Could not save the goal.',
+      update: 'Could not update the goal.',
+      remove: 'Could not delete the goal.',
     },
     processors,
   }),

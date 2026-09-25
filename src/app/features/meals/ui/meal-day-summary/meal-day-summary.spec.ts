@@ -9,7 +9,7 @@ describe('MealDaySummaryComponent', () => {
   const user: UserIdentity = {
     id: 1,
     account_id: 10,
-    name: 'Александр',
+    name: 'Alexander',
   };
   const summary: MealMemberSummary = {
     user,
@@ -46,9 +46,9 @@ describe('MealDaySummaryComponent', () => {
     fixture.detectChanges();
 
     const text = fixture.nativeElement.textContent as string;
-    expect(text).toContain('Итоги за весь день');
-    expect(text).toContain('Александр');
+    expect(text).toContain('Daily totals');
+    expect(text).toContain('Alexander');
     expect(text).toContain('90%');
-    expect(text).toContain('Достигнута');
+    expect(text).toContain('Reached');
   });
 });

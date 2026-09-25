@@ -1,8 +1,8 @@
 <app-ui-page>
   <ng-container title>
-    <span class="eyebrow">КАТАЛОГ</span>
-    <h1>Продукты</h1>
-    <p class="page-description">Пищевая ценность продуктов на 100 г</p>
+    <span class="eyebrow">CATALOG</span>
+    <h1>Products</h1>
+    <p class="page-description">Nutrition per 100 g</p>
   </ng-container>
 
   <button action
@@ -11,7 +11,7 @@
           [disabled]="saving()"
           (click)="addProduct()">
     <mat-icon>add</mat-icon>
-    Добавить продукт
+    Add product
   </button>
 
   <ng-container body>
@@ -28,10 +28,10 @@
       <ng-template #resolved>
         <div class="catalog-heading">
           <p>
-            Найдено продуктов:
+            Products found:
             <strong>{{ filteredProducts().length }}</strong>
           </p>
-          <span>Б · Ж · У на 100 г</span>
+          <span>P · F · C per 100 g</span>
         </div>
         @if (viewMode() === 'cards') {
           <div class="product-grid">
@@ -54,15 +54,15 @@
 <ng-template #empty>
   <mat-card class="state empty-state">
     <div class="state-icon"><mat-icon>search_off</mat-icon></div>
-    <h2>{{ products().length ? 'Ничего не найдено' : 'Каталог пока пуст' }}</h2>
+    <h2>{{ products().length ? 'No results' : 'The catalog is empty' }}</h2>
     <p>
-      {{ products().length ? 'Попробуйте изменить поисковый запрос или категорию.' : 'Добавьте первый продукт в общий семейный каталог.' }}
+      {{ products().length ? 'Try a different search term or category.' : 'Add your first product to the shared family catalog.' }}
     </p>
     @if (!products().length) {
       <button mat-stroked-button
               (click)="addProduct()">
         <mat-icon>add</mat-icon>
-        Добавить продукт
+        Add product
       </button>
     }
   </mat-card>

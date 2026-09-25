@@ -122,9 +122,9 @@ export class FamilyMembersPage implements OnInit {
       .open<UIConfirmDialogComponent, UIConfirmDialogData, boolean>(UIConfirmDialogComponent, {
         data: {
           icon: 'person_remove',
-          title: 'Удалить профиль?',
-          message: [{ text: 'Профиль ' }, { text: user.name, emphasis: true }, { text: ', его цели и измерения будут удалены.' }],
-          confirmText: 'Удалить',
+          title: 'Delete profile?',
+          message: [{ text: 'Profile ' }, { text: user.name, emphasis: true }, { text: ', along with its goals and measurements, will be deleted.' }],
+          confirmText: 'Delete',
           tone: 'danger',
           minWidth: 'min(390px, 82vw)',
         },
@@ -189,13 +189,13 @@ export class FamilyMembersPage implements OnInit {
       .open<UIConfirmDialogComponent, UIConfirmDialogData, boolean>(UIConfirmDialogComponent, {
         data: {
           icon: 'delete_outline',
-          title: 'Удалить замер?',
+          title: 'Delete measurement?',
           message: [
-            { text: measuredOn ? 'Запись от ' : 'Запись ' },
+            { text: measuredOn ? 'The entry dated ' : 'Entry ' },
             ...(measuredOn ? [{ text: format(parseISO(measuredOn), 'd MMMM yyyy', { locale: ru }), emphasis: true }] : []),
-            { text: ' будет удалена. Это действие нельзя отменить.' },
+            { text: ' will be deleted. This cannot be undone.' },
           ],
-          confirmText: 'Удалить',
+          confirmText: 'Delete',
           tone: 'danger',
         },
       })

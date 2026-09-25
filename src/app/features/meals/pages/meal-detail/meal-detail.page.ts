@@ -105,7 +105,7 @@ export class MealDetailPage implements OnInit {
   savePortion({ row, userId, rawValue }: MealPortionInputChange): void {
     const amount = rawValue.trim() === '' ? 0 : Number(rawValue);
     if (!Number.isFinite(amount) || amount < 0) {
-      this.store.setActionError('Граммы должны быть неотрицательным числом.');
+      this.store.setActionError('The amount in grams must be a non-negative number.');
       return;
     }
 
@@ -119,16 +119,16 @@ export class MealDetailPage implements OnInit {
       .open<UIConfirmDialogComponent, UIConfirmDialogData, boolean>(UIConfirmDialogComponent, {
         data: {
           icon: 'delete_sweep',
-          title: 'Удалить продукт из приёма пищи?',
+          title: 'Remove product from meal?',
           message: [
-            { text: 'Строка ' },
+            { text: 'The row ' },
             {
               text: row.product_name,
               emphasis: true,
             },
-            { text: ' и порции всех членов семьи будут удалены из этого приёма пищи.' },
+            { text: ' and all family members’ portions will be removed from this meal.' },
           ],
-          confirmText: 'Удалить строку',
+          confirmText: 'Delete row',
           tone: 'danger',
           minWidth: 'min(440px, 82vw)',
         },

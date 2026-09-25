@@ -9,7 +9,7 @@ import { StatisticsPeriodStore } from './data-access/statistics-period.store';
 export const STATISTICS_ROUTES: Routes = [
   {
     path: '',
-    title: 'Статистика — NutriFlow',
+    title: 'Statistics — NutriFlow',
     providers: [StatisticsApiService, StatisticsInitialStore, StatisticsDailyStore, StatisticsPeriodStore, StatisticsStore],
     loadComponent: () => import('./pages/statistics-page/statistics.page').then(component => component.StatisticsPage),
   },

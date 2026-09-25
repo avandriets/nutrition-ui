@@ -1,18 +1,18 @@
 import { registerLocaleData } from '@angular/common';
-import localeRu from '@angular/common/locales/ru';
+import localeEn from '@angular/common/locales/en';
 import { TestBed } from '@angular/core/testing';
 import { vi } from 'vitest';
 
 import type { FamilyUser } from '../../types/family.types';
 import { FamilyMemberProfileComponent } from './family-member-profile';
 
-registerLocaleData(localeRu);
+registerLocaleData(localeEn);
 
 describe('FamilyMemberProfileComponent', () => {
   const user: FamilyUser = {
     id: 1,
     account_id: 10,
-    name: 'Александр Андриец',
+    name: 'Alexander Andriets',
     birth_date: '1990-01-01',
     height_cm: 180,
     created_at: '2026-09-13T00:00:00Z',

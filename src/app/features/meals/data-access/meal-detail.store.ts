@@ -153,7 +153,7 @@ export const MealDetailStore = signalStore(
             },
             error: () => {
               if (store.progressCorrelationId() !== id) return;
-              const error = 'Не удалось загрузить дневные итоги.';
+              const error = 'Could not load daily totals.';
               patchState(store, store.dayTotals() ? { actionError: error } : { loadError: error });
             },
             finalize: () => {
@@ -194,7 +194,7 @@ export const MealDetailStore = signalStore(
       return {
         load(mealId: number): Observable<Meal> {
           if (!Number.isInteger(mealId) || mealId <= 0) {
-            patchState(store, { loading: false, loadError: 'Некорректный идентификатор приёма пищи.' });
+            patchState(store, { loading: false, loadError: 'Invalid meal ID.' });
             return EMPTY;
           }
 
@@ -219,10 +219,10 @@ export const MealDetailStore = signalStore(
                 patchState(store, {
                   meal: result.meal,
                   users: result.users,
-                  actionError: productsStore.error() ? 'Не удалось загрузить каталог продуктов.' : null,
+                  actionError: productsStore.error() ? 'Could not load the product catalog.' : null,
                 });
               },
-              error: () => patchState(store, { loadError: 'Не удалось загрузить приём пищи.' }),
+              error: () => patchState(store, { loadError: 'Could not load the meal.' }),
               finalize: () => patchState(store, { loading: false }),
             }),
             switchMap((result: MealDetailLoadResult) => refreshProgressAfter(result.meal)),
@@ -247,7 +247,7 @@ export const MealDetailStore = signalStore(
               },
               error: () => {
                 if (!isActiveAdd(id)) return;
-                const error = 'Не удалось добавить продукт.';
+                const error = 'Could not add the product.';
                 patchState(store, { actionError: error });
                 completeAdd(id, error);
               },
@@ -296,7 +296,7 @@ export const MealDetailStore = signalStore(
               },
               error: () => {
                 if (!isActiveCell(key, id)) return;
-                const error = 'Не удалось сохранить порцию. Обновите страницу и повторите.';
+                const error = 'Could not save the portion. Refresh the page and try again.';
                 patchState(store, { actionError: error });
                 completeCell(key, id, error);
               },
@@ -317,10 +317,6 @@ export const MealDetailStore = signalStore(
           const meal = store.meal();
           const accountId = store.accountId();
           if (!meal || accountId === null) return EMPTY;
-          if (!row.portions.length) {
-            patchState(store, { actionError: 'Строку без порций нельзя удалить через доступное API.' });
-            return EMPTY;
-          }
 
           const id = correlationId('remove');
           return defer(() => {
@@ -328,7 +324,7 @@ export const MealDetailStore = signalStore(
               actionError: null,
               rowOperations: { ...state.rowOperations, [row.id]: pendingOperation('remove', id) },
             }));
-            return forkJoin(row.portions.map(portion => api.deleteEntry(accountId, meal.id, portion.id))).pipe(
+            return api.deleteRow(accountId, meal.id, row.id).pipe(
               switchMap(() => api.getMeal(accountId, meal.id)),
               map(updatedMeal => ({ updatedMeal, failed: false })),
               catchError(() =>
@@ -341,7 +337,7 @@ export const MealDetailStore = signalStore(
           }).pipe(
             tap(({ updatedMeal, failed }) => {
               if (!isActiveRow(row.id, id)) return;
-              const error = failed ? 'Не удалось удалить строку полностью. Данные были обновлены.' : null;
+              const error = failed ? 'Could not delete the row. Try again.' : null;
               if (updatedMeal) applyMeal(updatedMeal);
               if (error) patchState(store, { actionError: error });
               completeRow(row.id, id, error);

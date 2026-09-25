@@ -6,7 +6,7 @@ import { of, shareReplay, switchMap, tap } from 'rxjs';
 import type { AccountIdentity } from './account.types';
 import { AccountContextStore } from './account-context.store';
 
-const DEFAULT_ACCOUNT_NAME = 'Наша семья';
+const DEFAULT_ACCOUNT_NAME = 'Our family';
 
 @Injectable({ providedIn: 'root' })
 export class AccountBootstrapService {

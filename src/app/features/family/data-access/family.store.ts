@@ -108,7 +108,7 @@ export class FamilyStore {
           this.selectUser(selectedUserId);
         }),
         catchError(() => {
-          this.initializationError.set('Не удалось загрузить семейный аккаунт.');
+          this.initializationError.set('Could not load the family account.');
           return EMPTY;
         }),
         finalize(() => this.initializing.set(false)),

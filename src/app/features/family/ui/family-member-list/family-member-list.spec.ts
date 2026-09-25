@@ -1,5 +1,5 @@
 import { registerLocaleData } from '@angular/common';
-import localeRu from '@angular/common/locales/ru';
+import localeEn from '@angular/common/locales/en';
 import { TestBed } from '@angular/core/testing';
 import { ActivatedRoute, Router } from '@angular/router';
 import { vi } from 'vitest';
@@ -7,7 +7,7 @@ import { vi } from 'vitest';
 import type { FamilyUser } from '../../types/family.types';
 import { FamilyMemberListComponent } from './family-member-list';
 
-registerLocaleData(localeRu);
+registerLocaleData(localeEn);
 
 describe('FamilyMemberListComponent', () => {
   const route = {};
@@ -15,7 +15,7 @@ describe('FamilyMemberListComponent', () => {
   const user: FamilyUser = {
     id: 1,
     account_id: 10,
-    name: 'Александр Андриец',
+    name: 'Alexander Andriets',
     birth_date: '1990-01-01',
     height_cm: 180,
     created_at: '2026-09-13T00:00:00Z',
@@ -41,7 +41,7 @@ describe('FamilyMemberListComponent', () => {
 
     (fixture.nativeElement.querySelector('.member-row') as HTMLButtonElement).click();
 
-    expect(fixture.nativeElement.textContent).toContain('Александр Андриец');
+    expect(fixture.nativeElement.textContent).toContain('Alexander Andriets');
     expect(router.navigate).toHaveBeenCalledWith([], {
       relativeTo: route,
       queryParams: { user: user.id },

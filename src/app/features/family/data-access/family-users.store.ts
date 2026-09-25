@@ -27,10 +27,10 @@ export const FamilyUsersStore = signalStore(
       };
     },
     errors: {
-      load: 'Не удалось загрузить семейный аккаунт.',
-      create: 'Не удалось добавить члена семьи.',
-      update: 'Не удалось обновить профиль.',
-      remove: 'Не удалось удалить профиль.',
+      load: 'Could not load the family account.',
+      create: 'Could not add the family member.',
+      update: 'Could not update the profile.',
+      remove: 'Could not delete the profile.',
     },
   }),
 );

@@ -1,19 +1,19 @@
 <button mat-icon-button
-        aria-label="Предыдущий день"
+        aria-label="Previous day"
         (click)="shiftDay(-1)">
   <mat-icon>chevron_left</mat-icon>
 </button>
 <label>
-  <span>Дата отчёта</span>
+  <span>Report date</span>
   <input #dayInput
          type="date"
-         aria-label="Дата отчёта по достижению целей"
+         aria-label="Goal progress report date"
          [max]="today()"
          [value]="day()"
          (change)="setDay(dayInput.value)" />
 </label>
 <button mat-icon-button
-        aria-label="Следующий день"
+        aria-label="Next day"
         [disabled]="day() >= today()"
         (click)="shiftDay(1)">
   <mat-icon>chevron_right</mat-icon>

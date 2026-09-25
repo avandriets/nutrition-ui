@@ -1,8 +1,8 @@
 <div class="dialog-heading">
   <div class="dialog-icon"><mat-icon>restaurant</mat-icon></div>
   <div>
-    <h2 mat-dialog-title>Новый приём пищи</h2>
-    <p>Создайте общий семейный приём пищи.</p>
+    <h2 mat-dialog-title>New meal</h2>
+    <p>Create a shared family meal.</p>
   </div>
 </div>
 <mat-dialog-content>
@@ -10,13 +10,13 @@
         [formGroup]="form"
         (ngSubmit)="submit()">
     <mat-form-field appearance="outline">
-      <mat-label>Дата</mat-label>
+      <mat-label>Date</mat-label>
       <input matInput
              type="date"
              formControlName="meal_date" />
     </mat-form-field>
     <mat-form-field appearance="outline">
-      <mat-label>Тип</mat-label>
+      <mat-label>Type</mat-label>
       <mat-select formControlName="meal_type">
         @for (type of mealTypes; track type.value) {
           <mat-option [value]="type.value">{{ type.label }}</mat-option>
@@ -25,22 +25,22 @@
     </mat-form-field>
     <mat-form-field appearance="outline"
                     class="full">
-      <mat-label>Название</mat-label>
+      <mat-label>Name</mat-label>
       <input matInput
              formControlName="name"
-             placeholder="Например, семейный ужин" />
+             placeholder="For example, family dinner" />
       @if (form.hasError('otherMealName')) {
-        <mat-error>Для типа «Другое» укажите название</mat-error>
+        <mat-error>Enter a name for the “Other” meal type</mat-error>
       }
     </mat-form-field>
   </form>
 </mat-dialog-content>
 <mat-dialog-actions align="end">
   <button mat-button
-          mat-dialog-close>Отмена</button>
+          mat-dialog-close>Cancel</button>
   <button mat-flat-button
           class="primary"
           form="meal-form"
           type="submit"
-          [disabled]="form.invalid">Создать</button>
+          [disabled]="form.invalid">Create</button>
 </mat-dialog-actions>

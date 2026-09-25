@@ -1,10 +1,10 @@
 <section class="summary-section">
   <div class="section-heading">
     <div>
-      <h2>Итоги этого приёма пищи</h2>
-      <p>Суммарные БЖУ, калории и клетчатка за этот приём пищи.</p>
+      <h2>Meal totals</h2>
+      <p>Total protein, fat, carbohydrates, calories, and fiber for this meal.</p>
     </div>
-    <span>На весь приём</span>
+    <span>Whole meal</span>
   </div>
 
   <mat-card class="table-card summary-card">
@@ -12,12 +12,12 @@
       <table class="member-summary">
         <thead>
           <tr>
-            <th scope="col">Член семьи</th>
-            <th scope="col">Калории</th>
-            <th scope="col">Белки</th>
-            <th scope="col">Жиры</th>
-            <th scope="col">Углеводы</th>
-            <th scope="col">Клетчатка</th>
+            <th scope="col">Family member</th>
+            <th scope="col">Calories</th>
+            <th scope="col">Protein</th>
+            <th scope="col">Fat</th>
+            <th scope="col">Carbohydrates</th>
+            <th scope="col">Fiber</th>
           </tr>
         </thead>
         <tbody>
@@ -29,23 +29,23 @@
               </th>
               <td class="calories">
                 <strong>{{ summary.totals.calories_kcal | number: '1.0-0' }}</strong>
-                <span>ккал</span>
+                <span>kcal</span>
               </td>
               <td>
                 <strong>{{ summary.totals.protein_g | number: '1.0-1' }}</strong>
-                <span>г</span>
+                <span>g</span>
               </td>
               <td>
                 <strong>{{ summary.totals.fat_g | number: '1.0-1' }}</strong>
-                <span>г</span>
+                <span>g</span>
               </td>
               <td>
                 <strong>{{ summary.totals.carbohydrates_g | number: '1.0-1' }}</strong>
-                <span>г</span>
+                <span>g</span>
               </td>
               <td>
                 <strong>{{ summary.totals.fiber_g | number: '1.0-1' }}</strong>
-                <span>г</span>
+                <span>g</span>
               </td>
             </tr>
           }

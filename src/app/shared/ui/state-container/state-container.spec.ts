@@ -74,7 +74,7 @@ describe('UIStateContainerComponent', () => {
   it('shows rejected content when any state is rejected', () => {
     const fixture = TestBed.createComponent(TestHost);
     fixture.componentInstance.state = {
-      request: { resolved: false, rejected: true, pending: false, err: 'Ошибка' },
+      request: { resolved: false, rejected: true, pending: false, err: 'Error' },
       dictionary: { resolved: true, rejected: false, pending: false, err: null },
     };
     fixture.detectChanges();
@@ -97,11 +97,11 @@ describe('UIStateContainerComponent', () => {
   it('shows and dismisses an action error without replacing resolved content', () => {
     const fixture = TestBed.createComponent(TestHost);
     fixture.componentInstance.state = { resolved: true, rejected: false, pending: false, err: null };
-    fixture.componentInstance.actionError = 'Не удалось сохранить изменения';
+    fixture.componentInstance.actionError = 'Could not save changes';
     fixture.detectChanges();
 
     const actionError = fixture.nativeElement.querySelector('.ui-state-container__action-error') as HTMLElement;
-    expect(actionError.textContent).toContain('Не удалось сохранить изменения');
+    expect(actionError.textContent).toContain('Could not save changes');
     expect(fixture.nativeElement.querySelector('.ui-state-container__resolved')).not.toBeNull();
 
     (actionError.querySelector('button') as HTMLButtonElement).click();
@@ -115,17 +115,17 @@ describe('UIStateContainerComponent', () => {
     const fixture = TestBed.createComponent(DefaultTestHost);
     fixture.detectChanges();
 
-    expect(fixture.nativeElement.querySelector('.ui-state-container__pending')?.textContent).toContain('Загрузка данных…');
+    expect(fixture.nativeElement.querySelector('.ui-state-container__pending')?.textContent).toContain('Loading data…');
   });
 
   it('shows the default rejected state and error details', () => {
     const fixture = TestBed.createComponent(DefaultTestHost);
-    fixture.componentInstance.state = { resolved: false, rejected: true, pending: false, err: 'Сервис недоступен' };
+    fixture.componentInstance.state = { resolved: false, rejected: true, pending: false, err: 'Service unavailable' };
     fixture.detectChanges();
 
     const rejected = fixture.nativeElement.querySelector('.ui-state-container__rejected') as HTMLElement;
-    expect(rejected.textContent).toContain('Произошла ошибка при загрузке данных');
-    expect(rejected.textContent).toContain('Сервис недоступен');
+    expect(rejected.textContent).toContain('An error occurred while loading data');
+    expect(rejected.textContent).toContain('Service unavailable');
   });
 
   it('shows the default empty state', () => {
@@ -133,6 +133,6 @@ describe('UIStateContainerComponent', () => {
     fixture.componentInstance.state = { resolved: true, rejected: false, pending: false, err: null, empty: true };
     fixture.detectChanges();
 
-    expect(fixture.nativeElement.querySelector('.ui-state-container__empty')?.textContent).toContain('Нет данных');
+    expect(fixture.nativeElement.querySelector('.ui-state-container__empty')?.textContent).toContain('No data');
   });
 });

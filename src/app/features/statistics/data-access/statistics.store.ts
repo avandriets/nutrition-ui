@@ -31,7 +31,7 @@ export class StatisticsStore {
     const selectedId = this.selectedUserId();
     return selectedId === null ? this.users() : this.users().filter(user => user.id === selectedId);
   });
-  readonly selectedUserName = computed(() => this.filteredUsers()[0]?.name ?? 'Вся семья');
+  readonly selectedUserName = computed(() => this.filteredUsers()[0]?.name ?? 'Whole family');
   readonly dailyReports = computed(() => this.dailyStore.data() ?? []);
   readonly averageReports = computed(() => this.periodStore.data()?.averageReports ?? []);
   readonly timelineReports = computed(() => this.periodStore.data()?.timelineReports ?? []);
@@ -140,11 +140,11 @@ export class StatisticsStore {
 
   applyPeriod(): void {
     if (!this.dateFrom() || !this.dateTo()) {
-      this.periodStore.setError('Укажите начало и конец периода.');
+      this.periodStore.setError('Enter the start and end dates.');
       return;
     }
     if (this.dateFrom() > this.dateTo()) {
-      this.periodStore.setError('Начало периода не может быть позже окончания.');
+      this.periodStore.setError('The start date cannot be after the end date.');
       return;
     }
     this.loadPeriodReports().subscribe();

@@ -9,13 +9,13 @@ describe('MealPortionMatrixComponent', () => {
   const user: UserIdentity = {
     id: 1,
     account_id: 10,
-    name: 'Александр',
+    name: 'Alexander',
   };
   const row: MealRow = {
     id: 20,
     position: 0,
     product_id: 30,
-    product_name: 'Яблоко',
+    product_name: 'Apple',
     product_brand: null,
     calories_kcal: 52,
     protein_g: 0.3,
@@ -55,8 +55,8 @@ describe('MealPortionMatrixComponent', () => {
     input.dispatchEvent(new Event('blur'));
     (fixture.nativeElement.querySelector('.delete-row-button') as HTMLButtonElement).click();
 
-    expect(fixture.nativeElement.textContent).toContain('Яблоко');
-    expect(fixture.nativeElement.textContent).toContain('Кк-52');
+    expect(fixture.nativeElement.textContent).toContain('Apple');
+    expect(fixture.nativeElement.textContent).toContain('Cal-52');
     expect(portionChange).toEqual({ row, userId: user.id, rawValue: '125' });
     expect(deletedRow).toBe(row);
   });

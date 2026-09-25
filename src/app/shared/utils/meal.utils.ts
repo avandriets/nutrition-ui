@@ -6,10 +6,10 @@ interface MealTypeMetadata {
 }
 
 export const MEAL_TYPE_METADATA: Readonly<Record<MealType, MealTypeMetadata>> = {
-  breakfast: { label: 'Завтрак', icon: 'bakery_dining' },
-  lunch: { label: 'Обед', icon: 'lunch_dining' },
-  dinner: { label: 'Ужин', icon: 'dinner_dining' },
-  other: { label: 'Другое', icon: 'restaurant' },
+  breakfast: { label: 'Breakfast', icon: 'bakery_dining' },
+  lunch: { label: 'Lunch', icon: 'lunch_dining' },
+  dinner: { label: 'Dinner', icon: 'dinner_dining' },
+  other: { label: 'Other', icon: 'restaurant' },
 };
 
 export function mealTypeLabel(type: MealType): string {

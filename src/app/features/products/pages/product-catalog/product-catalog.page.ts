@@ -59,11 +59,11 @@ export class ProductCatalogPage implements OnInit {
   );
 
   readonly filteredProducts = computed(() => {
-    const query = this.search().trim().toLocaleLowerCase('ru');
+    const query = this.search().trim().toLocaleLowerCase('en-US');
     const category = this.category();
     return this.products().filter(product => {
       const matchesCategory = category === 'all' || product.category === category;
-      const searchable = [product.name, product.brand, product.category].filter(Boolean).join(' ').toLocaleLowerCase('ru');
+      const searchable = [product.name, product.brand, product.category].filter(Boolean).join(' ').toLocaleLowerCase('en-US');
       return matchesCategory && (!query || searchable.includes(query));
     });
   });
@@ -116,15 +116,15 @@ export class ProductCatalogPage implements OnInit {
       .open<UIConfirmDialogComponent, UIConfirmDialogData, boolean>(UIConfirmDialogComponent, {
         data: {
           icon: 'delete_outline',
-          title: 'Удалить продукт?',
+          title: 'Delete product?',
           message: [
             {
               text: product.name,
               emphasis: true,
             },
-            { text: ' будет удалён из общего каталога. Это действие нельзя отменить.' },
+            { text: ' will be deleted from the shared catalog. This cannot be undone.' },
           ],
-          confirmText: 'Удалить',
+          confirmText: 'Delete',
           tone: 'danger',
         },
       })

@@ -6,11 +6,11 @@ import { ProductCardComponent } from './product-card';
 describe('ProductCardComponent', () => {
   const product: Product = {
     id: 1,
-    name: 'Яблоко',
+    name: 'Apple',
     brand: null,
-    category: 'Фрукты',
+    category: 'Fruit',
     barcode: null,
-    description: 'Зелёное яблоко',
+    description: 'Green apple',
     calories_kcal: 52,
     protein_g: 0.3,
     fat_g: 0.2,
@@ -30,9 +30,9 @@ describe('ProductCardComponent', () => {
     fixture.detectChanges();
 
     const text = fixture.nativeElement.textContent as string;
-    expect(text).toContain('Яблоко');
-    expect(text).toContain('Фрукты');
+    expect(text).toContain('Apple');
+    expect(text).toContain('Fruit');
     expect(text).toContain('52');
-    expect(text).toContain('14 г');
+    expect(text).toContain('14 g');
   });
 });

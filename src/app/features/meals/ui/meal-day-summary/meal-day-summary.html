@@ -1,8 +1,8 @@
 <section class="summary-section daily-summary-section">
   <div class="section-heading">
     <div>
-      <h2>Итоги за весь день</h2>
-      <p>Все приёмы пищи за этот день. Данные обновляются после изменения любой порции.</p>
+      <h2>Daily totals</h2>
+      <p>All meals for this day. Totals update whenever a portion changes.</p>
     </div>
     <span>{{ mealDate() | date: 'd MMMM' }}</span>
   </div>
@@ -12,13 +12,13 @@
       <table class="member-summary day-summary">
         <thead>
           <tr>
-            <th scope="col">Член семьи</th>
-            <th scope="col">Калории</th>
-            <th scope="col">Белки</th>
-            <th scope="col">Жиры</th>
-            <th scope="col">Углеводы</th>
-            <th scope="col">Клетчатка</th>
-            <th scope="col">Прогресс к дневным целям</th>
+            <th scope="col">Family member</th>
+            <th scope="col">Calories</th>
+            <th scope="col">Protein</th>
+            <th scope="col">Fat</th>
+            <th scope="col">Carbohydrates</th>
+            <th scope="col">Fiber</th>
+            <th scope="col">Daily goal progress</th>
           </tr>
         </thead>
         <tbody>
@@ -30,50 +30,50 @@
               </th>
               <td class="calories">
                 <strong>{{ summary.totals.calories_kcal | number: '1.0-0' }}</strong>
-                <span>ккал</span>
+                <span>kcal</span>
               </td>
               <td>
                 <strong>{{ summary.totals.protein_g | number: '1.0-1' }}</strong>
-                <span>г</span>
+                <span>g</span>
               </td>
               <td>
                 <strong>{{ summary.totals.fat_g | number: '1.0-1' }}</strong>
-                <span>г</span>
+                <span>g</span>
               </td>
               <td>
                 <strong>{{ summary.totals.carbohydrates_g | number: '1.0-1' }}</strong>
-                <span>г</span>
+                <span>g</span>
               </td>
               <td>
                 <strong>{{ summary.totals.fiber_g | number: '1.0-1' }}</strong>
-                <span>г</span>
+                <span>g</span>
               </td>
               <td class="goal-cell">
                 @if (goalFor(summary.user.id); as goal) {
                   <span class="goal-badge"
                         [class]="goalStatusClass(summary.totals.calories_kcal, goal.daily_calories_kcal)">
-                    Ккал:
+                    Calories:
                     <strong>{{ summary.totals.calories_kcal | number: '1.0-0' }}</strong>
                     / {{ goal.daily_calories_kcal | number: '1.0-0' }} ·
                     {{ goalStatus(summary.totals.calories_kcal, goal.daily_calories_kcal) }}
                   </span>
                   <span class="goal-badge"
                         [class]="goalStatusClass(summary.totals.protein_g, goal.daily_protein_g)">
-                    Белок:
+                    Protein:
                     <strong>{{ summary.totals.protein_g | number: '1.0-1' }}</strong>
-                    / {{ goal.daily_protein_g | number: '1.0-1' }} г ·
+                    / {{ goal.daily_protein_g | number: '1.0-1' }} g ·
                     {{ goalStatus(summary.totals.protein_g, goal.daily_protein_g) }}
                   </span>
                   <span class="goal-badge"
                         [class]="goalStatusClass(summary.totals.fiber_g, goal.daily_fiber_g)">
-                    Клетчатка:
+                    Fiber:
                     <strong>{{ summary.totals.fiber_g | number: '1.0-1' }}</strong>
-                    / {{ goal.daily_fiber_g | number: '1.0-1' }} г ·
+                    / {{ goal.daily_fiber_g | number: '1.0-1' }} g ·
                     {{ goalStatus(summary.totals.fiber_g, goal.daily_fiber_g) }}
                   </span>
                 } @else {
                   <a class="goal-link"
-                     routerLink="/family">Настроить цель</a>
+                     routerLink="/family">Set goal</a>
                 }
               </td>
             </tr>

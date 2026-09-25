@@ -1,13 +1,13 @@
 <label class="search-field">
   <mat-icon>search</mat-icon>
   <input type="search"
-         aria-label="Поиск продуктов"
-         placeholder="Название, бренд или категория"
+         aria-label="Search products"
+         placeholder="Name, brand, or category"
          [formControl]="searchControl" />
   @if (searchControl.value) {
     <button mat-icon-button
             type="button"
-            aria-label="Очистить поиск"
+            aria-label="Clear search"
             (click)="clear()">
       <mat-icon>close</mat-icon>
     </button>

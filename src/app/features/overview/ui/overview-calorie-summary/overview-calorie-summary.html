@@ -1,13 +1,13 @@
 <mat-card>
   <div class="card-heading">
     <div>
-      <span>КАЛОРИИ СЕГОДНЯ</span>
+      <span>TODAY’S CALORIES</span>
       <h2>
         {{ totals().calories_kcal | number: '1.0-0' }}
         @if (target(); as calorieTarget) {
-          <small>из {{ calorieTarget | number: '1.0-0' }} ккал</small>
+          <small>of {{ calorieTarget | number: '1.0-0' }} kcal</small>
         } @else {
-          <small>ккал</small>
+          <small>kcal</small>
         }
       </h2>
     </div>
@@ -22,16 +22,16 @@
          routerLink="/family"
          [queryParams]="{ editGoal: true }">
         <mat-icon>flag</mat-icon>
-        Настроить цель
+        Set goal
       </a>
     }
   </div>
   <mat-progress-bar mode="determinate"
                     [value]="percent() ?? 0" />
   <div class="calorie-legend">
-    <span><i class="consumed"></i>Съедено <b>{{ totals().calories_kcal | number: '1.0-0' }}</b></span>
+    <span><i class="consumed"></i>Consumed <b>{{ totals().calories_kcal | number: '1.0-0' }}</b></span>
     @if (remaining() !== null) {
-      <span><i class="remaining"></i>Осталось <b>{{ remaining() | number: '1.0-0' }}</b></span>
+      <span><i class="remaining"></i>Remaining <b>{{ remaining() | number: '1.0-0' }}</b></span>
     }
   </div>
 </mat-card>

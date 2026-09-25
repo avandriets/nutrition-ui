@@ -1,7 +1,7 @@
 <div class="section-heading">
   <div>
-    <h2>Приёмы пищи</h2>
-    <p>Только индивидуальные порции {{ userName() }}</p>
+    <h2>Meals</h2>
+    <p>Individual portions only {{ userName() }}</p>
   </div>
 </div>
 
@@ -19,9 +19,9 @@
 <ng-template #empty>
   <mat-card class="empty-meals">
     <div class="empty-icon"><mat-icon>restaurant_menu</mat-icon></div>
-    <h3>На эту дату порций нет</h3>
-    <p>Добавьте порцию пользователя в общий семейный приём пищи.</p>
+    <h3>No portions on this date</h3>
+    <p>Add a portion for this member to a shared family meal.</p>
     <a mat-stroked-button
-       routerLink="/meals">Перейти к приёмам пищи</a>
+       routerLink="/meals">Go to meals</a>
   </mat-card>
 </ng-template>

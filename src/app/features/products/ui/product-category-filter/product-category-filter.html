@@ -1,8 +1,8 @@
 <mat-select class="category-select"
-            aria-label="Категория"
+            aria-label="Category"
             [value]="category()"
             (selectionChange)="categoryChange.emit($event.value)">
-  <mat-option value="all">Все категории</mat-option>
+  <mat-option value="all">All categories</mat-option>
   @for (item of categories(); track item) {
     <mat-option [value]="item">{{ item }}</mat-option>
   }

@@ -3,10 +3,10 @@ import { TestBed } from '@angular/core/testing';
 import { AccountContextStore } from './account-context.store';
 
 describe('AccountContextStore', () => {
-  const account = { id: 10, name: 'Семья' };
+  const account = { id: 10, name: 'Family' };
   const members = [
-    { id: 1, name: 'Александр' },
-    { id: 2, name: 'Мария' },
+    { id: 1, name: 'Alexander' },
+    { id: 2, name: 'Maria' },
   ];
 
   beforeEach(() => {

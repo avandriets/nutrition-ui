@@ -1,8 +1,8 @@
 <div class="section-heading">
   <span class="section-icon"><mat-icon>date_range</mat-icon></span>
   <div>
-    <h2>Отчёт за период</h2>
-    <p>Средние значения и динамика питания</p>
+    <h2>Period report</h2>
+    <p>Nutrition averages and trends</p>
   </div>
 </div>
 
@@ -19,8 +19,8 @@
                         (actionErrorDismissed)="actionErrorDismissed.emit()">
   <ng-template #resolved>
     <div class="subsection-heading">
-      <h3>Средние значения в день</h3>
-      <p>{{ dateFrom() | date: 'd MMM y' : '' : 'ru' }} — {{ dateTo() | date: 'd MMM y' : '' : 'ru' }}</p>
+      <h3>Daily averages</h3>
+      <p>{{ dateFrom() | date: 'd MMM y' : '' : 'en-US' }} — {{ dateTo() | date: 'd MMM y' : '' : 'en-US' }}</p>
     </div>
 
     <div class="average-grid"

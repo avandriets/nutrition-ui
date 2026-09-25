@@ -64,28 +64,28 @@ export class OverviewStore {
 
     return [
       {
-        name: 'Белки',
+        name: 'Protein',
         value: totals.protein_g,
         target: goal?.daily_protein_g ?? null,
         color: '#7559d9',
         percent: this.percent(totals.protein_g, goal?.daily_protein_g ?? null),
       },
       {
-        name: 'Жиры',
+        name: 'Fat',
         value: totals.fat_g,
         target: null,
         color: '#e99a49',
         percent: null,
       },
       {
-        name: 'Углеводы',
+        name: 'Carbohydrates',
         value: totals.carbohydrates_g,
         target: null,
         color: '#3e9c68',
         percent: null,
       },
       {
-        name: 'Клетчатка',
+        name: 'Fiber',
         value: totals.fiber_g,
         target: goal?.daily_fiber_g ?? null,
         color: '#4e91c7',

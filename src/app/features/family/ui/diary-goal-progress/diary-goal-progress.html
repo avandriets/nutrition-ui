@@ -8,47 +8,47 @@
         <div>
           <mat-icon>flag</mat-icon>
           <span>
-            <strong>Прогресс к цели на выбранную дату</strong>
-            <small>Действует с {{ goal()!.effective_from | date: 'd MMM y' : '' : 'ru' }}</small>
+            <strong>Goal progress for the selected date</strong>
+            <small>Effective from {{ goal()!.effective_from | date: 'd MMM y' : '' : 'en-US' }}</small>
           </span>
         </div>
         <a mat-button
            routerLink="/family"
-           [queryParams]="{ editGoal: true }">Новая цель</a>
+           [queryParams]="{ editGoal: true }">New goal</a>
       </div>
       <div class="goal-progress-grid">
         <div class="goal-progress"
              [class]="goalState(totals().calories_kcal, goal()!.daily_calories_kcal)">
           <div class="goal-label">
-            <span>Калории</span>
-            <strong>{{ totals().calories_kcal | number: '1.0-0' }} / {{ goal()!.daily_calories_kcal | number: '1.0-0' }} ккал</strong>
+            <span>Calories</span>
+            <strong>{{ totals().calories_kcal | number: '1.0-0' }} / {{ goal()!.daily_calories_kcal | number: '1.0-0' }} kcal</strong>
           </div>
           <div class="progress-track">
             <span [style.width.%]="goalPercent(totals().calories_kcal, goal()!.daily_calories_kcal)"></span>
           </div>
-          <small>{{ goalCaption(totals().calories_kcal, goal()!.daily_calories_kcal, 'ккал') }}</small>
+          <small>{{ goalCaption(totals().calories_kcal, goal()!.daily_calories_kcal, 'kcal') }}</small>
         </div>
         <div class="goal-progress"
              [class]="goalState(totals().protein_g, goal()!.daily_protein_g)">
           <div class="goal-label">
-            <span>Белок</span>
-            <strong>{{ totals().protein_g | number: '1.0-1' }} / {{ goal()!.daily_protein_g | number: '1.0-1' }} г</strong>
+            <span>Protein</span>
+            <strong>{{ totals().protein_g | number: '1.0-1' }} / {{ goal()!.daily_protein_g | number: '1.0-1' }} g</strong>
           </div>
           <div class="progress-track">
             <span [style.width.%]="goalPercent(totals().protein_g, goal()!.daily_protein_g)"></span>
           </div>
-          <small>{{ goalCaption(totals().protein_g, goal()!.daily_protein_g, 'г') }}</small>
+          <small>{{ goalCaption(totals().protein_g, goal()!.daily_protein_g, 'g') }}</small>
         </div>
         <div class="goal-progress"
              [class]="goalState(totals().fiber_g, goal()!.daily_fiber_g)">
           <div class="goal-label">
-            <span>Клетчатка</span>
-            <strong>{{ totals().fiber_g | number: '1.0-1' }} / {{ goal()!.daily_fiber_g | number: '1.0-1' }} г</strong>
+            <span>Fiber</span>
+            <strong>{{ totals().fiber_g | number: '1.0-1' }} / {{ goal()!.daily_fiber_g | number: '1.0-1' }} g</strong>
           </div>
           <div class="progress-track">
             <span [style.width.%]="goalPercent(totals().fiber_g, goal()!.daily_fiber_g)"></span>
           </div>
-          <small>{{ goalCaption(totals().fiber_g, goal()!.daily_fiber_g, 'г') }}</small>
+          <small>{{ goalCaption(totals().fiber_g, goal()!.daily_fiber_g, 'g') }}</small>
         </div>
       </div>
     </mat-card>
@@ -59,11 +59,11 @@
   <mat-card class="goal-empty">
     <mat-icon>flag</mat-icon>
     <div>
-      <strong>Дневная цель не настроена</strong>
-      <span>Добавьте нормы для сравнения.</span>
+      <strong>No daily goal set</strong>
+      <span>Set targets to compare your progress.</span>
     </div>
     <a mat-stroked-button
        routerLink="/family"
-       [queryParams]="{ editGoal: true }">Настроить</a>
+       [queryParams]="{ editGoal: true }">Set up</a>
   </mat-card>
 </ng-template>

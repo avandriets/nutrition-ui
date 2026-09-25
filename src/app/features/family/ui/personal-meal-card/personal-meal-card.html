@@ -8,16 +8,16 @@
       <div>
         <span>{{ typeLabel(view().meal.meal_type) }}</span>
         <h3>{{ view().meal.name || typeLabel(view().meal.meal_type) }}</h3>
-        <small>{{ view().rows.length }} продуктов</small>
+        <small>{{ view().rows.length }} products</small>
       </div>
     </div>
     <div class="meal-total">
       <strong>{{ view().totals.calories_kcal | number: '1.0-0' }}</strong>
-      <span>ккал</span>
+      <span>kcal</span>
     </div>
     <a mat-stroked-button
        [routerLink]="['/meals', view().meal.id]">
-      Открыть
+      Open
       <mat-icon>arrow_forward</mat-icon>
     </a>
   </div>
@@ -25,13 +25,13 @@
     <table class="meal-table">
       <thead>
         <tr>
-          <th scope="col">Продукт</th>
-          <th scope="col">Порция</th>
-          <th scope="col">Ккал</th>
-          <th scope="col">Белки</th>
-          <th scope="col">Жиры</th>
-          <th scope="col">Углеводы</th>
-          <th scope="col">Клетчатка</th>
+          <th scope="col">Product</th>
+          <th scope="col">Portion</th>
+          <th scope="col">Calories</th>
+          <th scope="col">Protein</th>
+          <th scope="col">Fat</th>
+          <th scope="col">Carbohydrates</th>
+          <th scope="col">Fiber</th>
         </tr>
       </thead>
       <tbody>
@@ -39,17 +39,17 @@
           <tr>
             <th scope="row">
               <strong>{{ row.product_name }}</strong>
-              <small>{{ row.product_brand || 'Без бренда' }}</small>
+              <small>{{ row.product_brand || 'No brand' }}</small>
             </th>
             <td>
               <strong>{{ row.portion_g | number: '1.0-1' }}</strong>
-              г
+              g
             </td>
             <td>{{ row.calories_kcal | number: '1.0-0' }}</td>
-            <td>{{ row.protein_g | number: '1.0-1' }} г</td>
-            <td>{{ row.fat_g | number: '1.0-1' }} г</td>
-            <td>{{ row.carbohydrates_g | number: '1.0-1' }} г</td>
-            <td>{{ row.fiber_g | number: '1.0-1' }} г</td>
+            <td>{{ row.protein_g | number: '1.0-1' }} g</td>
+            <td>{{ row.fat_g | number: '1.0-1' }} g</td>
+            <td>{{ row.carbohydrates_g | number: '1.0-1' }} g</td>
+            <td>{{ row.fiber_g | number: '1.0-1' }} g</td>
           </tr>
         }
       </tbody>

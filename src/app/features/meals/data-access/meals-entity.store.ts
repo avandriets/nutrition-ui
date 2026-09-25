@@ -27,11 +27,11 @@ export const MealsEntityStore = signalStore(
       };
     },
     errors: {
-      load: 'Не удалось загрузить приёмы пищи.',
-      getById: 'Не удалось загрузить приём пищи.',
-      create: 'Не удалось создать приём пищи.',
-      update: 'Изменение приёма пищи не поддерживается.',
-      remove: 'Удаление приёма пищи не поддерживается.',
+      load: 'Could not load meals.',
+      getById: 'Could not load the meal.',
+      create: 'Could not create the meal.',
+      update: 'Editing meals is not supported.',
+      remove: 'Deleting meals is not supported.',
     },
   }),
 );

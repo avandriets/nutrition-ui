@@ -4,7 +4,7 @@
      class="back-link"
      routerLink="/meals">
     <mat-icon>arrow_back</mat-icon>
-    Все приёмы пищи
+    All meals
   </a>
 
   <ng-container title>
@@ -12,7 +12,7 @@
       <span class="eyebrow">{{ typeLabel(currentMeal.meal_type) }}
         · {{ currentMeal.meal_date | date: 'd MMMM y' }}</span>
       <h1>{{ currentMeal.name || typeLabel(currentMeal.meal_type) }}</h1>
-      <p class="page-description">Общий приём пищи с индивидуальными порциями для каждого члена семьи.</p>
+      <p class="page-description">A shared meal with individual portions for each family member.</p>
     }
   </ng-container>
 
@@ -24,7 +24,7 @@
            routerLink="/meals"
            [queryParams]="{ copy: currentMeal.meal_date }">
           <mat-icon>content_copy</mat-icon>
-          Повторить рацион
+          Repeat meal plan
         </a>
       }
       <button mat-flat-button
@@ -36,7 +36,7 @@
         } @else {
           <mat-icon>add</mat-icon>
         }
-        Добавить продукт
+        Add product
       </button>
     </div>
   </ng-container>
@@ -67,8 +67,8 @@
     <ng-template #empty>
       <div class="empty-state">
         <mat-icon>restaurant_menu</mat-icon>
-        <h2>Пока нет данных для приёма пищи</h2>
-        <p>Добавьте членов семьи и продукты, чтобы заполнить порции и рассчитать итоговые значения.</p>
+        <h2>No meal data yet</h2>
+        <p>Add family members and products to enter portions and calculate totals.</p>
       </div>
     </ng-template>
   </ng-container>

@@ -7,9 +7,9 @@
       <span class="member-copy">
         <strong>{{ user.name }}</strong>
         <small>
-          {{ user.birth_date ? (user.birth_date | date: 'd MMMM y' : '' : 'ru') : 'Дата рождения не указана' }}
+          {{ user.birth_date ? (user.birth_date | date: 'd MMMM y' : '' : 'en-US') : 'Date of birth not set' }}
           @if (user.height_cm != null) {
-            · {{ user.height_cm | number: '1.0-1' }} см
+            · {{ user.height_cm | number: '1.0-1' }} cm
           }
         </small>
       </span>

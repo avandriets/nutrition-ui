@@ -3,13 +3,13 @@
     <table>
       <thead>
         <tr>
-          <th scope="col">Приём пищи</th>
-          <th scope="col">Калории</th>
-          <th scope="col">Белки</th>
-          <th scope="col">Жиры</th>
-          <th scope="col">Углеводы</th>
-          <th scope="col">Клетчатка</th>
-          <th scope="col"><span class="visually-hidden">Открыть</span></th>
+          <th scope="col">Meal</th>
+          <th scope="col">Calories</th>
+          <th scope="col">Protein</th>
+          <th scope="col">Fat</th>
+          <th scope="col">Carbohydrates</th>
+          <th scope="col">Fiber</th>
+          <th scope="col"><span class="visually-hidden">Open</span></th>
         </tr>
       </thead>
       <tbody>
@@ -22,18 +22,18 @@
               </span>
               <span class="meal-main">
                 <strong>{{ summary.meal.name || typeLabel(summary.meal) }}</strong>
-                <small>{{ typeLabel(summary.meal) }} · {{ summary.products || 'Нет продуктов' }}</small>
+                <small>{{ typeLabel(summary.meal) }} · {{ summary.products || 'No products' }}</small>
               </span>
             </th>
-            <td class="calories"><strong>{{ summary.totals.calories_kcal | number: '1.0-0' }}</strong><span>ккал</span></td>
-            <td><strong>{{ summary.totals.protein_g | number: '1.0-1' }}</strong><span>г</span></td>
-            <td><strong>{{ summary.totals.fat_g | number: '1.0-1' }}</strong><span>г</span></td>
-            <td><strong>{{ summary.totals.carbohydrates_g | number: '1.0-1' }}</strong><span>г</span></td>
-            <td><strong>{{ summary.totals.fiber_g | number: '1.0-1' }}</strong><span>г</span></td>
+            <td class="calories"><strong>{{ summary.totals.calories_kcal | number: '1.0-0' }}</strong><span>kcal</span></td>
+            <td><strong>{{ summary.totals.protein_g | number: '1.0-1' }}</strong><span>g</span></td>
+            <td><strong>{{ summary.totals.fat_g | number: '1.0-1' }}</strong><span>g</span></td>
+            <td><strong>{{ summary.totals.carbohydrates_g | number: '1.0-1' }}</strong><span>g</span></td>
+            <td><strong>{{ summary.totals.fiber_g | number: '1.0-1' }}</strong><span>g</span></td>
             <td>
               <a mat-icon-button
                  [routerLink]="['/meals', summary.meal.id]"
-                 [attr.aria-label]="'Открыть ' + (summary.meal.name || typeLabel(summary.meal))">
+                 [attr.aria-label]="'Open ' + (summary.meal.name || typeLabel(summary.meal))">
                 <mat-icon>arrow_forward</mat-icon>
               </a>
             </td>

@@ -1,11 +1,11 @@
 import { registerLocaleData } from '@angular/common';
-import localeRu from '@angular/common/locales/ru';
+import localeEn from '@angular/common/locales/en';
 import { TestBed } from '@angular/core/testing';
 
 import type { UserGoal } from '../../types/family.types';
 import { GoalSummaryComponent } from './goal-summary';
 
-registerLocaleData(localeRu);
+registerLocaleData(localeEn);
 
 describe('GoalSummaryComponent', () => {
   it('renders the current nutrition goal', () => {

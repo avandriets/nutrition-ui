@@ -12,11 +12,11 @@ import { UserGoalsStore } from './user-goals.store';
 import { UserMeasurementsStore } from './user-measurements.store';
 
 describe('FamilyStore', () => {
-  const account = { id: 10, name: 'Семья' };
+  const account = { id: 10, name: 'Family' };
   const user: FamilyUser = {
     id: 1,
     account_id: account.id,
-    name: 'Александр',
+    name: 'Alexander',
     birth_date: null,
     height_cm: 180,
     created_at: '2026-09-12T00:00:00Z',
@@ -154,7 +154,7 @@ describe('FamilyStore', () => {
   });
 
   it('selects the user requested by the route', () => {
-    const requestedUser = { ...user, id: 4, name: 'Мария' };
+    const requestedUser = { ...user, id: 4, name: 'Maria' };
     api.listUsers.mockReturnValue(of([user, requestedUser]));
     const store = TestBed.inject(FamilyStore);
 
@@ -170,10 +170,10 @@ describe('FamilyStore', () => {
     const context = TestBed.inject(AccountContextStore);
     store.initialize();
 
-    store.updateUser(user.id, { name: 'Новое имя', birth_date: null, height_cm: 181 });
+    store.updateUser(user.id, { name: 'New name', birth_date: null, height_cm: 181 });
 
     expect(api.updateUser).toHaveBeenCalledWith(account.id, user.id, {
-      name: 'Новое имя',
+      name: 'New name',
       birth_date: null,
       height_cm: 181,
     });

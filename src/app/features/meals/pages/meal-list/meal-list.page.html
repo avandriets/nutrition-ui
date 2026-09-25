@@ -1,8 +1,8 @@
 <app-ui-page size="narrow">
   <ng-container title>
-    <span class="eyebrow">СЕМЕЙНЫЙ ДНЕВНИК</span>
-    <h1>Приёмы пищи</h1>
-    <p class="page-description">Общая еда с персональными порциями для каждого члена семьи.</p>
+    <span class="eyebrow">FAMILY DIARY</span>
+    <h1>Meals</h1>
+    <p class="page-description">Shared meals with individual portions for each family member.</p>
   </ng-container>
 
   <div action
@@ -14,14 +14,14 @@
             [disabled]="saving()"
             (click)="copyMealDay()">
       <mat-icon>content_copy</mat-icon>
-      Копировать рацион
+      Copy meal plan
     </button>
     <button mat-flat-button
             class="add-button"
             [disabled]="saving()"
             (click)="createMeal()">
       <mat-icon>add</mat-icon>
-      Новый приём пищи
+      New meal
     </button>
   </div>
 
@@ -37,8 +37,8 @@
 
 <ng-template #resolved>
   <div class="list-heading">
-    <span>Найдено: {{ meals().length }}</span>
-    <span>Калории по членам семьи</span>
+    <span>Found: {{ meals().length }}</span>
+    <span>Calories by family member</span>
   </div>
   <div class="meal-grid">
     @for (meal of meals(); track meal.id) {
@@ -53,12 +53,12 @@
     <div class="empty-icon">
       <mat-icon>restaurant_menu</mat-icon>
     </div>
-    <h2>{{ dateFilter() ? 'На эту дату приёмов пищи нет' : 'Дневник пока пуст' }}</h2>
-    <p>Создайте общий приём пищи и добавьте порции членов семьи.</p>
+    <h2>{{ dateFilter() ? 'No meals on this date' : 'Your diary is empty' }}</h2>
+    <p>Create a shared meal and add portions for family members.</p>
     <button mat-stroked-button
             (click)="createMeal()">
       <mat-icon>add</mat-icon>
-      Создать приём пищи
+      Create meal
     </button>
   </mat-card>
 </ng-template>

@@ -1,30 +1,30 @@
 <mat-card class="measurement-history-card">
   <div class="history-heading">
-    <h3>История измерений</h3>
+    <h3>Measurement history</h3>
     <span>{{ recordsCountLabel(measurements().length) }}</span>
   </div>
   <div class="measurement-table-scroll">
     <table class="measurement-table">
       <thead>
         <tr>
-          <th scope="col">Дата</th>
-          <th scope="col">Вес</th>
-          <th scope="col">Шея</th>
-          <th scope="col">Талия</th>
-          <th scope="col">Бёдра</th>
-          <th scope="col"><span class="visually-hidden">Действия</span></th>
+          <th scope="col">Date</th>
+          <th scope="col">Weight</th>
+          <th scope="col">Neck</th>
+          <th scope="col">Waist</th>
+          <th scope="col">Hips</th>
+          <th scope="col"><span class="visually-hidden">Actions</span></th>
         </tr>
       </thead>
       <tbody>
         @for (measurement of measurements(); track measurement.id) {
           <tr>
             <th scope="row">
-              {{ measurement.measured_on | date: 'd MMM y' : '' : 'ru' }}
+              {{ measurement.measured_on | date: 'd MMM y' : '' : 'en-US' }}
             </th>
             <td>
               @if (measurement.weight_kg != null) {
                 <strong>{{ measurement.weight_kg | number: '1.0-1' }}</strong>
-                кг
+                kg
               } @else {
                 —
               }
@@ -32,7 +32,7 @@
             <td>
               @if (measurement.neck_cm != null) {
                 <strong>{{ measurement.neck_cm | number: '1.0-1' }}</strong>
-                см
+                cm
               } @else {
                 —
               }
@@ -40,7 +40,7 @@
             <td>
               @if (measurement.waist_cm != null) {
                 <strong>{{ measurement.waist_cm | number: '1.0-1' }}</strong>
-                см
+                cm
               } @else {
                 —
               }
@@ -48,7 +48,7 @@
             <td>
               @if (measurement.hips_cm != null) {
                 <strong>{{ measurement.hips_cm | number: '1.0-1' }}</strong>
-                см
+                cm
               } @else {
                 —
               }
@@ -56,14 +56,14 @@
             <td class="measurement-actions">
               <button mat-icon-button
                       [disabled]="pendingIds().has(measurement.id)"
-                      aria-label="Редактировать замер"
+                      aria-label="Edit measurement"
                       (click)="editRequested.emit(measurement)">
                 <mat-icon>edit</mat-icon>
               </button>
               <button mat-icon-button
                       class="delete-measurement"
                       [disabled]="pendingIds().has(measurement.id)"
-                      aria-label="Удалить замер"
+                      aria-label="Delete measurement"
                       (click)="deleteRequested.emit(measurement)">
                 <mat-icon>delete_outline</mat-icon>
               </button>

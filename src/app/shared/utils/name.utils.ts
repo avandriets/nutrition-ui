@@ -1,4 +1,4 @@
-export function initials(name: string, locale = 'ru'): string {
+export function initials(name: string, locale = 'en-US'): string {
   return name
     .trim()
     .split(/\s+/)

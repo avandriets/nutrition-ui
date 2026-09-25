@@ -32,7 +32,7 @@ export const StatisticsPeriodStore = signalStore(
         },
       };
     },
-    error: 'Не удалось загрузить статистику за выбранный период.',
+    error: 'Could not load statistics for the selected period.',
     isEmpty: data => !data.averageReports.length && !data.timelineReports.length,
   }),
 );

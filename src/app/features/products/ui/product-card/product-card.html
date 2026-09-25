@@ -1,9 +1,9 @@
 <mat-card class="product-card">
   <div class="card-top">
     <div class="food-icon"><mat-icon>nutrition</mat-icon></div>
-    <span class="category">{{ product().category || 'Без категории' }}</span>
+    <span class="category">{{ product().category || 'No category' }}</span>
     <button mat-icon-button
-            aria-label="Меню продукта"
+            aria-label="Product menu"
             [matMenuTriggerFor]="productMenu">
       <mat-icon>more_horiz</mat-icon>
     </button>
@@ -11,38 +11,38 @@
       <button mat-menu-item
               (click)="editRequested.emit(product())">
         <mat-icon>edit</mat-icon>
-        Редактировать
+        Edit
       </button>
       <button mat-menu-item
               (click)="deleteRequested.emit(product())">
         <mat-icon>delete_outline</mat-icon>
-        Удалить
+        Delete
       </button>
     </mat-menu>
   </div>
   <div class="product-copy">
     <h2>{{ product().name }}</h2>
-    <p>{{ product().brand || product().description || 'Описание не указано' }}</p>
+    <p>{{ product().brand || product().description || 'No description' }}</p>
   </div>
   <div class="calories">
     <strong>{{ product().calories_kcal | number: '1.0-1' }}</strong>
-    <span>ккал</span>
+    <span>kcal</span>
   </div>
   <div class="macros">
     <div>
       <i class="protein"></i>
-      <span>Белки</span>
-      <strong>{{ product().protein_g | number: '1.0-1' }} г</strong>
+      <span>Protein</span>
+      <strong>{{ product().protein_g | number: '1.0-1' }} g</strong>
     </div>
     <div>
       <i class="fat"></i>
-      <span>Жиры</span>
-      <strong>{{ product().fat_g | number: '1.0-1' }} г</strong>
+      <span>Fat</span>
+      <strong>{{ product().fat_g | number: '1.0-1' }} g</strong>
     </div>
     <div>
       <i class="carbs"></i>
-      <span>Углеводы</span>
-      <strong>{{ product().carbohydrates_g | number: '1.0-1' }} г</strong>
+      <span>Carbohydrates</span>
+      <strong>{{ product().carbohydrates_g | number: '1.0-1' }} g</strong>
     </div>
   </div>
 </mat-card>

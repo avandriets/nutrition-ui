@@ -60,7 +60,7 @@ export class MealListStore {
       tap(({ users }) => this.accountContext.setMembers(users)),
       map(({ meals }) => meals.entities),
       catchError(() => {
-        this.usersError.set('Не удалось загрузить приёмы пищи.');
+        this.usersError.set('Could not load meals.');
         return EMPTY;
       }),
       finalize(() => this.initializing.set(false)),
@@ -90,7 +90,7 @@ export class MealListStore {
           this.dateFilter.set(mealDay.meal_date);
           this.mealsStore.replaceAll(mealDay.meals);
         },
-        error: () => this.copyError.set('Не удалось скопировать рацион. Если целевой день уже заполнен, включите замену существующих приёмов.'),
+        error: () => this.copyError.set('Could not copy the meal plan. If the target day already has meals, enable replacement of existing meals.'),
         finalize: () => this.copying.set(false),
       }),
     );

@@ -24,10 +24,10 @@ export class MealDaySummaryComponent {
   }
 
   goalStatus(value: number, target: number): string {
-    if (target <= 0) return 'Не задана';
+    if (target <= 0) return 'Not set';
     const ratio = value / target;
     if (ratio < 1) return `${Math.round(ratio * 100)}%`;
-    if (ratio <= 1.05) return 'Достигнута';
+    if (ratio <= 1.05) return 'Reached';
     return `+\u00a0${Math.round((ratio - 1) * 100)}%`;
   }
 

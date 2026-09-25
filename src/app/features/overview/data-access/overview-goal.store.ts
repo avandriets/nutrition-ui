@@ -17,6 +17,6 @@ export const OverviewGoalStore = signalStore(
         load: ({ accountId, userId }) => api.getCurrentGoal(accountId, userId).pipe(catchError(() => of(null))),
       };
     },
-    error: 'Не удалось загрузить дневную цель.',
+    error: 'Could not load the daily goal.',
   }),
 );

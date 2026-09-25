@@ -102,7 +102,7 @@ export class MealListPage implements OnInit {
         ),
         tap(mealDay => {
           this.updateDateQueryParam(mealDay.meal_date);
-          this.snackBar.open('Рацион успешно скопирован.', 'Закрыть', { duration: 4000 });
+          this.snackBar.open('Meal plan copied successfully.', 'Close', { duration: 4000 });
         }),
       )
       .subscribe();

@@ -14,10 +14,10 @@ import { StatisticsInitialStore } from './statistics-initial.store';
 import { StatisticsPeriodStore } from './statistics-period.store';
 
 describe('StatisticsStore', () => {
-  const account = { id: 10, name: 'Семья' };
+  const account = { id: 10, name: 'Family' };
   const users: UserIdentity[] = [
-    { id: 1, account_id: account.id, name: 'Александр' },
-    { id: 2, account_id: account.id, name: 'Мария' },
+    { id: 1, account_id: account.id, name: 'Alexander' },
+    { id: 2, account_id: account.id, name: 'Maria' },
   ];
   const nutrients = {
     ...emptyNutrientValues(),
@@ -113,7 +113,7 @@ describe('StatisticsStore', () => {
     store.applyPeriod();
 
     expect(api.getNutritionAverage).toHaveBeenCalledTimes(requestCount);
-    expect(store.periodError()).toBe('Начало периода не может быть позже окончания.');
+    expect(store.periodError()).toBe('The start date cannot be after the end date.');
   });
 
   it('reloads only the report group affected by route filters', () => {

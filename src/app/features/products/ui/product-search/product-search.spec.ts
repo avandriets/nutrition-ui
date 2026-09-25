@@ -7,7 +7,7 @@ import { vi } from 'vitest';
 import { ProductSearchComponent } from './product-search';
 
 describe('ProductSearchComponent', () => {
-  const queryParamMap = new BehaviorSubject(convertToParamMap({ search: 'молоко' }));
+  const queryParamMap = new BehaviorSubject(convertToParamMap({ search: 'milk' }));
   const route = {
     queryParamMap,
     snapshot: { queryParamMap: queryParamMap.value },
@@ -17,7 +17,7 @@ describe('ProductSearchComponent', () => {
   };
 
   beforeEach(async () => {
-    queryParamMap.next(convertToParamMap({ search: 'молоко' }));
+    queryParamMap.next(convertToParamMap({ search: 'milk' }));
     route.snapshot.queryParamMap = queryParamMap.value;
     router.navigate.mockClear();
 
@@ -37,12 +37,12 @@ describe('ProductSearchComponent', () => {
       const fixture = TestBed.createComponent(ProductSearchComponent);
       fixture.detectChanges();
 
-      fixture.componentInstance.searchControl.setValue('  яблоко  ');
+      fixture.componentInstance.searchControl.setValue('  apple  ');
       await vi.advanceTimersByTimeAsync(300);
 
       expect(router.navigate).toHaveBeenCalledWith([], {
         relativeTo: route,
-        queryParams: { search: 'яблоко' },
+        queryParams: { search: 'apple' },
         queryParamsHandling: 'merge',
         replaceUrl: true,
       });
@@ -55,11 +55,11 @@ describe('ProductSearchComponent', () => {
     const fixture = TestBed.createComponent(ProductSearchComponent);
     fixture.detectChanges();
 
-    queryParamMap.next(convertToParamMap({ search: 'банан' }));
+    queryParamMap.next(convertToParamMap({ search: 'banana' }));
     fixture.detectChanges();
 
     const input = fixture.nativeElement.querySelector('input') as HTMLInputElement;
-    expect(input.value).toBe('банан');
+    expect(input.value).toBe('banana');
     expect(router.navigate).not.toHaveBeenCalled();
   });
 });

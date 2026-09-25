@@ -9,11 +9,11 @@ import { initials } from '../../../../shared/utils/name.utils';
 import type { NutritionTimelinePoint, StatisticsMetric, StatisticsMetricOption, TimelineReport } from '../../types/statistics.types';
 
 const METRIC_OPTIONS: readonly StatisticsMetricOption[] = [
-  { value: 'calories_kcal', label: 'Калории', unit: 'ккал' },
-  { value: 'protein_g', label: 'Белки', unit: 'г' },
-  { value: 'fat_g', label: 'Жиры', unit: 'г' },
-  { value: 'carbohydrates_g', label: 'Углеводы', unit: 'г' },
-  { value: 'fiber_g', label: 'Клетчатка', unit: 'г' },
+  { value: 'calories_kcal', label: 'Calories', unit: 'kcal' },
+  { value: 'protein_g', label: 'Protein', unit: 'g' },
+  { value: 'fat_g', label: 'Fat', unit: 'g' },
+  { value: 'carbohydrates_g', label: 'Carbohydrates', unit: 'g' },
+  { value: 'fiber_g', label: 'Fiber', unit: 'g' },
 ];
 
 @Component({

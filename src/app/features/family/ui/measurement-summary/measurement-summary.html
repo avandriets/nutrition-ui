@@ -1,16 +1,16 @@
 <div class="latest-heading">
-  <span>Последний замер</span>
-  <strong>{{ measurement().measured_on | date: 'd MMMM y' : '' : 'ru' }}</strong>
+  <span>Latest measurement</span>
+  <strong>{{ measurement().measured_on | date: 'd MMMM y' : '' : 'en-US' }}</strong>
 </div>
 
 <div class="measurement-summary-grid">
   <mat-card class="measurement-summary weight">
     <div class="measurement-icon"><mat-icon>monitor_weight</mat-icon></div>
-    <span>ВЕС</span>
+    <span>WEIGHT</span>
     <strong>
       @if (measurement().weight_kg != null) {
         {{ measurement().weight_kg | number: '1.0-1' }}
-        <small>кг</small>
+        <small>kg</small>
       } @else {
         —
       }
@@ -18,11 +18,11 @@
   </mat-card>
   <mat-card class="measurement-summary neck">
     <div class="measurement-icon"><mat-icon>straighten</mat-icon></div>
-    <span>ШЕЯ</span>
+    <span>NECK</span>
     <strong>
       @if (measurement().neck_cm != null) {
         {{ measurement().neck_cm | number: '1.0-1' }}
-        <small>см</small>
+        <small>cm</small>
       } @else {
         —
       }
@@ -30,11 +30,11 @@
   </mat-card>
   <mat-card class="measurement-summary waist">
     <div class="measurement-icon"><mat-icon>straighten</mat-icon></div>
-    <span>ТАЛИЯ</span>
+    <span>WAIST</span>
     <strong>
       @if (measurement().waist_cm != null) {
         {{ measurement().waist_cm | number: '1.0-1' }}
-        <small>см</small>
+        <small>cm</small>
       } @else {
         —
       }
@@ -42,11 +42,11 @@
   </mat-card>
   <mat-card class="measurement-summary hips">
     <div class="measurement-icon"><mat-icon>straighten</mat-icon></div>
-    <span>БЁДРА</span>
+    <span>HIPS</span>
     <strong>
       @if (measurement().hips_cm != null) {
         {{ measurement().hips_cm | number: '1.0-1' }}
-        <small>см</small>
+        <small>cm</small>
       } @else {
         —
       }

@@ -1,8 +1,8 @@
 <div class="dialog-heading">
   <div class="dialog-icon"><mat-icon>person</mat-icon></div>
   <div>
-    <h2 mat-dialog-title>{{ user ? 'Редактировать профиль' : 'Новый член семьи' }}</h2>
-    <p>{{ user ? 'Обновите персональные данные.' : 'Добавьте человека в семейный аккаунт.' }}</p>
+    <h2 mat-dialog-title>{{ user ? 'Edit profile' : 'New family member' }}</h2>
+    <p>{{ user ? 'Update personal details.' : 'Add a member to the family account.' }}</p>
   </div>
 </div>
 
@@ -11,30 +11,30 @@
         [formGroup]="form"
         (ngSubmit)="submit()">
     <mat-form-field appearance="outline">
-      <mat-label>Имя</mat-label>
+      <mat-label>Name</mat-label>
       <input matInput
              formControlName="name"
              autocomplete="off" />
       @if (form.controls.name.hasError('required')) {
-        <mat-error>Укажите имя</mat-error>
+        <mat-error>Enter a name</mat-error>
       }
     </mat-form-field>
     <mat-form-field appearance="outline">
-      <mat-label>Дата рождения</mat-label>
+      <mat-label>Date of birth</mat-label>
       <input matInput
              type="date"
              formControlName="birth_date" />
     </mat-form-field>
     <mat-form-field appearance="outline">
-      <mat-label>Рост</mat-label>
+      <mat-label>Height</mat-label>
       <input matInput
              type="number"
              min="1"
              max="300"
              formControlName="height_cm" />
-      <span matTextSuffix>см</span>
+      <span matTextSuffix>cm</span>
       @if (form.controls.height_cm.hasError('min') || form.controls.height_cm.hasError('max')) {
-        <mat-error>Укажите рост от 1 до 300 см</mat-error>
+        <mat-error>Enter a height between 1 and 300 cm</mat-error>
       }
     </mat-form-field>
   </form>
@@ -42,12 +42,12 @@
 
 <mat-dialog-actions align="end">
   <button mat-button
-          mat-dialog-close>Отмена</button>
+          mat-dialog-close>Cancel</button>
   <button mat-flat-button
           class="primary"
           form="member-form"
           type="submit"
           [disabled]="form.invalid">
-    {{ user ? 'Сохранить' : 'Добавить' }}
+    {{ user ? 'Save' : 'Add' }}
   </button>
 </mat-dialog-actions>

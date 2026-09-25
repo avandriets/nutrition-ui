@@ -7,7 +7,7 @@ describe('MealSummaryComponent', () => {
   it('renders nutrition totals for each family member', () => {
     const summaries: readonly MealMemberSummary[] = [
       {
-        user: { id: 1, account_id: 10, name: 'Александр' },
+        user: { id: 1, account_id: 10, name: 'Alexander' },
         totals: {
           calories_kcal: 640,
           protein_g: 38.5,
@@ -26,8 +26,8 @@ describe('MealSummaryComponent', () => {
     fixture.detectChanges();
 
     const content = fixture.nativeElement.textContent as string;
-    expect(content).toContain('Итоги этого приёма пищи');
-    expect(content).toContain('Александр');
+    expect(content).toContain('Meal totals');
+    expect(content).toContain('Alexander');
     expect(content).toContain('640');
   });
 });

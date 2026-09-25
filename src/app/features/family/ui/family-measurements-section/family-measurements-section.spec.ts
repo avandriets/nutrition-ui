@@ -14,7 +14,7 @@ describe('FamilyMeasurementsSectionComponent', () => {
     fixture.componentInstance.addRequested.subscribe(addRequested);
     fixture.detectChanges();
 
-    expect(fixture.nativeElement.textContent).toContain('Замеров пока нет');
+    expect(fixture.nativeElement.textContent).toContain('No measurements yet');
     (fixture.nativeElement.querySelector('.empty-measurements button') as HTMLButtonElement).click();
     expect(addRequested).toHaveBeenCalledOnce();
   });

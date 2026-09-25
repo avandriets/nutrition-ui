@@ -30,14 +30,14 @@ export class DiaryGoalProgressComponent {
   }
 
   goalCaption(value: number, target: number, unit: string): string {
-    if (target <= 0) return 'Цель не задана';
+    if (target <= 0) return 'No goal set';
     const difference = target - value;
-    if (difference > 0) return `Осталось ${this.formatNumber(difference)} ${unit}`;
-    if (Math.abs(difference) <= target * 0.05) return 'Цель достигнута';
-    return `Превышено на ${this.formatNumber(Math.abs(difference))} ${unit}`;
+    if (difference > 0) return `Remaining: ${this.formatNumber(difference)} ${unit}`;
+    if (Math.abs(difference) <= target * 0.05) return 'Goal reached';
+    return `Exceeded by ${this.formatNumber(Math.abs(difference))} ${unit}`;
   }
 
   private formatNumber(value: number): string {
-    return new Intl.NumberFormat('ru-RU', { maximumFractionDigits: 1 }).format(value);
+    return new Intl.NumberFormat('en-US', { maximumFractionDigits: 1 }).format(value);
   }
 }

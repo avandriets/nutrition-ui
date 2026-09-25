@@ -1,11 +1,11 @@
 import { registerLocaleData } from '@angular/common';
-import localeRu from '@angular/common/locales/ru';
+import localeEn from '@angular/common/locales/en';
 import { TestBed } from '@angular/core/testing';
 
 import type { UserGoal } from '../../types/family.types';
 import { GoalHistoryComponent } from './goal-history';
 
-registerLocaleData(localeRu);
+registerLocaleData(localeEn);
 
 describe('GoalHistoryComponent', () => {
   const goal: UserGoal = {
@@ -30,7 +30,7 @@ describe('GoalHistoryComponent', () => {
     (fixture.nativeElement.querySelector('button') as HTMLButtonElement).click();
 
     expect(fixture.nativeElement.textContent).toContain('2,000');
-    expect(fixture.nativeElement.textContent).toContain('Текущая');
+    expect(fixture.nativeElement.textContent).toContain('Current');
     expect(edited).toBe(goal);
   });
 

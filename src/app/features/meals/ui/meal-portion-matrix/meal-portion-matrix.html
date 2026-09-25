@@ -1,10 +1,10 @@
 <section class="matrix-section">
   <div class="section-heading">
     <div>
-      <h2>Порции семьи</h2>
-      <p>Строки — продукты, столбцы — члены семьи. Вводите вес порции в граммах.</p>
+      <h2>Family portions</h2>
+      <p>Rows show products; columns show family members. Enter portion weights in grams.</p>
     </div>
-    <span>{{ rows().length }} продуктов · {{ users().length }} членов семьи</span>
+    <span>{{ rows().length }} products · {{ users().length }} family members</span>
   </div>
 
   <mat-card class="table-card matrix-card">
@@ -13,7 +13,7 @@
         <thead>
           <tr>
             <th class="product-column"
-                scope="col">Продукт</th>
+                scope="col">Product</th>
             @for (user of users(); track user.id) {
               <th class="member-column"
                   scope="col">
@@ -32,18 +32,18 @@
                   scope="row">
                 <span class="product-copy">
                   <strong>{{ row.product_name }}</strong>
-                  <small>{{ row.product_brand || 'Без бренда' }}</small>
+                  <small>{{ row.product_brand || 'No brand' }}</small>
                   <small class="per-hundred">
-                    100 г: {{ row.calories_kcal | number: '1.0-0' }} ккал · Б {{ row.protein_g | number: '1.0-1' }} · Ж {{ row.fat_g | number: '1.0-1' }} · У
-                    {{ row.carbohydrates_g | number: '1.0-1' }} · Кл {{ row.fiber_g | number: '1.0-1' }}
+                    100 g: {{ row.calories_kcal | number: '1.0-0' }} kcal · P {{ row.protein_g | number: '1.0-1' }} · F {{ row.fat_g | number: '1.0-1' }} · C
+                    {{ row.carbohydrates_g | number: '1.0-1' }} · Fiber {{ row.fiber_g | number: '1.0-1' }}
                   </small>
                 </span>
                 <button mat-icon-button
                         class="delete-row-button"
                         type="button"
                         [disabled]="isRowDeleting(row.id) || isRowSaving(row.id)"
-                        [attr.aria-label]="'Удалить ' + row.product_name + ' из приёма пищи'"
-                        [attr.title]="'Удалить ' + row.product_name"
+                        [attr.aria-label]="'Delete ' + row.product_name + ' from the meal'"
+                        [attr.title]="'Delete ' + row.product_name"
                         (click)="deleteRequested.emit(row)">
                   @if (isRowDeleting(row.id)) {
                     <mat-spinner diameter="18"></mat-spinner>
@@ -64,21 +64,21 @@
                              inputmode="decimal"
                              [value]="portionFor(row, user.id) || ''"
                              [disabled]="isCellSaving(row.id, user.id) || isRowDeleting(row.id)"
-                             [attr.aria-label]="row.product_name + ', порция ' + user.name + ' в граммах'"
+                             [attr.aria-label]="row.product_name + ', portion for ' + user.name + ' in grams'"
                              (keydown.enter)="$any($event.target).blur()"
                              (blur)="portionChanged.emit({ row, userId: user.id, rawValue: $any($event.target).value })" />
-                      <span>г</span>
+                      <span>g</span>
                       @if (isCellSaving(row.id, user.id)) {
                         <mat-spinner diameter="16"></mat-spinner>
                       }
                     </label>
                     <div class="metric-line"
-                         aria-label="Пищевая ценность порции">
-                      <span class="metric calories">Кк-{{ nutrientFor(row, user.id, 'calories_kcal') | number: '1.0-0' }}</span>
-                      <span class="metric protein">Б-{{ nutrientFor(row, user.id, 'protein_g') | number: '1.0-1' }}г</span>
-                      <span class="metric fat">Ж-{{ nutrientFor(row, user.id, 'fat_g') | number: '1.0-1' }}г</span>
-                      <span class="metric carbs">У-{{ nutrientFor(row, user.id, 'carbohydrates_g') | number: '1.0-1' }}г</span>
-                      <span class="metric fiber">F-{{ nutrientFor(row, user.id, 'fiber_g') | number: '1.0-1' }}г</span>
+                         aria-label="Portion nutrition">
+                      <span class="metric calories">Cal-{{ nutrientFor(row, user.id, 'calories_kcal') | number: '1.0-0' }}</span>
+                      <span class="metric protein">P-{{ nutrientFor(row, user.id, 'protein_g') | number: '1.0-1' }}g</span>
+                      <span class="metric fat">F-{{ nutrientFor(row, user.id, 'fat_g') | number: '1.0-1' }}g</span>
+                      <span class="metric carbs">C-{{ nutrientFor(row, user.id, 'carbohydrates_g') | number: '1.0-1' }}g</span>
+                      <span class="metric fiber">F-{{ nutrientFor(row, user.id, 'fiber_g') | number: '1.0-1' }}g</span>
                     </div>
                   </div>
                 </td>
@@ -90,7 +90,7 @@
     </div>
     <div class="table-hint">
       <mat-icon>info</mat-icon>
-      <span>Изменения сохраняются по Enter или при переходе в другую ячейку. Пустое поле или 0 удаляет порцию одного члена семьи; кнопка корзины удаляет всю строку.</span>
+      <span>Changes are saved when you press Enter or leave a cell. An empty field or 0 removes one member’s portion; the trash button deletes the entire row.</span>
     </div>
   </mat-card>
 </section>

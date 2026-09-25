@@ -24,11 +24,11 @@ export const ProductsStore = signalStore(
       };
     },
     errors: {
-      load: 'Не удалось загрузить продукты',
-      getById: 'Не удалось загрузить продукт.',
-      create: 'Не удалось добавить продукт.',
-      update: 'Не удалось сохранить изменения.',
-      remove: 'Не удалось удалить продукт.',
+      load: 'Could not load products',
+      getById: 'Could not load the product.',
+      create: 'Could not add the product.',
+      update: 'Could not save changes.',
+      remove: 'Could not delete the product.',
     },
     events: productsEvents,
     processors: productsProcessors,

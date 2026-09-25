@@ -29,12 +29,12 @@ describe('ProductCatalogFiltersComponent', () => {
   it('writes category and view mode to the URL', () => {
     const fixture = TestBed.createComponent(ProductCatalogFiltersComponent);
 
-    fixture.componentInstance.setCategory('Фрукты');
+    fixture.componentInstance.setCategory('Fruit');
     fixture.componentInstance.setViewMode('table');
 
     expect(router.navigate).toHaveBeenNthCalledWith(1, [], {
       relativeTo: route,
-      queryParams: { category: 'Фрукты' },
+      queryParams: { category: 'Fruit' },
       queryParamsHandling: 'merge',
       replaceUrl: true,
     });

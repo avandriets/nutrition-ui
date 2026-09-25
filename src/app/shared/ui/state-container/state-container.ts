@@ -60,7 +60,7 @@ export class UIStateContainerComponent {
     if (error instanceof Error) return error.message;
     if (typeof error === 'string' && error) return error;
 
-    return 'Не удалось загрузить данные.';
+    return 'Could not load data.';
   });
   readonly actionErrorMessage = computed(() => {
     const error = this.actionError();

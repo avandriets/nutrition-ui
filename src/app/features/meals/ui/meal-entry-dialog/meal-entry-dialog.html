@@ -1,8 +1,8 @@
 <div class="dialog-heading">
   <div class="dialog-icon"><mat-icon>add_circle</mat-icon></div>
   <div>
-    <h2 mat-dialog-title>Добавить продукт</h2>
-    <p>Задайте порции сразу для всех членов семьи.</p>
+    <h2 mat-dialog-title>Add product</h2>
+    <p>Set portions for all family members at once.</p>
   </div>
 </div>
 
@@ -12,13 +12,13 @@
         (ngSubmit)="submit()">
     <mat-form-field appearance="outline"
                     class="product-field">
-      <mat-label>Найти продукт</mat-label>
+      <mat-label>Find a product</mat-label>
       <mat-icon matPrefix>search</mat-icon>
       <input matInput
              type="text"
              formControlName="product"
              [matAutocomplete]="productAutocomplete"
-             placeholder="Название, бренд или категория"
+             placeholder="Name, brand, or category"
              autocomplete="off" />
       <mat-autocomplete #productAutocomplete="matAutocomplete"
                         [displayWith]="displayProduct"
@@ -28,7 +28,7 @@
             <span class="product-option">
               <strong>{{ product.name }}</strong>
               <small>
-                {{ product.brand || 'Без бренда' }}
+                {{ product.brand || 'No brand' }}
                 @if (product.category) {
                   · {{ product.category }}
                 }
@@ -36,22 +36,22 @@
             </span>
           </mat-option>
         } @empty {
-          <mat-option disabled>Ничего не найдено</mat-option>
+          <mat-option disabled>No results</mat-option>
         }
       </mat-autocomplete>
-      <mat-hint>Выберите продукт из результатов поиска</mat-hint>
+      <mat-hint>Select a product from the search results</mat-hint>
       @if (form.controls.product.hasError('productNotSelected')) {
-        <mat-error>Выберите продукт из списка</mat-error>
+        <mat-error>Select a product from the list</mat-error>
       }
     </mat-form-field>
 
     @if (data.users.length) {
       <div class="portions-heading">
         <div>
-          <strong>Порции семьи</strong>
-          <span>Заполните хотя бы одну порцию</span>
+          <strong>Family portions</strong>
+          <span>Enter at least one portion</span>
         </div>
-        <span>граммы</span>
+        <span>grams</span>
       </div>
 
       <div class="portion-list"
@@ -64,15 +64,15 @@
             </div>
             <mat-form-field appearance="outline"
                             subscriptSizing="dynamic">
-              <mat-label>Порция</mat-label>
+              <mat-label>Portion</mat-label>
               <input matInput
                      type="number"
                      min="0"
                      step="1"
                      inputmode="decimal"
                      [formControlName]="index"
-                     [attr.aria-label]="'Порция ' + user.name + ' в граммах'" />
-              <span matTextSuffix>г</span>
+                     [attr.aria-label]="'Portion ' + user.name + ' in grams'" />
+              <span matTextSuffix>g</span>
             </mat-form-field>
           </div>
         }
@@ -83,25 +83,25 @@
   @if (!data.products.length) {
     <p class="hint">
       <mat-icon>info</mat-icon>
-      В каталоге нет продуктов, которые можно добавить.
+      There are no available products to add.
     </p>
   }
   @if (!data.users.length) {
     <p class="hint">
       <mat-icon>info</mat-icon>
-      Сначала добавьте членов семьи.
+      Add family members first.
     </p>
   }
 </mat-dialog-content>
 
 <mat-dialog-actions align="end">
   <button mat-button
-          mat-dialog-close>Отмена</button>
+          mat-dialog-close>Cancel</button>
   <button mat-flat-button
           class="primary"
           form="entry-form"
           type="submit"
           [disabled]="form.invalid || !hasPositivePortion() || !data.products.length || !data.users.length">
-    Добавить продукт
+    Add product
   </button>
 </mat-dialog-actions>

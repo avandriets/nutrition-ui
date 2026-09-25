@@ -17,13 +17,13 @@ export const FAMILY_ROUTES: Routes = [
       {
         path: '',
         pathMatch: 'full',
-        title: 'Семья — NutriFlow',
+        title: 'Family — NutriFlow',
         loadComponent: () => import('./pages/family-members/family-members.page').then(page => page.FamilyMembersPage),
       },
       {
         path: 'users/:userId/diary',
         providers: [FamilyDiaryApiService, PersonalDiaryDataStore, PersonalDiaryStore],
-        title: 'Персональный дневник — NutriFlow',
+        title: 'Personal diary — NutriFlow',
         loadComponent: () => import('./pages/personal-diary/personal-diary.page').then(page => page.PersonalDiaryPage),
       },
     ],

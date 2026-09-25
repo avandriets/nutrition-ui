@@ -1,8 +1,8 @@
 <mat-card class="goal-history-card">
   <div class="history-heading">
     <div>
-      <h3>История целей</h3>
-      <p>Для дневника используется цель, действовавшая в выбранную дату</p>
+      <h3>Goal history</h3>
+      <p>The diary uses the goal that was active on the selected date</p>
     </div>
     <span>{{ recordsCountLabel(goals().length) }}</span>
   </div>
@@ -10,31 +10,31 @@
     <table class="goal-history-table">
       <thead>
         <tr>
-          <th scope="col">Действует с</th>
-          <th scope="col">Калории</th>
-          <th scope="col">Белок</th>
-          <th scope="col">Клетчатка</th>
-          <th scope="col">Статус</th>
-          <th scope="col"><span class="visually-hidden">Действия</span></th>
+          <th scope="col">Effective from</th>
+          <th scope="col">Calories</th>
+          <th scope="col">Protein</th>
+          <th scope="col">Fiber</th>
+          <th scope="col">Status</th>
+          <th scope="col"><span class="visually-hidden">Actions</span></th>
         </tr>
       </thead>
       <tbody>
         @for (goal of goals(); track goal.id) {
           <tr>
             <th scope="row">
-              {{ goal.effective_from | date: 'd MMM y' : '' : 'ru' }}
+              {{ goal.effective_from | date: 'd MMM y' : '' : 'en-US' }}
             </th>
             <td>
               <strong>{{ goal.daily_calories_kcal | number: '1.0-0' }}</strong>
-              ккал
+              kcal
             </td>
             <td>
               <strong>{{ goal.daily_protein_g | number: '1.0-1' }}</strong>
-              г
+              g
             </td>
             <td>
               <strong>{{ goal.daily_fiber_g | number: '1.0-1' }}</strong>
-              г
+              g
             </td>
             <td>
               <span class="goal-status"
@@ -45,7 +45,7 @@
             <td class="goal-history-actions">
               <button mat-icon-button
                       [disabled]="pendingIds().has(goal.id)"
-                      aria-label="Редактировать цель"
+                      aria-label="Edit goal"
                       (click)="editRequested.emit(goal)">
                 <mat-icon>edit</mat-icon>
               </button>

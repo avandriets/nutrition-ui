@@ -1,10 +1,10 @@
 <div class="subsection-heading">
   <div>
-    <h3>Динамика питания</h3>
-    <p>{{ metricLabel() }} · {{ includeEmptyDays() ? 'все дни' : 'только дни с данными' }}</p>
+    <h3>Nutrition trends</h3>
+    <p>{{ metricLabel() }} · {{ includeEmptyDays() ? 'all days' : 'only days with data' }}</p>
   </div>
   <mat-select class="metric-select"
-              aria-label="Показатель графика"
+              aria-label="Chart metric"
               [value]="metric()"
               (selectionChange)="selectMetric($event.value)">
     @for (option of metricOptions; track option.value) {
@@ -21,7 +21,7 @@
           <span class="avatar">{{ initials(report.user.name) }}</span>
           <div>
             <h4>{{ report.user.name }}</h4>
-            <small>{{ report.timeline.points.length }} периодов</small>
+            <small>{{ report.timeline.points.length }} periods</small>
           </div>
         </div>
         <span class="metric-badge">{{ metricLabel() }}</span>
@@ -38,12 +38,12 @@
                      [style.height.%]="barHeight(point, report.timeline.points)"></i>
                 </div>
                 <span>
-                  {{ point.period_start | date: 'd MMM' : '' : 'ru' }}
+                  {{ point.period_start | date: 'd MMM' : '' : 'en-US' }}
                   @if (!isSingleDay(point)) {
-                    <small>— {{ point.period_end | date: 'd MMM' : '' : 'ru' }}</small>
+                    <small>— {{ point.period_end | date: 'd MMM' : '' : 'en-US' }}</small>
                   }
                 </span>
-                <em>{{ point.active_days }}/{{ point.calendar_days }} дн.</em>
+                <em>{{ point.active_days }}/{{ point.calendar_days }} days</em>
               </div>
             }
           </div>
@@ -51,7 +51,7 @@
       } @else {
         <div class="empty-chart">
           <mat-icon>query_stats</mat-icon>
-          <span>За выбранный период данных нет</span>
+          <span>No data for the selected period</span>
         </div>
       }
     </mat-card>

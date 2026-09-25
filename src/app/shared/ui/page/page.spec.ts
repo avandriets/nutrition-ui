@@ -9,10 +9,10 @@ import { UIPageComponent } from './page';
   template: `
     <app-ui-page [header]="header()" [size]="size()" [spacing]="spacing()">
       @if (showTitle()) {
-        <span title>Заголовок</span>
+        <span title>Title</span>
       }
-      <span action>Действие</span>
-      <span body>Содержимое</span>
+      <span action>Action</span>
+      <span body>Content</span>
     </app-ui-page>
   `,
 })
@@ -32,9 +32,9 @@ describe('UIPageComponent', () => {
     const fixture = TestBed.createComponent(TestHost);
     fixture.detectChanges();
 
-    expect(fixture.nativeElement.querySelector('.ui-page-header-primary')?.textContent).toContain('Заголовок');
-    expect(fixture.nativeElement.querySelector('.ui-page-header-secondary')?.textContent).toContain('Действие');
-    expect(fixture.nativeElement.querySelector('.ui-page-body')?.textContent).toContain('Содержимое');
+    expect(fixture.nativeElement.querySelector('.ui-page-header-primary')?.textContent).toContain('Title');
+    expect(fixture.nativeElement.querySelector('.ui-page-header-secondary')?.textContent).toContain('Action');
+    expect(fixture.nativeElement.querySelector('.ui-page-body')?.textContent).toContain('Content');
     expect((fixture.nativeElement.querySelector('app-ui-page') as HTMLElement).style.maxWidth).toBe('1180px');
   });
 
@@ -44,7 +44,7 @@ describe('UIPageComponent', () => {
     fixture.detectChanges();
 
     expect(fixture.nativeElement.querySelector('.ui-page-header')).toBeNull();
-    expect(fixture.nativeElement.querySelector('.ui-page-body')?.textContent).toContain('Содержимое');
+    expect(fixture.nativeElement.querySelector('.ui-page-body')?.textContent).toContain('Content');
   });
 
   it('maps semantic variants to layout values', () => {

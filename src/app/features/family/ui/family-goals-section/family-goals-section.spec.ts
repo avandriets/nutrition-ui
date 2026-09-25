@@ -15,7 +15,7 @@ describe('FamilyGoalsSectionComponent', () => {
     fixture.componentInstance.addRequested.subscribe(addRequested);
     fixture.detectChanges();
 
-    expect(fixture.nativeElement.textContent).toContain('Цель пока не настроена');
+    expect(fixture.nativeElement.textContent).toContain('No goal set yet');
     (fixture.nativeElement.querySelector('.empty-goal button') as HTMLButtonElement).click();
     expect(addRequested).toHaveBeenCalledOnce();
   });

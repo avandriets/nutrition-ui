@@ -16,9 +16,9 @@ import { SessionService } from './core/auth/session.service';
 export class App {
   readonly session = inject(SessionService);
   readonly navigation = [
-    { label: 'Обзор', icon: 'dashboard', path: '/overview' },
-    { label: 'Продукты', icon: 'grocery', path: '/products' },
-    { label: 'Приёмы пищи', icon: 'restaurant', path: '/meals' },
-    { label: 'Статистика', icon: 'monitoring', path: '/statistics' },
+    { label: 'Overview', icon: 'dashboard', path: '/overview' },
+    { label: 'Products', icon: 'grocery', path: '/products' },
+    { label: 'Meals', icon: 'restaurant', path: '/meals' },
+    { label: 'Statistics', icon: 'monitoring', path: '/statistics' },
   ];
 }

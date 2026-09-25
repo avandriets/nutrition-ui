@@ -38,6 +38,10 @@ export class MealsApiService {
     return this.http.delete<void>(`/api/accounts/${accountId}/meals/${mealId}/entries/${entryId}`);
   }
 
+  deleteRow(accountId: number, mealId: number, rowId: number): Observable<void> {
+    return this.http.delete<void>(`/api/accounts/${accountId}/meals/${mealId}/rows/${rowId}`);
+  }
+
   listUsers(accountId: number): Observable<UserIdentity[]> {
     return this.http.get<UserIdentity[]>(`/api/accounts/${accountId}/users`);
   }

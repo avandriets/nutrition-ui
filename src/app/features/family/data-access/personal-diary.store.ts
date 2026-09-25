@@ -53,7 +53,7 @@ export class PersonalDiaryStore {
   initialize(userId: number, diaryDate = this.todayDate): void {
     if (!Number.isInteger(userId) || userId <= 0) {
       this.userId = null;
-      this.dataStore.setError('Некорректный идентификатор пользователя.');
+      this.dataStore.setError('Invalid user ID.');
       return;
     }
 

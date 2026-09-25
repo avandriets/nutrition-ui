@@ -31,11 +31,11 @@ export class DailyGoalReportCardComponent {
   }
 
   goalStatus(value: number, target: number): string {
-    if (target <= 0) return 'Цель не задана';
+    if (target <= 0) return 'No goal set';
     const state = this.goalState(value, target);
-    if (state === 'achieved') return 'Достигнута';
-    if (state === 'exceeded') return `Перевыполнена на ${Math.round((value / target - 1) * 100)}%`;
-    return `Выполнено ${Math.round((value / target) * 100)}%`;
+    if (state === 'achieved') return 'Reached';
+    if (state === 'exceeded') return `Exceeded by ${Math.round((value / target - 1) * 100)}%`;
+    return `Completed: ${Math.round((value / target) * 100)}%`;
   }
 
   completedGoals(): number {

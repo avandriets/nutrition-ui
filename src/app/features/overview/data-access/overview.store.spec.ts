@@ -13,10 +13,10 @@ import { OverviewDataStore } from './overview-data.store';
 import { OverviewGoalStore } from './overview-goal.store';
 
 describe('OverviewStore', () => {
-  const account = { id: 10, name: 'Семья' };
+  const account = { id: 10, name: 'Family' };
   const users: UserIdentity[] = [
-    { id: 1, account_id: account.id, name: 'Александр' },
-    { id: 2, account_id: account.id, name: 'Мария' },
+    { id: 1, account_id: account.id, name: 'Alexander' },
+    { id: 2, account_id: account.id, name: 'Maria' },
   ];
   const goals: Record<number, OverviewGoal> = {
     1: { daily_calories_kcal: 2_000, daily_protein_g: 100, daily_fiber_g: 30 },
@@ -27,10 +27,10 @@ describe('OverviewStore', () => {
       id: 20,
       meal_date: '2026-09-13',
       meal_type: 'breakfast',
-      name: 'Завтрак',
+      name: 'Breakfast',
       rows: [
         {
-          product_name: 'Овсянка',
+          product_name: 'Oatmeal',
           calories_kcal: 100,
           protein_g: 10,
           fat_g: 5,

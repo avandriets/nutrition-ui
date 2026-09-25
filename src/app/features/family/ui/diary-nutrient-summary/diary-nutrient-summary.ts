@@ -19,11 +19,6 @@ export class DiaryNutrientSummaryComponent {
 
   mealsCountLabel(): string {
     const count = this.mealsCount();
-    const lastTwo = count % 100;
-    const last = count % 10;
-    if (lastTwo >= 11 && lastTwo <= 14) return `${count} приёмов пищи`;
-    if (last === 1) return `${count} приём пищи`;
-    if (last >= 2 && last <= 4) return `${count} приёма пищи`;
-    return `${count} приёмов пищи`;
+    return `${count} ${count === 1 ? 'meal' : 'meals'}`;
   }
 }

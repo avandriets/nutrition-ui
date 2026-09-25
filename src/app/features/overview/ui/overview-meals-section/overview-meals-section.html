@@ -1,11 +1,11 @@
 <div class="section-title">
   <div>
-    <h2>Сегодняшние приёмы пищи</h2>
-    <p>{{ userName() }} · добавлено: {{ summaries().length }}</p>
+    <h2>Today’s meals</h2>
+    <p>{{ userName() }} · added: {{ summaries().length }}</p>
   </div>
   <a mat-button
      routerLink="/meals">
-    Все приёмы
+    All meals
     <mat-icon>arrow_forward</mat-icon>
   </a>
 </div>
@@ -23,11 +23,11 @@
   <mat-card class="empty-meals">
     <mat-icon>restaurant</mat-icon>
     <div>
-      <h3>На сегодня нет приёмов пищи</h3>
-      <p>Создайте первый приём и укажите порцию.</p>
+      <h3>No meals today</h3>
+      <p>Create your first meal and enter a portion.</p>
     </div>
     <a mat-stroked-button
        routerLink="/meals"
-       [queryParams]="{ create: true }">Добавить</a>
+       [queryParams]="{ create: true }">Add</a>
   </mat-card>
 </ng-template>

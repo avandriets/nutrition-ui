@@ -35,7 +35,7 @@ export const PersonalDiaryDataStore = signalStore(
           ),
       };
     },
-    error: 'Не удалось загрузить персональный дневник.',
+    error: 'Could not load the personal diary.',
     concurrency: 'latest',
   }),
 );

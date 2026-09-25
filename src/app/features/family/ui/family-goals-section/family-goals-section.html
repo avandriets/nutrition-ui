@@ -1,13 +1,13 @@
 <div class="section-heading">
   <div>
-    <h2>Дневная цель</h2>
-    <p>Нормы меняются по датам, предыдущие значения сохраняются</p>
+    <h2>Daily goal</h2>
+    <p>Targets change by date; previous values are retained</p>
   </div>
   <button mat-button
           [disabled]="createPending()"
           (click)="addRequested.emit()">
     <mat-icon>add</mat-icon>
-    {{ goals().length ? 'Новая цель' : 'Настроить' }}
+    {{ goals().length ? 'New goal' : 'Set up' }}
   </button>
 </div>
 
@@ -40,12 +40,12 @@
       <mat-icon>flag</mat-icon>
     </div>
     <div>
-      <h3>Цель пока не настроена</h3>
-      <p>Укажите норму калорий, белка и клетчатки для персонального дневника.</p>
+      <h3>No goal set yet</h3>
+      <p>Set calorie, protein, and fiber targets for the personal diary.</p>
     </div>
     <button mat-stroked-button
             [disabled]="createPending()"
-            (click)="addRequested.emit()">Настроить
+            (click)="addRequested.emit()">Set up
     </button>
   </mat-card>
 </ng-template>
@@ -56,8 +56,8 @@
       <mat-icon>schedule</mat-icon>
     </div>
     <div>
-      <h3>Текущей цели пока нет</h3>
-      <p>Запланированные цели начнут действовать с указанной даты.</p>
+      <h3>No current goal</h3>
+      <p>Scheduled goals take effect on their start date.</p>
     </div>
   </mat-card>
 </ng-template>

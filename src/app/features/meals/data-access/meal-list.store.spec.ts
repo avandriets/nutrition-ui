@@ -11,14 +11,14 @@ import { MealsApiService } from './meals-api.service';
 import { MealsEntityStore } from './meals-entity.store';
 
 describe('MealListStore', () => {
-  const account = { id: 10, name: 'Семья' };
-  const user: UserIdentity = { id: 1, account_id: account.id, name: 'Александр' };
+  const account = { id: 10, name: 'Family' };
+  const user: UserIdentity = { id: 1, account_id: account.id, name: 'Alexander' };
   const meal: Meal = {
     id: 2,
     account_id: account.id,
     meal_date: '2026-09-12',
     meal_type: 'breakfast',
-    name: 'Завтрак',
+    name: 'Breakfast',
     rows: [],
     created_at: '2026-09-12T00:00:00Z',
     updated_at: '2026-09-12T00:00:00Z',
@@ -125,7 +125,7 @@ describe('MealListStore', () => {
       .subscribe();
 
     expect(store.meals()).toEqual([meal]);
-    expect(store.actionError()).toContain('Не удалось скопировать рацион');
+    expect(store.actionError()).toContain('Could not copy the meal plan');
     expect(store.state().resolved).toBe(true);
   });
 });

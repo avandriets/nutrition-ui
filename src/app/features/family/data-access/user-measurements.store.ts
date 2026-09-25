@@ -41,10 +41,10 @@ export const UserMeasurementsStore = signalStore(
       };
     },
     errors: {
-      load: 'Не удалось загрузить историю замеров.',
-      create: 'Не удалось добавить замер.',
-      update: 'Не удалось обновить замер.',
-      remove: 'Не удалось удалить замер.',
+      load: 'Could not load measurement history.',
+      create: 'Could not add the measurement.',
+      update: 'Could not update the measurement.',
+      remove: 'Could not delete the measurement.',
     },
     processors,
   }),

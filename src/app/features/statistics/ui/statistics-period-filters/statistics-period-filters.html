@@ -1,29 +1,29 @@
 <label>
-  <span>С</span>
+  <span>From</span>
   <input #fromInput
          type="date"
-         aria-label="Начало периода статистики"
+         aria-label="Statistics start date"
          [value]="dateFrom()"
          (change)="updateDateFrom(fromInput.value)" />
 </label>
 <label>
-  <span>По</span>
+  <span>To</span>
   <input #toInput
          type="date"
-         aria-label="Конец периода статистики"
+         aria-label="Statistics end date"
          [max]="today()"
          [value]="dateTo()"
          (change)="updateDateTo(toInput.value)" />
 </label>
 <div class="granularity-filter">
-  <span>Группировка</span>
-  <mat-select aria-label="Группировка статистики"
+  <span>Group by</span>
+  <mat-select aria-label="Statistics grouping"
               [value]="granularity()"
               (selectionChange)="updateGranularity($event.value)">
-    <mat-option value="day">По дням</mat-option>
-    <mat-option value="week">По неделям</mat-option>
-    <mat-option value="month">По месяцам</mat-option>
+    <mat-option value="day">Day</mat-option>
+    <mat-option value="week">Week</mat-option>
+    <mat-option value="month">Month</mat-option>
   </mat-select>
 </div>
 <mat-slide-toggle [checked]="includeEmptyDays()"
-                  (change)="updateIncludeEmptyDays($event.checked)">Учитывать дни без записей</mat-slide-toggle>
+                  (change)="updateIncludeEmptyDays($event.checked)">Include days without entries</mat-slide-toggle>

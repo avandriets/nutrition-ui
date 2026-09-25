@@ -1,32 +1,32 @@
 <mat-card class="profile-card">
   <div class="profile-avatar">{{ initials(user().name) }}</div>
   <div class="profile-copy">
-    <span>АКТИВНЫЙ ПРОФИЛЬ</span>
+    <span>ACTIVE PROFILE</span>
     <h2>{{ user().name }}</h2>
     <div class="profile-meta">
       <span>
         <mat-icon>cake</mat-icon>
-        {{ user().birth_date ? (user().birth_date | date: 'd MMMM y' : '' : 'ru') : 'Дата рождения не указана' }}
+        {{ user().birth_date ? (user().birth_date | date: 'd MMMM y' : '' : 'en-US') : 'Date of birth not set' }}
       </span>
       <span>
         <mat-icon>height</mat-icon>
         @if (user().height_cm != null) {
-          {{ user().height_cm | number: '1.0-1' }} см
+          {{ user().height_cm | number: '1.0-1' }} cm
         } @else {
-          Рост не указан
+          Height not set
         }
       </span>
     </div>
   </div>
   <div class="profile-actions">
     <button mat-icon-button
-            aria-label="Редактировать"
+            aria-label="Edit"
             (click)="editRequested.emit(user())">
       <mat-icon>edit</mat-icon>
     </button>
     <button mat-icon-button
             class="delete"
-            aria-label="Удалить"
+            aria-label="Delete"
             (click)="deleteRequested.emit(user())">
       <mat-icon>delete_outline</mat-icon>
     </button>

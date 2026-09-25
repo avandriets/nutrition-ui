@@ -8,7 +8,7 @@
     <div class="meal-copy">
       <span>{{ meal().meal_date | date: 'd MMMM y' }}</span>
       <h2>{{ meal().name || typeLabel(meal().meal_type) }}</h2>
-      <p>{{ typeLabel(meal().meal_type) }} · {{ meal().rows.length }} продуктов</p>
+      <p>{{ typeLabel(meal().meal_type) }} · {{ meal().rows.length }} products</p>
     </div>
     <div class="meal-calories">
       @for (user of users(); track user.id) {
@@ -16,7 +16,7 @@
           <span class="member-name">{{ user.name }}</span>
           <span class="member-value">
             <strong>{{ userCalories(user.id) | number: '1.0-0' }}</strong>
-            ккал
+            kcal
           </span>
         </div>
       }

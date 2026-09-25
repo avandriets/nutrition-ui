@@ -29,10 +29,10 @@ export class MealFormDialog {
   private readonly formBuilder = inject(FormBuilder);
 
   readonly mealTypes: { value: MealType; label: string }[] = [
-    { value: 'breakfast', label: 'Завтрак' },
-    { value: 'lunch', label: 'Обед' },
-    { value: 'dinner', label: 'Ужин' },
-    { value: 'other', label: 'Другое' },
+    { value: 'breakfast', label: 'Breakfast' },
+    { value: 'lunch', label: 'Lunch' },
+    { value: 'dinner', label: 'Dinner' },
+    { value: 'other', label: 'Other' },
   ];
 
   readonly form = this.formBuilder.nonNullable.group(

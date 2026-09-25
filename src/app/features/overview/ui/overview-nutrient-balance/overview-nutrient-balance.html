@@ -1,6 +1,6 @@
 <div class="section-title">
-  <h2>Баланс нутриентов</h2>
-  <p>Данные за сегодня · {{ userName() }}</p>
+  <h2>Nutrient balance</h2>
+  <p>Today’s data · {{ userName() }}</p>
 </div>
 <div class="nutrients-grid">
   @for (item of nutrients(); track item.name) {
@@ -9,9 +9,9 @@
            [style.--progress]="item.percent ?? 0">
         <div>
           @if (item.percent !== null) {
-            <b>{{ item.percent }}%</b><small>нормы</small>
+            <b>{{ item.percent }}%</b><small>of target</small>
           } @else {
-            <b>—</b><small>без нормы</small>
+            <b>—</b><small>no target</small>
           }
         </div>
       </div>
@@ -20,9 +20,9 @@
         <h3>
           {{ item.value | number: '1.0-1' }}
           @if (item.target !== null) {
-            <small>/ {{ item.target | number: '1.0-1' }} г</small>
+            <small>/ {{ item.target | number: '1.0-1' }} g</small>
           } @else {
-            <small>г</small>
+            <small>g</small>
           }
         </h3>
         <div class="mini-track"><i [style.width.%]="item.percent ?? 0"></i></div>

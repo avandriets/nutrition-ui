@@ -9,7 +9,7 @@ export const PRODUCTS_ROUTES: Routes = [
     children: [
       {
         path: '',
-        title: 'Продукты — NutriFlow',
+        title: 'Products — NutriFlow',
         loadComponent: () => import('./pages/product-catalog/product-catalog.page').then(page => page.ProductCatalogPage),
       },
     ],

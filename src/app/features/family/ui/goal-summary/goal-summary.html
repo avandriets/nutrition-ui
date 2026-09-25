@@ -1,26 +1,26 @@
 <div class="goal-grid">
   <mat-card class="goal-card calories">
     <div class="goal-icon"><mat-icon>local_fire_department</mat-icon></div>
-    <span>КАЛОРИИ</span>
+    <span>CALORIES</span>
     <strong>{{ goal().daily_calories_kcal | number: '1.0-0' }}</strong>
-    <small>ккал в день</small>
+    <small>kcal per day</small>
   </mat-card>
   <mat-card class="goal-card protein">
     <div class="goal-icon"><mat-icon>fitness_center</mat-icon></div>
-    <span>БЕЛОК</span>
+    <span>PROTEIN</span>
     <strong>{{ goal().daily_protein_g | number: '1.0-1' }}</strong>
-    <small>грамм в день</small>
+    <small>grams per day</small>
   </mat-card>
   <mat-card class="goal-card fiber">
     <div class="goal-icon"><mat-icon>eco</mat-icon></div>
-    <span>КЛЕТЧАТКА</span>
+    <span>FIBER</span>
     <strong>{{ goal().daily_fiber_g | number: '1.0-1' }}</strong>
-    <small>грамм в день</small>
+    <small>grams per day</small>
   </mat-card>
 </div>
 
 <p class="effective-date">
   <mat-icon>event</mat-icon>
-  Цель действует с
-  {{ goal().effective_from | date: 'd MMMM y' : '' : 'ru' }}
+  Goal effective from
+  {{ goal().effective_from | date: 'd MMMM y' : '' : 'en-US' }}
 </p>

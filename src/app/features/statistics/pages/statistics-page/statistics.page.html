@@ -2,9 +2,9 @@
              spacing="compact"
              headerMargin="32px">
   <ng-container title>
-    <span class="eyebrow">АНАЛИТИКА ПИТАНИЯ</span>
-    <h1>Статистика</h1>
-    <p class="page-description">Достижение целей за день, средние значения и динамика рациона.</p>
+    <span class="eyebrow">NUTRITION ANALYTICS</span>
+    <h1>Statistics</h1>
+    <p class="page-description">Daily goal progress, averages, and nutrition trends.</p>
   </ng-container>
 
   @if (initialState().resolved && users().length) {
@@ -47,10 +47,10 @@
   <mat-card class="empty-family">
     <div class="empty-icon"><mat-icon>group_add</mat-icon></div>
     <div>
-      <h2>Сначала добавьте членов семьи</h2>
-      <p>После этого здесь появятся персональные отчёты.</p>
+      <h2>Add family members first</h2>
+      <p>Personal reports will appear here once you add family members.</p>
     </div>
     <a mat-stroked-button
-       routerLink="/family">Управление семьёй</a>
+       routerLink="/family">Manage family</a>
   </mat-card>
 </ng-template>

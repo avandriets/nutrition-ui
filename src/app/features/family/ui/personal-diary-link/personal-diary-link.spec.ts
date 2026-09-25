@@ -9,7 +9,7 @@ describe('PersonalDiaryLinkComponent', () => {
     const user: FamilyUser = {
       id: 4,
       account_id: 10,
-      name: 'Мария',
+      name: 'Maria',
       birth_date: null,
       height_cm: null,
       created_at: '2026-09-13T00:00:00Z',

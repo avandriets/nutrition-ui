@@ -23,7 +23,7 @@ describe('StatisticsPage', () => {
     granularity: signal('day'),
     includeEmptyDays: signal(false),
     selectedMetric: signal('calories_kcal'),
-    selectedUserName: signal('Вся семья'),
+    selectedUserName: signal('Whole family'),
     dailyReports: signal([]),
     averageReports: signal([]),
     timelineReports: signal([]),

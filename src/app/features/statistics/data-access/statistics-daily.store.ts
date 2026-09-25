@@ -65,7 +65,7 @@ export const StatisticsDailyStore = signalStore(
         },
       };
     },
-    error: 'Не удалось загрузить достижения за выбранный день.',
+    error: 'Could not load goal progress for the selected day.',
     isEmpty: reports => !reports.length,
   }),
 );

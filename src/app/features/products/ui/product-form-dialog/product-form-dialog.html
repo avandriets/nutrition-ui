@@ -3,8 +3,8 @@
     <mat-icon>nutrition</mat-icon>
   </div>
   <div>
-    <h2 mat-dialog-title>{{ product ? 'Редактировать продукт' : 'Новый продукт' }}</h2>
-    <p>Пищевая ценность указывается на 100 г продукта.</p>
+    <h2 mat-dialog-title>{{ product ? 'Edit product' : 'New product' }}</h2>
+    <p>Enter nutrition values per 100 g of product.</p>
   </div>
 </div>
 
@@ -15,27 +15,27 @@
     <section class="fields main-fields">
       <mat-form-field appearance="outline"
                       class="full">
-        <mat-label>Название</mat-label>
+        <mat-label>Name</mat-label>
         <input matInput
                formControlName="name"
                autocomplete="off" />
         @if (form.controls.name.hasError('required') || form.controls.name.hasError('pattern')) {
-          <mat-error>Укажите название</mat-error>
+          <mat-error>Enter a name</mat-error>
         }
       </mat-form-field>
       <mat-form-field appearance="outline">
-        <mat-label>Бренд</mat-label>
+        <mat-label>Brand</mat-label>
         <input matInput
                formControlName="brand" />
       </mat-form-field>
       <mat-form-field appearance="outline">
-        <mat-label>Категория</mat-label>
+        <mat-label>Category</mat-label>
         <input matInput
                formControlName="category" />
       </mat-form-field>
       <mat-form-field appearance="outline"
                       class="full">
-        <mat-label>Описание</mat-label>
+        <mat-label>Description</mat-label>
         <textarea matInput
                   rows="2"
                   formControlName="description"></textarea>
@@ -43,54 +43,54 @@
     </section>
 
     <div class="section-label">
-      <span>ПИЩЕВАЯ ЦЕННОСТЬ</span>
-      <small>на 100 г</small>
+      <span>NUTRITION</span>
+      <small>per 100 g</small>
     </div>
     <section class="fields nutrition-fields">
       <mat-form-field appearance="outline">
-        <mat-label>Калории</mat-label>
+        <mat-label>Calories</mat-label>
         <input matInput
                type="number"
                min="0"
                step="0.1"
                formControlName="calories_kcal" />
-        <span matTextSuffix>ккал</span>
+        <span matTextSuffix>kcal</span>
       </mat-form-field>
       <mat-form-field appearance="outline">
-        <mat-label>Белки</mat-label>
+        <mat-label>Protein</mat-label>
         <input matInput
                type="number"
                min="0"
                step="0.1"
                formControlName="protein_g" />
-        <span matTextSuffix>г</span>
+        <span matTextSuffix>g</span>
       </mat-form-field>
       <mat-form-field appearance="outline">
-        <mat-label>Жиры</mat-label>
+        <mat-label>Fat</mat-label>
         <input matInput
                type="number"
                min="0"
                step="0.1"
                formControlName="fat_g" />
-        <span matTextSuffix>г</span>
+        <span matTextSuffix>g</span>
       </mat-form-field>
       <mat-form-field appearance="outline">
-        <mat-label>Углеводы</mat-label>
+        <mat-label>Carbohydrates</mat-label>
         <input matInput
                type="number"
                min="0"
                step="0.1"
                formControlName="carbohydrates_g" />
-        <span matTextSuffix>г</span>
+        <span matTextSuffix>g</span>
       </mat-form-field>
       <mat-form-field appearance="outline">
-        <mat-label>Клетчатка</mat-label>
+        <mat-label>Fiber</mat-label>
         <input matInput
                type="number"
                min="0"
                step="0.1"
                formControlName="fiber_g" />
-        <span matTextSuffix>г</span>
+        <span matTextSuffix>g</span>
       </mat-form-field>
     </section>
   </form>
@@ -98,12 +98,12 @@
 
 <mat-dialog-actions align="end">
   <button mat-button
-          mat-dialog-close>Отмена</button>
+          mat-dialog-close>Cancel</button>
   <button mat-flat-button
           class="primary"
           type="submit"
           form="product-form"
           [disabled]="form.invalid">
-    {{ product ? 'Сохранить' : 'Добавить продукт' }}
+    {{ product ? 'Save' : 'Add product' }}
   </button>
 </mat-dialog-actions>

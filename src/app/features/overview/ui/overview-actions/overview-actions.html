@@ -1,8 +1,8 @@
 <div class="user-filter">
   <mat-icon>person</mat-icon>
   <div>
-    <span>ЧЛЕН СЕМЬИ</span>
-    <mat-select aria-label="Фильтр по члену семьи"
+    <span>FAMILY MEMBER</span>
+    <mat-select aria-label="Filter by family member"
                 [value]="selectedUserId()"
                 [disabled]="!users().length"
                 (selectionChange)="selectUser($event.value)">
@@ -17,5 +17,5 @@
    routerLink="/meals"
    [queryParams]="{ create: true }">
   <mat-icon>add</mat-icon>
-  Добавить приём пищи
+  Add meal
 </a>

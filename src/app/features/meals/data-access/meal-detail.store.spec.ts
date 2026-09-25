@@ -11,13 +11,13 @@ import { MealDetailStore } from './meal-detail.store';
 import { MealsApiService } from './meals-api.service';
 
 describe('MealDetailStore', () => {
-  const account = { id: 10, name: 'Семья' };
-  const user: UserIdentity = { id: 1, account_id: account.id, name: 'Александр' };
+  const account = { id: 10, name: 'Family' };
+  const user: UserIdentity = { id: 1, account_id: account.id, name: 'Alexander' };
   const row: MealRow = {
     id: 20,
     position: 0,
     product_id: 30,
-    product_name: 'Яблоко',
+    product_name: 'Apple',
     product_brand: null,
     calories_kcal: 52,
     protein_g: 0.3,
@@ -40,7 +40,7 @@ describe('MealDetailStore', () => {
     account_id: account.id,
     meal_date: '2026-09-12',
     meal_type: 'breakfast',
-    name: 'Завтрак',
+    name: 'Breakfast',
     rows: [row],
     created_at: '2026-09-12T00:00:00Z',
     updated_at: '2026-09-12T00:00:00Z',
@@ -48,9 +48,9 @@ describe('MealDetailStore', () => {
   const products: Product[] = [
     {
       id: 30,
-      name: 'Яблоко',
+      name: 'Apple',
       brand: null,
-      category: 'Фрукты',
+      category: 'Fruit',
       barcode: null,
       description: null,
       calories_kcal: 52,
@@ -103,6 +103,7 @@ describe('MealDetailStore', () => {
     upsertEntry: vi.fn(() => of({})),
     upsertEntries: vi.fn(() => of({})),
     deleteEntry: vi.fn(() => of(undefined)),
+    deleteRow: vi.fn(() => of(undefined)),
   };
   const productsApi = {
     list: vi.fn(() => of(products)),
@@ -118,6 +119,7 @@ describe('MealDetailStore', () => {
     api.upsertEntry.mockReturnValue(of({}));
     api.upsertEntries.mockReturnValue(of({}));
     api.deleteEntry.mockReturnValue(of(undefined));
+    api.deleteRow.mockReturnValue(of(undefined));
 
     TestBed.configureTestingModule({
       providers: [
@@ -229,7 +231,7 @@ describe('MealDetailStore', () => {
   });
 
   it('adds entries and refreshes the meal and daily progress', () => {
-    const addedMeal = { ...meal, name: 'Обновлённый завтрак' };
+    const addedMeal = { ...meal, name: 'Updated breakfast' };
     const entries = [{ user_id: user.id, product_id: 30, amount_g: 120, version: null }];
     const store = TestBed.inject(MealDetailStore);
     store.load(meal.id).subscribe();
@@ -246,8 +248,8 @@ describe('MealDetailStore', () => {
   it('ignores a stale response for the same portion cell', () => {
     const firstRequest = new Subject<object>();
     const secondRequest = new Subject<object>();
-    const firstMeal = { ...meal, name: 'Устаревший ответ' };
-    const secondMeal = { ...meal, name: 'Последний ответ' };
+    const firstMeal = { ...meal, name: 'Stale response' };
+    const secondMeal = { ...meal, name: 'Latest response' };
     const store = TestBed.inject(MealDetailStore);
     store.load(meal.id).subscribe();
     api.upsertEntry.mockReturnValueOnce(firstRequest).mockReturnValueOnce(secondRequest);
@@ -273,17 +275,18 @@ describe('MealDetailStore', () => {
     expect(store.state().pending).toBe(false);
   });
 
-  it('does not call the API when a row without portions cannot be deleted', () => {
+  it('deletes a row without portions', () => {
     const store = TestBed.inject(MealDetailStore);
     store.load(meal.id).subscribe();
 
     store.deleteRow({ ...row, portions: [] }).subscribe();
 
     expect(api.deleteEntry).not.toHaveBeenCalled();
-    expect(store.actionError()).toBe('Строку без порций нельзя удалить через доступное API.');
+    expect(api.deleteRow).toHaveBeenCalledWith(account.id, meal.id, row.id);
+    expect(store.actionError()).toBeNull();
   });
 
-  it('deletes every portion in a row and refreshes the meal', () => {
+  it('deletes a row with one request and refreshes the meal', () => {
     const updatedMeal = { ...meal, rows: [] };
     const store = TestBed.inject(MealDetailStore);
     store.load(meal.id).subscribe();
@@ -291,7 +294,8 @@ describe('MealDetailStore', () => {
 
     store.deleteRow(row).subscribe();
 
-    expect(api.deleteEntry).toHaveBeenCalledWith(account.id, meal.id, row.portions[0].id);
+    expect(api.deleteRow).toHaveBeenCalledExactlyOnceWith(account.id, meal.id, row.id);
+    expect(api.deleteEntry).not.toHaveBeenCalled();
     expect(store.meal()).toEqual(updatedMeal);
     expect(store.rowOperations()[row.id]).toEqual(expect.objectContaining({ status: 'success', type: 'remove' }));
   });

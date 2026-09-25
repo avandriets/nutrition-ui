@@ -61,9 +61,9 @@ export class MealEntryDialog {
   }
 
   private filterProducts(value: string | Product): Product[] {
-    const query = (typeof value === 'string' ? value : value.name).trim().toLocaleLowerCase('ru');
+    const query = (typeof value === 'string' ? value : value.name).trim().toLocaleLowerCase('en-US');
     if (!query) return this.data.products;
 
-    return this.data.products.filter(product => [product.name, product.brand, product.category].filter(Boolean).some(field => field!.toLocaleLowerCase('ru').includes(query)));
+    return this.data.products.filter(product => [product.name, product.brand, product.category].filter(Boolean).some(field => field!.toLocaleLowerCase('en-US').includes(query)));
   }
 }

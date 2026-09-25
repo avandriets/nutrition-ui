@@ -18,7 +18,7 @@ export const StatisticsInitialStore = signalStore(
         load: () => accountBootstrap.ensureAccount().pipe(switchMap(account => api.listUsers(account.id).pipe(map(users => ({ accountId: account.id, users }))))),
       };
     },
-    error: 'Не удалось загрузить семейный аккаунт.',
+    error: 'Could not load the family account.',
     isEmpty: data => !data.users.length,
   }),
 );

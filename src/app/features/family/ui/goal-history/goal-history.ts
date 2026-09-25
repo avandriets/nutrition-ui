@@ -23,8 +23,8 @@ export class GoalHistoryComponent {
   readonly recordsCountLabel = recordsCountLabel;
 
   goalStatusLabel(goal: UserGoal): string {
-    if (this.currentGoalId() === goal.id) return 'Текущая';
-    return goal.effective_from > format(new Date(), 'yyyy-MM-dd') ? 'Запланирована' : 'Завершена';
+    if (this.currentGoalId() === goal.id) return 'Current';
+    return goal.effective_from > format(new Date(), 'yyyy-MM-dd') ? 'Scheduled' : 'Ended';
   }
 
   goalStatusClass(goal: UserGoal): string {

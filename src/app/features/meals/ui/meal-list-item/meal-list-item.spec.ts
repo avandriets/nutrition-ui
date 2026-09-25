@@ -8,20 +8,20 @@ import { MealListItemComponent } from './meal-list-item';
 describe('MealListItemComponent', () => {
   const user: FamilyMemberIdentity = {
     id: 1,
-    name: 'Александр',
+    name: 'Alexander',
   };
   const meal: Meal = {
     id: 20,
     account_id: 10,
     meal_date: '2026-09-13',
     meal_type: 'breakfast',
-    name: 'Завтрак',
+    name: 'Breakfast',
     rows: [
       {
         id: 30,
         position: 0,
         product_id: 40,
-        product_name: 'Овсянка',
+        product_name: 'Oatmeal',
         product_brand: null,
         calories_kcal: 200,
         protein_g: 6,
@@ -58,9 +58,9 @@ describe('MealListItemComponent', () => {
     fixture.detectChanges();
 
     const text = fixture.nativeElement.textContent as string;
-    expect(text).toContain('Завтрак');
-    expect(text).toContain('Александр');
+    expect(text).toContain('Breakfast');
+    expect(text).toContain('Alexander');
     expect(text).toContain('300');
-    expect(text).toContain('ккал');
+    expect(text).toContain('kcal');
   });
 });

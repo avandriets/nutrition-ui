@@ -11,9 +11,9 @@ import { ProductCatalogStore } from './product-catalog.store';
 describe('ProductCatalogStore', () => {
   const product: Product = {
     id: 1,
-    name: 'Яблоко',
+    name: 'Apple',
     brand: null,
-    category: 'Фрукты',
+    category: 'Fruit',
     barcode: null,
     description: null,
     calories_kcal: 52,
@@ -40,7 +40,7 @@ describe('ProductCatalogStore', () => {
     list: vi.fn(() => of([product])),
     getById: vi.fn(() => of(product)),
     create: vi.fn(() => of(product)),
-    update: vi.fn(() => of({ ...product, name: 'Зелёное яблоко' })),
+    update: vi.fn(() => of({ ...product, name: 'Green apple' })),
     delete: vi.fn(() => of(undefined)),
   };
   const snackBar = {
@@ -52,7 +52,7 @@ describe('ProductCatalogStore', () => {
     productsApi.list.mockReturnValue(of([product]));
     productsApi.getById.mockReturnValue(of(product));
     productsApi.create.mockReturnValue(of(product));
-    productsApi.update.mockReturnValue(of({ ...product, name: 'Зелёное яблоко' }));
+    productsApi.update.mockReturnValue(of({ ...product, name: 'Green apple' }));
     productsApi.delete.mockReturnValue(of(undefined));
 
     TestBed.configureTestingModule({
@@ -87,7 +87,7 @@ describe('ProductCatalogStore', () => {
   });
 
   it('post-processes loaded entities before storing and publishing them', () => {
-    productsApi.list.mockReturnValue(of([{ ...product, name: '  Яблоко  ', category: '  Фрукты  ' }]));
+    productsApi.list.mockReturnValue(of([{ ...product, name: '  Apple  ', category: '  Fruit  ' }]));
     const events = TestBed.inject(Events);
     const store = TestBed.inject(ProductCatalogStore);
     const loaded = vi.fn();
@@ -118,7 +118,7 @@ describe('ProductCatalogStore', () => {
       resolved: false,
       rejected: true,
       pending: false,
-      err: 'Не удалось загрузить продукты',
+      err: 'Could not load products',
       empty: false,
     });
   });
@@ -126,14 +126,14 @@ describe('ProductCatalogStore', () => {
   it('updates the entity collection after create, update and remove', () => {
     const store = TestBed.inject(ProductCatalogStore);
 
-    store.create({ ...payload, name: '  Яблоко  ', brand: '   ' }).subscribe();
-    expect(productsApi.create).toHaveBeenCalledWith({ ...payload, name: 'Яблоко', brand: null });
+    store.create({ ...payload, name: '  Apple  ', brand: '   ' }).subscribe();
+    expect(productsApi.create).toHaveBeenCalledWith({ ...payload, name: 'Apple', brand: null });
     expect(store.entities()).toEqual([product]);
-    expect(snackBar.open).toHaveBeenCalledWith('Продукт добавлен в общий каталог', 'Закрыть', { duration: 3000 });
+    expect(snackBar.open).toHaveBeenCalledWith('Product added to the shared catalog', 'Close', { duration: 3000 });
 
-    store.update({ id: product.id, payload: { ...payload, name: '  Зелёное яблоко  ' } }).subscribe();
-    expect(productsApi.update).toHaveBeenCalledWith(product.id, { ...payload, name: 'Зелёное яблоко' });
-    expect(store.entities()[0].name).toBe('Зелёное яблоко');
+    store.update({ id: product.id, payload: { ...payload, name: '  Green apple  ' } }).subscribe();
+    expect(productsApi.update).toHaveBeenCalledWith(product.id, { ...payload, name: 'Green apple' });
+    expect(store.entities()[0].name).toBe('Green apple');
     expect(store.entityOperations()[product.id]).toEqual(expect.objectContaining({ type: 'update', status: 'success' }));
 
     store.remove(product.id).subscribe();
@@ -148,7 +148,7 @@ describe('ProductCatalogStore', () => {
     store.create(payload, { correlationId: 'create-failed' }).subscribe();
 
     expect(store.saving()).toBe(false);
-    expect(store.actionError()).toBe('Не удалось добавить продукт.');
+    expect(store.actionError()).toBe('Could not add the product.');
 
     store.dismissActionError();
     expect(store.actionError()).toBeNull();
@@ -167,7 +167,7 @@ describe('ProductCatalogStore', () => {
       type: productsEvents.createFailed.type,
       payload: {
         error: expect.any(Error),
-        message: 'Не удалось добавить продукт.',
+        message: 'Could not add the product.',
         correlationId: 'create-failed',
       },
     });
